@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.measure.AngularVelocity;
 import frc.lib.subsystems.LimelightHelpers;
 import frc.lib.subsystems.LimelightHelpers.RawDetection;
 import frc.lib.subsystems.LimelightHelpers.RawFiducial;
@@ -64,6 +65,8 @@ public class VisionIOLimelight implements VisionIO {
 
   @Override
   public void readInputs(VisionInputsAutoLogged inputs) {
+    inputs.cameraName = limelightName;
+
     inputs.fiducialCount = LimelightHelpers.getTargetCount(limelightName);
     inputs.ta = LimelightHelpers.getTA(limelightName);
     inputs.targettingType = getPipeType();
@@ -102,8 +105,8 @@ public class VisionIOLimelight implements VisionIO {
 
   /* TODO: Connect with drive subsystem. */
   @Override
-  public void setRobotRotationUpdate(Rotation2d rotation, Rotation2d angularVelocity) {
-    LimelightHelpers.SetRobotOrientation(limelightName, 0, 0, 0, 0, 0, 0);
+  public void setRobotRotationUpdate(Rotation2d rotation, AngularVelocity angularVelocity) {
+    LimelightHelpers.SetRobotOrientation(limelightName, rotation.getDegrees(), angularVelocity.in(DegreesPerSecond), 0, 0, 0, 0);
   }
 
   @Override
