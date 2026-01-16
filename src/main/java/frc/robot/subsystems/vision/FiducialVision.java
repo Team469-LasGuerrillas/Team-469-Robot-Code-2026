@@ -2,11 +2,6 @@ package frc.robot.subsystems.vision;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.subsystems.interfaces.VisionIO;
@@ -16,6 +11,9 @@ import frc.lib.subsystems.interfaces.VisionIO.TargettingType;
 import frc.lib.subsystems.interfaces.VisionInputsAutoLogged;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.util.FiducialFilters;
+import java.util.LinkedList;
+import java.util.List;
+import org.littletonrobotics.junction.Logger;
 
 public class FiducialVision extends SubsystemBase {
   private static List<PoseObservation> allObservations = new LinkedList<>();
@@ -29,13 +27,11 @@ public class FiducialVision extends SubsystemBase {
     for (int i = 0; i < allObservations.size(); i++) {
       PoseObservation o = allObservations.get(i);
 
-      Drive.getInstance().addVisionMeasurement(
-          o.pose().toPose2d(),
-          o.timestamp(),
-          VecBuilder.fill(
-              o.stdDevs()[0],
-              o.stdDevs()[1],
-              o.stdDevs()[2]));
+      Drive.getInstance()
+          .addVisionMeasurement(
+              o.pose().toPose2d(),
+              o.timestamp(),
+              VecBuilder.fill(o.stdDevs()[0], o.stdDevs()[1], o.stdDevs()[2]));
     }
   }
 
@@ -47,19 +43,24 @@ public class FiducialVision extends SubsystemBase {
   @Override
   public void periodic() {
     io.readInputs(visionInputs);
-    io.setRobotRotationUpdate(Drive.getInstance().getRotation(),
+    io.setRobotRotationUpdate(
+        Drive.getInstance().getRotation(),
         RadiansPerSecond.of(Drive.getInstance().getFieldSpeeds().omegaRadiansPerSecond));
     Logger.processInputs(getCameraName(), visionInputs);
 
     List<PoseObservation> robotPosesAccepted = new LinkedList<>();
     List<PoseObservation> robotPosesRejected = new LinkedList<>();
 
-    if (visionInputs.hasLatestFrame &&
-        visionInputs.targettingType == TargettingType.FIDUCIAL &&
-        visionInputs.fiducialCount >= 1) {
+    if (visionInputs.hasLatestFrame
+        && visionInputs.targettingType == TargettingType.FIDUCIAL
+        && visionInputs.fiducialCount >= 1) {
       for (PoseObservation observation : visionInputs.poseObservations) {
         // TODO: Apply rejection
-        boolean reject = false;
+        boolean reject =
+            FiducialFilters.FiducialRejections.badAmbiguity(observation)
+                || FiducialFilters.FiducialRejections.badYaw(observation)
+                || FiducialFilters.FiducialRejections.hasNoTags(observation)
+                || FiducialFilters.FiducialRejections.tooSmall(observation);
 
         if (reject) {
           robotPosesRejected.add(observation);
@@ -67,14 +68,12 @@ public class FiducialVision extends SubsystemBase {
           robotPosesAccepted.add(observation);
 
           // TODO: Apply more filters
-          PoseObservation filteredObservation = new FiducialFilters.FiducialModifications(observation)
-              .withUpdateYaw()
-              .get();
+          PoseObservation filteredObservation =
+              new FiducialFilters.FiducialModifications(observation).withUpdateYaw().get();
 
           allObservations.add(filteredObservation);
         }
       }
-
     }
 
     Logger.recordOutput(
@@ -89,5 +88,4 @@ public class FiducialVision extends SubsystemBase {
   public String getCameraName() {
     return visionInputs.cameraName;
   }
-
 }

@@ -7,6 +7,7 @@ public class VisionInputsAutoLogged extends VisionIO.VisionInputs
     implements LoggableInputs, Cloneable {
   @Override
   public void toLog(LogTable table) {
+    table.put("CameraName", cameraName);
     table.put("FiducialCount", fiducialCount);
     table.put("Ta", ta);
     table.put("TargettingType", targettingType);
@@ -20,6 +21,7 @@ public class VisionInputsAutoLogged extends VisionIO.VisionInputs
 
   @Override
   public void fromLog(LogTable table) {
+    cameraName = table.get("CameraName", cameraName);
     fiducialCount = table.get("FiducialCount", fiducialCount);
     ta = table.get("Ta", ta);
     targettingType = table.get("TargettingType", targettingType);
@@ -33,6 +35,7 @@ public class VisionInputsAutoLogged extends VisionIO.VisionInputs
 
   public VisionInputsAutoLogged clone() {
     VisionInputsAutoLogged copy = new VisionInputsAutoLogged();
+    copy.cameraName = this.cameraName;
     copy.fiducialCount = this.fiducialCount;
     copy.ta = this.ta;
     copy.targettingType = this.targettingType;

@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.vision.FiducialVision;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -49,10 +50,10 @@ public class Robot extends LoggedRobot {
         Logger.addDataReceiver(new NT4Publisher());
         break;
 
-      case SIM:
-        // Running a physics simulator, log to NT
-        Logger.addDataReceiver(new NT4Publisher());
-        break;
+        // case SIM:
+        //   // Running a physics simulator, log to NT
+        //   Logger.addDataReceiver(new NT4Publisher());
+        //   break;
 
       case REPLAY:
         // Replaying a log, set up replay source
@@ -84,6 +85,7 @@ public class Robot extends LoggedRobot {
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    FiducialVision.applyUpdates();
 
     // Return to non-RT thread priority (do not modify the first argument)
     // Threads.setCurrentThreadPriority(false, 10);

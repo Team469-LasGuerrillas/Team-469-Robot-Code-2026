@@ -106,7 +106,8 @@ public class VisionIOLimelight implements VisionIO {
   /* TODO: Connect with drive subsystem. */
   @Override
   public void setRobotRotationUpdate(Rotation2d rotation, AngularVelocity angularVelocity) {
-    LimelightHelpers.SetRobotOrientation(limelightName, rotation.getDegrees(), angularVelocity.in(DegreesPerSecond), 0, 0, 0, 0);
+    LimelightHelpers.SetRobotOrientation(
+        limelightName, rotation.getDegrees(), angularVelocity.in(DegreesPerSecond), 0, 0, 0, 0);
   }
 
   @Override

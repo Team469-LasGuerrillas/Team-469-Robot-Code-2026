@@ -1,13 +1,13 @@
 package frc.lib.subsystems.interfaces;
 
+import static edu.wpi.first.units.Units.Celsius;
+
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Temperature;
-
 import java.util.Comparator;
-
 import org.littletonrobotics.junction.AutoLog;
 
 public interface VisionIO {
@@ -71,7 +71,7 @@ public interface VisionIO {
     public TrackedTarget[] trackedTargets;
 
     // Performance
-    public Temperature cpuTemp = Temperature.ofBaseUnits(0, null);
+    public Temperature cpuTemp = Celsius.of(0);
     public double totalLatencyMs = 0;
     public double fps = 0;
   }
