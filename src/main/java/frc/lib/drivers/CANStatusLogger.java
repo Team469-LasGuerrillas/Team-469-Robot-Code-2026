@@ -1,17 +1,14 @@
 package frc.lib.drivers;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import java.util.ArrayList;
+import java.util.List;
+import org.littletonrobotics.junction.Logger;
 
 // Also copied from 254's code
 public class CANStatusLogger {
@@ -38,8 +35,7 @@ public class CANStatusLogger {
     }
   }
 
-  private CANStatusLogger() {
-  }
+  private CANStatusLogger() {}
 
   public static synchronized CANStatusLogger getInstance() {
     if (instance == null) {

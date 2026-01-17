@@ -1,7 +1,5 @@
 package frc.lib.drivers;
 
-import java.util.function.Supplier;
-
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
@@ -16,8 +14,8 @@ import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S1FloatStateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
 import com.ctre.phoenix6.signals.S2FloatStateValue;
-
 import edu.wpi.first.wpilibj.DriverStation;
+import java.util.function.Supplier;
 
 // Copied from 254's code
 public class CTREUtil {
@@ -28,18 +26,11 @@ public class CTREUtil {
     StatusCode statusCode = StatusCode.OK;
     for (int i = 0; i < max_num_retries; ++i) {
       statusCode = function.get();
-      if (statusCode == StatusCode.OK)
-        break;
+      if (statusCode == StatusCode.OK) break;
     }
     if (statusCode != StatusCode.OK) {
       DriverStation.reportError(
-          "Error calling "
-              + function
-              + " on ctre device id "
-              + deviceId
-              + ": "
-              + statusCode,
-          true);
+          "Error calling " + function + " on ctre device id " + deviceId + ": " + statusCode, true);
     }
     return statusCode;
   }

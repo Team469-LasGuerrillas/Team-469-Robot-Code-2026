@@ -9,7 +9,7 @@ public class MotorInputsAutoLogged extends MotorIO.MotorInputs implements Loggab
   @Override
   public void toLog(LogTable table) {
     table.put("MotorPosition", motorPosition);
-    table.put("RawMotorPoAngle", rawMotorPosition);
+    table.put("RawMotorPosition", rawMotorPosition);
     table.put("MotorVelocity", motorVelocity);
     table.put("MotorAngularAcceleration", motorAngularAcceleration);
     table.put("TargetPosition", targetPosition);
@@ -22,7 +22,7 @@ public class MotorInputsAutoLogged extends MotorIO.MotorInputs implements Loggab
   @Override
   public void fromLog(LogTable table) {
     motorPosition = table.get("MotorPosition", motorPosition);
-    rawMotorPosition = table.get("RawMotorPoAngle", rawMotorPosition);
+    rawMotorPosition = table.get("RawMotorPosition", rawMotorPosition);
     motorVelocity = table.get("MotorVelocity", motorVelocity);
     motorAngularAcceleration = table.get("MotorAngularAcceleration", motorAngularAcceleration);
     targetPosition = table.get("TargetPosition", targetPosition);

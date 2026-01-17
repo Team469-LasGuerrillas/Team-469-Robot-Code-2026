@@ -8,7 +8,7 @@ public class MotorInputsAutoLogged extends MotorIO.MotorInputs
   @Override
   public void toLog(LogTable table) {
     table.put("MotorPosition", motorPosition);
-    table.put("RawMotorPoAngle", rawMotorPoAngle);
+    table.put("RawMotorPosition", rawMotorPosition);
     table.put("MotorVelocity", motorVelocity);
     table.put("MotorAngularAcceleration", motorAngularAcceleration);
     table.put("TargetPosition", targetPosition);
@@ -21,7 +21,7 @@ public class MotorInputsAutoLogged extends MotorIO.MotorInputs
   @Override
   public void fromLog(LogTable table) {
     motorPosition = table.get("MotorPosition", motorPosition);
-    rawMotorPoAngle = table.get("RawMotorPoAngle", rawMotorPoAngle);
+    rawMotorPosition = table.get("RawMotorPosition", rawMotorPosition);
     motorVelocity = table.get("MotorVelocity", motorVelocity);
     motorAngularAcceleration = table.get("MotorAngularAcceleration", motorAngularAcceleration);
     targetPosition = table.get("TargetPosition", targetPosition);
@@ -34,7 +34,7 @@ public class MotorInputsAutoLogged extends MotorIO.MotorInputs
   public MotorInputsAutoLogged clone() {
     MotorInputsAutoLogged copy = new MotorInputsAutoLogged();
     copy.motorPosition = this.motorPosition;
-    copy.rawMotorPoAngle = this.rawMotorPoAngle;
+    copy.rawMotorPosition = this.rawMotorPosition;
     copy.motorVelocity = this.motorVelocity;
     copy.motorAngularAcceleration = this.motorAngularAcceleration;
     copy.targetPosition = this.targetPosition;

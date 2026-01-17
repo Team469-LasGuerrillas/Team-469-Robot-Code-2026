@@ -16,6 +16,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.lib.drivers.CANDeviceId;
+import frc.lib.subsystems.configs.ServoMotorSubsystemConfig;
+import frc.lib.subsystems.implementations.MotorIOTalonFX;
 import frc.lib.subsystems.implementations.VisionIOLimelight;
 
 /**
@@ -38,7 +41,7 @@ public final class Constants {
     REPLAY
   }
 
-  public static class Vision {
+  public static class VisionC {
     public static final double MAX_SINGLE_TAG_AMBIGUITY = 0.55;
     public static final double MIN_SINGLE_TAG_AREA = 0.33;
     public static final Angle MAX_YAW_ERROR_MT1 = Degrees.of(2.41);
@@ -53,5 +56,16 @@ public final class Constants {
                 Units.inchesToMeters(-8.848357),
                 Units.inchesToMeters(5.60048 - 0.125),
                 new Rotation3d(0, Units.degreesToRadians(26), Units.degreesToRadians(15.2))));
+  }
+
+  public static class ExampeC {
+
+    public static final ServoMotorSubsystemConfig EXAMPE_CONFIG = new ServoMotorSubsystemConfig();
+
+    static {
+      EXAMPE_CONFIG.talonCANID = new CANDeviceId(41);
+    }
+
+    public static final MotorIOTalonFX EXMAPE_MOTOR = new MotorIOTalonFX(EXAMPE_CONFIG);
   }
 }
