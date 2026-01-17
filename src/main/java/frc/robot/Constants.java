@@ -10,6 +10,8 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
@@ -41,6 +43,14 @@ public final class Constants {
     REPLAY
   }
 
+  public static class Field {
+    public static final AprilTagFieldLayout WELDED_FIELD =
+        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+
+    public static final Distance MAX_FIELD_X = Meters.of(WELDED_FIELD.getFieldLength());
+    public static final Distance MAX_FIELD_Y = Meters.of(WELDED_FIELD.getFieldWidth());
+  }
+
   public static class VisionC {
     public static final double MAX_SINGLE_TAG_AMBIGUITY = 0.55;
     public static final double MIN_SINGLE_TAG_AREA = 0.33;
@@ -52,10 +62,10 @@ public final class Constants {
         VisionIOLimelight.getInstance(
             "limelight-dev",
             new Pose3d(
-                Units.inchesToMeters(-4.232579),
-                Units.inchesToMeters(-8.848357),
-                Units.inchesToMeters(5.60048 - 0.125),
-                new Rotation3d(0, Units.degreesToRadians(26), Units.degreesToRadians(15.2))));
+                Units.inchesToMeters(-3.127),
+                Units.inchesToMeters(-8.552080),
+                Units.inchesToMeters(6.158800 - 0.125),
+                new Rotation3d(0, Units.degreesToRadians(26), Units.degreesToRadians(15))));
   }
 
   public static class ExampeC {

@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -13,6 +15,8 @@ import frc.lib.drivers.LimelightHelpers.RawFiducial;
 import frc.lib.subsystems.interfaces.VisionIO;
 import frc.lib.subsystems.interfaces.VisionInputsAutoLogged;
 import frc.lib.utilities.field.Clock;
+import frc.robot.subsystems.drive.Drive;
+
 import java.util.HashMap;
 
 /*
@@ -154,7 +158,7 @@ public class VisionIOLimelight implements VisionIO {
       targets[i] =
           new TrackedTarget(
               Clock.time() - Units.millisecondsToSeconds(totalLatencyMs),
-              cameraPose,
+              new Pose3d(Drive.getInstance().getPose()).plus(new Transform3d(cameraPose.getX(), cameraPose.getY(), cameraPose.getZ(), cameraPose.getRotation())),
               Degrees.of(detections[i].txnc),
               Degrees.of(detections[i].tync),
               detections[i].ta,
@@ -168,6 +172,9 @@ public class VisionIOLimelight implements VisionIO {
     double[] stddevs = LimelightHelpers.getLimelightNTDoubleArray(limelightName, "stddevs");
     RawFiducial[] rawFiducials = LimelightHelpers.getRawFiducials(limelightName);
 
+    double[] stddevsMt1 = new double[] {stddevs[0], stddevs[1], stddevs[5]};
+    double[] stddevsMt2 = new double[] {stddevs[6], stddevs[7], stddevs[11]};
+
     if (stddevs.length == 0 || rawFiducials.length == 0) {
       return new PoseObservation[] {};
     }
@@ -179,20 +186,20 @@ public class VisionIOLimelight implements VisionIO {
 
     PoseObservation[] poses = {
       new PoseObservation(
-          mt1Estimate.timestampSeconds,
+          Clock.time() - Units.millisecondsToSeconds(mt1Estimate.latency),
           rawFiducials[0].ambiguity,
           mt1Estimate.avgTagArea,
           mt1Estimate.tagCount,
           LimelightHelpers.getBotPose3d_wpiBlue(limelightName),
-          stddevs,
+          stddevsMt1,
           PoseObservationType.MT1),
       new PoseObservation(
-          mt2Estimate.timestampSeconds,
+          Clock.time() - Units.millisecondsToSeconds(mt1Estimate.latency),
           rawFiducials[0].ambiguity,
           mt2Estimate.avgTagArea,
           mt2Estimate.tagCount,
           LimelightHelpers.getBotPose3d_wpiBlue_MegaTag2(limelightName),
-          stddevs,
+          stddevsMt2,
           PoseObservationType.MT2)
     };
 

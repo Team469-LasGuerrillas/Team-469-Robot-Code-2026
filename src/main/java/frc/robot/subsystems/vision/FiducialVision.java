@@ -9,6 +9,7 @@ import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservationComparator;
 import frc.lib.subsystems.interfaces.VisionIO.TargettingType;
 import frc.lib.subsystems.interfaces.VisionInputsAutoLogged;
+import frc.lib.utilities.field.Clock;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.util.FiducialFilters;
 import java.util.LinkedList;
@@ -27,11 +28,18 @@ public class FiducialVision extends SubsystemBase {
     for (int i = 0; i < allObservations.size(); i++) {
       PoseObservation o = allObservations.get(i);
 
+      Logger.recordOutput("Data into pose estimator delay", Clock.time() - o.timestamp());
+
       Drive.getInstance()
           .addVisionMeasurement(
               o.pose().toPose2d(),
               o.timestamp(),
               VecBuilder.fill(o.stdDevs()[0], o.stdDevs()[1], o.stdDevs()[2]));
+      // .addVisionMeasurement(
+      //     new Pose2d(
+      //         11 * 2, 7 * 2, Rotation2d.fromDegrees(-90).rotateBy(Rotation2d.fromDegrees(-90))),
+      //     Clock.time() - 0.001,
+      //     VecBuilder.fill(0.1, 0.1, 0.1));
     }
   }
 
@@ -60,6 +68,8 @@ public class FiducialVision extends SubsystemBase {
             FiducialFilters.FiducialRejections.badAmbiguity(observation)
                 || FiducialFilters.FiducialRejections.badYaw(observation)
                 || FiducialFilters.FiducialRejections.hasNoTags(observation)
+                || FiducialFilters.FiducialRejections.isOffField(observation)
+                || FiducialFilters.FiducialRejections.isFlying(observation)
                 || FiducialFilters.FiducialRejections.tooSmall(observation);
 
         if (reject) {
@@ -71,7 +81,7 @@ public class FiducialVision extends SubsystemBase {
           PoseObservation filteredObservation =
               new FiducialFilters.FiducialModifications(observation).withUpdateYaw().get();
 
-          allObservations.add(filteredObservation);
+          allObservations.add(observation);
         }
       }
     }
