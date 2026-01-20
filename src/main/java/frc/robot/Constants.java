@@ -10,6 +10,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -19,8 +20,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.lib.drivers.CANDeviceId;
-import frc.lib.subsystems.configs.ServoMotorSubsystemConfig;
-import frc.lib.subsystems.implementations.MotorIOTalonFX;
+import frc.lib.subsystems.configs.CanCoderConfig;
+import frc.lib.subsystems.implementations.CanCoderIOCanCoder;
 import frc.lib.subsystems.implementations.VisionIOLimelight;
 
 /**
@@ -58,6 +59,13 @@ public final class Constants {
     public static final Angle MAX_YAW_ERROR_MT2 = Degrees.of(1.67);
     public static final Distance MAX_FLOATING_NOCLIP = Meters.of(0.2);
 
+    public static final Pose3d TURD_CENTER =
+        new Pose3d(
+            0.031613,
+            0.183773,
+            0.215900,
+            new Rotation3d(0, 0, Units.degreesToRadians(180 - 20.220574)));
+
     public static final VisionIOLimelight DEV_LIMELIGHT =
         VisionIOLimelight.getInstance(
             "limelight-dev",
@@ -66,16 +74,28 @@ public final class Constants {
                 Units.inchesToMeters(-8.552080),
                 Units.inchesToMeters(6.158800 - 0.125),
                 new Rotation3d(0, Units.degreesToRadians(26), Units.degreesToRadians(15))));
+
+    public static final VisionIOLimelight TURD_LIMELIGHT =
+        VisionIOLimelight.getInstance(
+            "limelight-turd",
+            new Pose3d(
+                0.060712,
+                0.173054,
+                0.299212 - Units.inchesToMeters(0.125),
+                new Rotation3d(
+                    0, Units.degreesToRadians(28), Units.degreesToRadians(180 - 20.220574))));
   }
 
   public static class ExampeC {
 
-    public static final ServoMotorSubsystemConfig EXAMPE_CONFIG = new ServoMotorSubsystemConfig();
+    public static final CanCoderConfig EXAMPE_CONFIG = new CanCoderConfig();
 
     static {
-      EXAMPE_CONFIG.talonCANID = new CANDeviceId(41);
+      EXAMPE_CONFIG.CANID = new CANDeviceId(5);
+      EXAMPE_CONFIG.config = new CANcoderConfiguration();
+      EXAMPE_CONFIG.config.MagnetSensor.MagnetOffset = 0.35791 - 0.003;
     }
 
-    public static final MotorIOTalonFX EXMAPE_MOTOR = new MotorIOTalonFX(EXAMPE_CONFIG);
+    public static final CanCoderIOCanCoder coder = new CanCoderIOCanCoder(EXAMPE_CONFIG);
   }
 }

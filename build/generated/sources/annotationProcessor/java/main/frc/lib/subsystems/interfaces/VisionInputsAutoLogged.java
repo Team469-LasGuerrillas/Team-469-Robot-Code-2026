@@ -9,6 +9,7 @@ public class VisionInputsAutoLogged extends VisionIO.VisionInputs implements Log
   @Override
   public void toLog(LogTable table) {
     table.put("CameraName", cameraName);
+    table.put("CameraPose", cameraPose);
     table.put("FiducialCount", fiducialCount);
     table.put("Ta", ta);
     table.put("TargettingType", targettingType);
@@ -23,6 +24,7 @@ public class VisionInputsAutoLogged extends VisionIO.VisionInputs implements Log
   @Override
   public void fromLog(LogTable table) {
     cameraName = table.get("CameraName", cameraName);
+    cameraPose = table.get("CameraPose", cameraPose);
     fiducialCount = table.get("FiducialCount", fiducialCount);
     ta = table.get("Ta", ta);
     targettingType = table.get("TargettingType", targettingType);
@@ -37,6 +39,7 @@ public class VisionInputsAutoLogged extends VisionIO.VisionInputs implements Log
   public VisionInputsAutoLogged clone() {
     VisionInputsAutoLogged copy = new VisionInputsAutoLogged();
     copy.cameraName = this.cameraName;
+    copy.cameraPose = this.cameraPose;
     copy.fiducialCount = this.fiducialCount;
     copy.ta = this.ta;
     copy.targettingType = this.targettingType;

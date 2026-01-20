@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -16,7 +15,6 @@ import frc.lib.subsystems.interfaces.VisionIO;
 import frc.lib.subsystems.interfaces.VisionInputsAutoLogged;
 import frc.lib.utilities.field.Clock;
 import frc.robot.subsystems.drive.Drive;
-
 import java.util.HashMap;
 
 /*
@@ -70,6 +68,7 @@ public class VisionIOLimelight implements VisionIO {
   @Override
   public void readInputs(VisionInputsAutoLogged inputs) {
     inputs.cameraName = limelightName;
+    inputs.cameraPose = cameraPose; // LimelightHelpers.getCameraPose3d_RobotSpace(limelightName);
 
     inputs.fiducialCount = LimelightHelpers.getTargetCount(limelightName);
     inputs.ta = LimelightHelpers.getTA(limelightName);
@@ -97,6 +96,7 @@ public class VisionIOLimelight implements VisionIO {
 
   @Override
   public void setPoseRobotSpace(Pose3d cameraPose) {
+    this.cameraPose = cameraPose;
     LimelightHelpers.setCameraPose_RobotSpace(
         limelightName,
         cameraPose.getX(),
@@ -107,7 +107,6 @@ public class VisionIOLimelight implements VisionIO {
         Math.toDegrees(cameraPose.getRotation().getZ()));
   }
 
-  /* TODO: Connect with drive subsystem. */
   @Override
   public void setRobotRotationUpdate(Rotation2d rotation, AngularVelocity angularVelocity) {
     LimelightHelpers.SetRobotOrientation(
@@ -158,7 +157,13 @@ public class VisionIOLimelight implements VisionIO {
       targets[i] =
           new TrackedTarget(
               Clock.time() - Units.millisecondsToSeconds(totalLatencyMs),
-              new Pose3d(Drive.getInstance().getPose()).plus(new Transform3d(cameraPose.getX(), cameraPose.getY(), cameraPose.getZ(), cameraPose.getRotation())),
+              new Pose3d(Drive.getInstance().getPose())
+                  .plus(
+                      new Transform3d(
+                          cameraPose.getX(),
+                          cameraPose.getY(),
+                          cameraPose.getZ(),
+                          cameraPose.getRotation())),
               Degrees.of(detections[i].txnc),
               Degrees.of(detections[i].tync),
               detections[i].ta,

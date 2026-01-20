@@ -3,6 +3,8 @@ package frc.robot.subsystems.vision;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.subsystems.interfaces.VisionIO;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
@@ -12,6 +14,7 @@ import frc.lib.subsystems.interfaces.VisionInputsAutoLogged;
 import frc.lib.utilities.field.Clock;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.util.FiducialFilters;
+import frc.robot.subsystems.vision.util.TurretedCamera;
 import java.util.LinkedList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
@@ -21,6 +24,9 @@ public class FiducialVision extends SubsystemBase {
 
   private final VisionIO io;
   private final VisionInputsAutoLogged visionInputs = new VisionInputsAutoLogged();
+
+  private Pose3d originalCameraPose;
+  private boolean hasOriginalPoseBeenSet = false;
 
   public static void applyUpdates() {
     allObservations.sort(new PoseObservationComparator());
@@ -55,6 +61,11 @@ public class FiducialVision extends SubsystemBase {
         Drive.getInstance().getRotation(),
         RadiansPerSecond.of(Drive.getInstance().getFieldSpeeds().omegaRadiansPerSecond));
     Logger.processInputs(getCameraName(), visionInputs);
+
+    if (!hasOriginalPoseBeenSet) {
+      originalCameraPose = visionInputs.cameraPose;
+      hasOriginalPoseBeenSet = true;
+    }
 
     List<PoseObservation> robotPosesAccepted = new LinkedList<>();
     List<PoseObservation> robotPosesRejected = new LinkedList<>();
@@ -93,6 +104,15 @@ public class FiducialVision extends SubsystemBase {
     Logger.recordOutput(
         getCameraName() + "/RobotPosesRejected",
         robotPosesRejected.toArray(new PoseObservation[robotPosesRejected.size()]));
+  }
+
+  public void setPoseRobotSpace(Pose3d pose) {
+    io.setPoseRobotSpace(pose);
+  }
+
+  public void updatePositionTurret(Angle turretAngle, Pose3d turretCenter) {
+    Pose3d updatedPose = TurretedCamera.recalcPose(turretAngle, originalCameraPose, turretCenter);
+    io.setPoseRobotSpace(updatedPose);
   }
 
   public String getCameraName() {

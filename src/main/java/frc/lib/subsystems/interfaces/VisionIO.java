@@ -57,6 +57,7 @@ public interface VisionIO {
   @AutoLog
   public class VisionInputs {
     public String cameraName = "Manav Khosla CS + BA @ UMich";
+    public Pose3d cameraPose = new Pose3d();
 
     // General targetting
     public int fiducialCount = 0;

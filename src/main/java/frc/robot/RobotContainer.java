@@ -16,9 +16,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.subsystems.interfaces.CanCoderIO;
 import frc.lib.subsystems.interfaces.VisionIO;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Exampe;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -36,8 +38,9 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final FiducialVision limelightDev;
-  // private final Exampe exampe;
+  // private final FiducialVision limelightDev;
+  public final FiducialVision limelightTurd;
+  public final Exampe exampe;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -60,9 +63,11 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        limelightDev = new FiducialVision(Constants.VisionC.DEV_LIMELIGHT);
+        // limelightDev = new FiducialVision(Constants.VisionC.DEV_LIMELIGHT);
 
-        // exampe = new Exampe(Constants.ExampeC.EXMAPE_MOTOR);
+        limelightTurd = new FiducialVision(Constants.VisionC.TURD_LIMELIGHT);
+
+        exampe = new Exampe(Constants.ExampeC.coder);
 
         break;
 
@@ -89,9 +94,11 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
 
-        limelightDev = new FiducialVision(new VisionIO() {});
+        // limelightDev = new FiducialVision(new VisionIO() {});
 
-        // exampe = new Exampe(new MotorIO() {});
+        limelightTurd = new FiducialVision(new VisionIO() {});
+
+        exampe = new Exampe(new CanCoderIO() {});
 
         break;
     }
@@ -133,6 +140,13 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
+
+    // limelightTurd.setDefaultCommand(
+    //     Commands.run(
+    //         () ->
+    //             limelightTurd.updatePositionTurret(
+    //                 exampe.getPosition(), Constants.VisionC.TURD_CENTER),
+    //         limelightTurd));
 
     // Lock to 0° when A button is held
     controller
