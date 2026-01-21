@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -93,7 +94,8 @@ public final class Constants {
     static {
       EXAMPE_CONFIG.CANID = new CANDeviceId(5);
       EXAMPE_CONFIG.config = new CANcoderConfiguration();
-      EXAMPE_CONFIG.config.MagnetSensor.MagnetOffset = 0.35791 - 0.003;
+      EXAMPE_CONFIG.config.MagnetSensor.MagnetOffset = -0.36523433383028964;
+      EXAMPE_CONFIG.config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     }
 
     public static final CanCoderIOCanCoder coder = new CanCoderIOCanCoder(EXAMPE_CONFIG);

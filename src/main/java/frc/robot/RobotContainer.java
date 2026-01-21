@@ -141,13 +141,6 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    // limelightTurd.setDefaultCommand(
-    //     Commands.run(
-    //         () ->
-    //             limelightTurd.updatePositionTurret(
-    //                 exampe.getPosition(), Constants.VisionC.TURD_CENTER),
-    //         limelightTurd));
-
     // Lock to 0° when A button is held
     controller
         .a()

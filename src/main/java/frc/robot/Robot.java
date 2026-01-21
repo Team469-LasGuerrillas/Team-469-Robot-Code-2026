@@ -7,8 +7,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.vision.FiducialVision;
@@ -87,10 +85,11 @@ public class Robot extends LoggedRobot {
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    robotContainer.limelightTurd.setPoseRobotSpace(
-        new Pose3d(0, 0, 1, new Rotation3d(0, 0.5 * Math.PI, 0)));
-    // robotContainer.limelightTurd.updatePositionTurret(
-    //     robotContainer.exampe.getPosition(), Constants.VisionC.TURD_CENTER);
+    // robotContainer.limelightTurd.setPoseRobotSpace(
+    //     new Pose3d(0, 0, 1, new Rotation3d(new
+    // Rotation2d(robotContainer.exampe.getPosition()))));
+    robotContainer.limelightTurd.setPositionTurret(
+        robotContainer.exampe.getPosition(), Constants.VisionC.TURD_CENTER);
     FiducialVision.applyUpdates();
 
     // Return to non-RT thread priority (do not modify the first argument)

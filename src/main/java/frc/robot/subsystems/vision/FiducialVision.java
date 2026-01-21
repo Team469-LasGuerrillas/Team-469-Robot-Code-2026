@@ -110,7 +110,7 @@ public class FiducialVision extends SubsystemBase {
     io.setPoseRobotSpace(pose);
   }
 
-  public void updatePositionTurret(Angle turretAngle, Pose3d turretCenter) {
+  public void setPositionTurret(Angle turretAngle, Pose3d turretCenter) {
     Pose3d updatedPose = TurretedCamera.recalcPose(turretAngle, originalCameraPose, turretCenter);
     io.setPoseRobotSpace(updatedPose);
   }
