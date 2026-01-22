@@ -15,8 +15,16 @@ import frc.lib.utilities.field.Clock;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.util.FiducialFilters;
 import frc.robot.subsystems.vision.util.TurretedCamera;
+import frc.robot.subsystems.vision.util.FiducialFilters.FiducialModifications;
+import frc.robot.subsystems.vision.util.FiducialFilters.FiducialRejections;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
+
 import org.littletonrobotics.junction.Logger;
 
 public class FiducialVision extends SubsystemBase {
@@ -27,6 +35,9 @@ public class FiducialVision extends SubsystemBase {
 
   private Pose3d originalCameraPose;
   private boolean hasOriginalPoseBeenSet = false;
+
+  ArrayList<Function<PoseObservation, Boolean>> extraRejections;
+  ArrayList<UnaryOperator<FiducialModifications>> extraModifications;
 
   public static void applyUpdates() {
     allObservations.sort(new PoseObservationComparator());
@@ -49,8 +60,10 @@ public class FiducialVision extends SubsystemBase {
     }
   }
 
-  public FiducialVision(VisionIO io) {
+  public FiducialVision(VisionIO io, ArrayList<Function<PoseObservation, Boolean>> extraRejections, ArrayList<UnaryOperator<FiducialModifications>> extraModifications) {
     this.io = io;
+    this.extraRejections = extraRejections;
+    this.extraModifications = extraModifications;
     // Set tag filter override
   }
 
@@ -83,16 +96,28 @@ public class FiducialVision extends SubsystemBase {
                 || FiducialFilters.FiducialRejections.isFlying(observation)
                 || FiducialFilters.FiducialRejections.tooSmall(observation);
 
-        if (reject) {
+        boolean supplementalReject = false;
+        for (Function<PoseObservation, Boolean> rejection : extraRejections) {
+          if (rejection.apply(observation)) {
+            supplementalReject = true;
+          }
+        }
+
+
+
+        if (reject || supplementalReject) {
           robotPosesRejected.add(observation);
         } else {
           robotPosesAccepted.add(observation);
 
-          // TODO: Apply more filters
-          PoseObservation filteredObservation =
-              new FiducialFilters.FiducialModifications(observation).withUpdateYaw().get();
+          FiducialModifications filteredObservation =
+              new FiducialFilters.FiducialModifications(observation).withUpdateYaw();
 
-          allObservations.add(observation);
+          for (UnaryOperator<FiducialModifications> modification : extraModifications) {
+            filteredObservation = modification.apply(filteredObservation);
+          }
+
+          allObservations.add(filteredObservation.get());
         }
       }
     }

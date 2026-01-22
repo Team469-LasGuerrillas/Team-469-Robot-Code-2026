@@ -1,11 +1,15 @@
 package frc.robot.subsystems.vision.util;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
+
+import java.util.function.UnaryOperator;
 
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservationType;
 import frc.robot.Constants;
+import frc.robot.subsystems.Exampe;
 import frc.robot.subsystems.drive.Drive;
 
 public class FiducialFilters {
@@ -30,21 +34,19 @@ public class FiducialFilters {
       if (toFilter.type() == PoseObservationType.MT1 && toFilter.tagCount() == 1) {
         // MT1 1 Tag Cases
         return toFilter
-                .pose()
-                .getRotation()
-                .getMeasureZ()
-                .minus(Drive.getInstance().getRotation().getMeasure())
-                .abs(Degrees)
-            >= Constants.VisionC.MAX_YAW_ERROR_MT1.in(Degrees);
+            .pose()
+            .getRotation()
+            .getMeasureZ()
+            .minus(Drive.getInstance().getRotation().getMeasure())
+            .abs(Degrees) >= Constants.VisionC.MAX_YAW_ERROR_MT1.in(Degrees);
       } else if (toFilter.type() == PoseObservationType.MT2) {
         // MT2 Case
         return toFilter
-                .pose()
-                .getRotation()
-                .getMeasureZ()
-                .minus(Drive.getInstance().getRotation().getMeasure())
-                .abs(Degrees)
-            >= Constants.VisionC.MAX_YAW_ERROR_MT2.in(Degrees);
+            .pose()
+            .getRotation()
+            .getMeasureZ()
+            .minus(Drive.getInstance().getRotation().getMeasure())
+            .abs(Degrees) >= Constants.VisionC.MAX_YAW_ERROR_MT2.in(Degrees);
       }
       // MT1 2 Tag Case
       return false;
@@ -84,8 +86,25 @@ public class FiducialFilters {
       return this;
     }
 
+    public FiducialModifications withDistrustMt2WhileTurretSpinToFast() {
+      if (observation.type() == PoseObservationType.MT2 && Exampe.getInstance().getAngularVelocity().abs(DegreesPerSecond) >= Constants.VisionC.REASONABLE_TURRET_ANGULAR_VELOCITY_MT2.abs(DegreesPerSecond)) {
+        observation.stdDevs()[0] *= Constants.VisionC.REASONABLE_TURRET_ANGULAR_VELOCITY_MT2_MULT;
+        observation.stdDevs()[1] *= Constants.VisionC.REASONABLE_TURRET_ANGULAR_VELOCITY_MT2_MULT;
+      } else if (observation.type() == PoseObservationType.MT1 && Exampe.getInstance().getAngularVelocity().abs(DegreesPerSecond) >= Constants.VisionC.REASONABLE_TURRET_ANGULAR_VELOCITY_MT1.abs(DegreesPerSecond)) {
+        for (double std : observation.stdDevs()) {
+          std *= Constants.VisionC.REASONABLE_TURRET_ANGULAR_VELOCITY_MT1_MULT;
+        }
+      }
+      return this;
+    }
+
     public PoseObservation get() {
       return observation;
     }
+
+    public static UnaryOperator<FiducialModifications> o_withDistrustMt2WhileTurretSpinToFast() {
+      return FiducialModifications::withDistrustMt2WhileTurretSpinToFast;
+    }
+
   }
 }

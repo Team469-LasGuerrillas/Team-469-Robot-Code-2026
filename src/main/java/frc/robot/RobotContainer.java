@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.subsystems.interfaces.CanCoderIO;
 import frc.lib.subsystems.interfaces.VisionIO;
+import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Exampe;
@@ -27,6 +28,12 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.FiducialVision;
+import frc.robot.subsystems.vision.util.FiducialFilters.FiducialModifications;
+
+import java.util.ArrayList;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -65,9 +72,9 @@ public class RobotContainer {
 
         // limelightDev = new FiducialVision(Constants.VisionC.DEV_LIMELIGHT);
 
-        limelightTurd = new FiducialVision(Constants.VisionC.TURD_LIMELIGHT);
+        limelightTurd = new FiducialVision(Constants.VisionC.TURD_LIMELIGHT, new ArrayList<Function<PoseObservation, Boolean>>(), Constants.VisionC.TURRET_MODIFICATIONS);
 
-        exampe = new Exampe(Constants.ExampeC.coder);
+        exampe = Exampe.createInstance(Constants.ExampeC.coder);
 
         break;
 
@@ -96,9 +103,9 @@ public class RobotContainer {
 
         // limelightDev = new FiducialVision(new VisionIO() {});
 
-        limelightTurd = new FiducialVision(new VisionIO() {});
+        limelightTurd = new FiducialVision(new VisionIO() {}, null, null);
 
-        exampe = new Exampe(new CanCoderIO() {});
+        exampe = Exampe.createInstance(new CanCoderIO() {});
 
         break;
     }

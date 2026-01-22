@@ -9,6 +9,10 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+
+import java.util.ArrayList;
+import java.util.function.UnaryOperator;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -18,12 +22,15 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.lib.drivers.CANDeviceId;
 import frc.lib.subsystems.configs.CanCoderConfig;
 import frc.lib.subsystems.implementations.CanCoderIOCanCoder;
 import frc.lib.subsystems.implementations.VisionIOLimelight;
+import frc.robot.subsystems.vision.util.FiducialFilters;
+import frc.robot.subsystems.vision.util.FiducialFilters.FiducialModifications;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -59,6 +66,17 @@ public final class Constants {
     public static final Angle MAX_YAW_ERROR_MT1 = Degrees.of(2.41);
     public static final Angle MAX_YAW_ERROR_MT2 = Degrees.of(1.67);
     public static final Distance MAX_FLOATING_NOCLIP = Meters.of(0.2);
+
+    public static final AngularVelocity REASONABLE_TURRET_ANGULAR_VELOCITY_MT1 = RadiansPerSecond.of(0.5);
+    public static final double REASONABLE_TURRET_ANGULAR_VELOCITY_MT1_MULT = 2.17;
+    public static final AngularVelocity REASONABLE_TURRET_ANGULAR_VELOCITY_MT2 = RadiansPerSecond.of(0.2);
+    public static final double REASONABLE_TURRET_ANGULAR_VELOCITY_MT2_MULT = 4.69;
+
+    public static final ArrayList<UnaryOperator<FiducialModifications>> TURRET_MODIFICATIONS = new ArrayList<UnaryOperator<FiducialModifications>>();
+
+    static {
+      TURRET_MODIFICATIONS.add(FiducialFilters.FiducialModifications.o_withDistrustMt2WhileTurretSpinToFast());
+    }
 
     public static final Pose3d TURD_CENTER =
         new Pose3d(
