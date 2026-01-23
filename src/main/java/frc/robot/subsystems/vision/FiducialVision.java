@@ -14,17 +14,13 @@ import frc.lib.subsystems.interfaces.VisionInputsAutoLogged;
 import frc.lib.utilities.field.Clock;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.util.FiducialFilters;
-import frc.robot.subsystems.vision.util.TurretedCamera;
 import frc.robot.subsystems.vision.util.FiducialFilters.FiducialModifications;
-import frc.robot.subsystems.vision.util.FiducialFilters.FiducialRejections;
-
+import frc.robot.subsystems.vision.util.TurretedCamera;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
-
 import org.littletonrobotics.junction.Logger;
 
 public class FiducialVision extends SubsystemBase {
@@ -60,7 +56,10 @@ public class FiducialVision extends SubsystemBase {
     }
   }
 
-  public FiducialVision(VisionIO io, ArrayList<Function<PoseObservation, Boolean>> extraRejections, ArrayList<UnaryOperator<FiducialModifications>> extraModifications) {
+  public FiducialVision(
+      VisionIO io,
+      ArrayList<Function<PoseObservation, Boolean>> extraRejections,
+      ArrayList<UnaryOperator<FiducialModifications>> extraModifications) {
     this.io = io;
     this.extraRejections = extraRejections;
     this.extraModifications = extraModifications;
@@ -102,8 +101,6 @@ public class FiducialVision extends SubsystemBase {
             supplementalReject = true;
           }
         }
-
-
 
         if (reject || supplementalReject) {
           robotPosesRejected.add(observation);

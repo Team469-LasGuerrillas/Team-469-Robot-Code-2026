@@ -177,6 +177,10 @@ public class VisionIOLimelight implements VisionIO {
     double[] stddevs = LimelightHelpers.getLimelightNTDoubleArray(limelightName, "stddevs");
     RawFiducial[] rawFiducials = LimelightHelpers.getRawFiducials(limelightName);
 
+    if (stddevs.length == 0) {
+      return new PoseObservation[0];
+    }
+
     double[] stddevsMt1 = new double[] {stddevs[0], stddevs[1], stddevs[5]};
     double[] stddevsMt2 = new double[] {stddevs[6], stddevs[7], stddevs[11]};
 

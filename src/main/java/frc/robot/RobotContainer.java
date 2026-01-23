@@ -28,12 +28,8 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.FiducialVision;
-import frc.robot.subsystems.vision.util.FiducialFilters.FiducialModifications;
-
 import java.util.ArrayList;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -72,7 +68,11 @@ public class RobotContainer {
 
         // limelightDev = new FiducialVision(Constants.VisionC.DEV_LIMELIGHT);
 
-        limelightTurd = new FiducialVision(Constants.VisionC.TURD_LIMELIGHT, new ArrayList<Function<PoseObservation, Boolean>>(), Constants.VisionC.TURRET_MODIFICATIONS);
+        limelightTurd =
+            new FiducialVision(
+                Constants.VisionC.TURD_LIMELIGHT,
+                new ArrayList<Function<PoseObservation, Boolean>>(),
+                Constants.VisionC.TURRET_MODIFICATIONS);
 
         exampe = Exampe.createInstance(Constants.ExampeC.coder);
 
