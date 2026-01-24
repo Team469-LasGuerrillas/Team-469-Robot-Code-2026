@@ -1,8 +1,10 @@
 package frc.lib.subsystems.interfaces;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -22,12 +24,12 @@ public interface MotorIO {
     public AngularVelocity motorVelocity = RotationsPerSecond.of(0);
     public AngularAcceleration motorAngularAcceleration = RotationsPerSecondPerSecond.of(0);
 
-    public Angle targetPosition = Angle.ofBaseUnits(0, null);
-    public AngularVelocity targetVelocity = AngularVelocity.ofBaseUnits(0, null);
+    public Angle targetPosition = Rotations.of(0);
+    public AngularVelocity targetVelocity = RotationsPerSecond.of(0);
 
-    public Voltage appliedVolts = Voltage.ofBaseUnits(0, null);
-    public Current supplyCurrent = Current.ofBaseUnits(0, null);
-    public Current statorCurrent = Current.ofBaseUnits(0, null);
+    public Voltage appliedVolts = Volts.of(0);
+    public Current supplyCurrent = Amps.of(0);
+    public Current statorCurrent = Amps.of(0);
   }
 
   default void readInputs(MotorInputsAutoLogged inputs) {}

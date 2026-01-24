@@ -10,9 +10,13 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -24,8 +28,11 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.lib.drivers.CANDeviceId;
 import frc.lib.subsystems.configs.CanCoderConfig;
+import frc.lib.subsystems.configs.ServoMotorSubsystemWithCancoderConfig;
 import frc.lib.subsystems.implementations.CanCoderIOCanCoder;
+import frc.lib.subsystems.implementations.MotorIOTalonFX;
 import frc.lib.subsystems.implementations.VisionIOLimelight;
+import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.robot.subsystems.vision.util.FiducialFilters;
 import frc.robot.subsystems.vision.util.FiducialFilters.FiducialModifications;
@@ -109,8 +116,8 @@ public final class Constants {
         VisionIOLimelight.getInstance(
             "limelight-turd",
             new Pose3d(
-                0.060712,
-                0.173054,
+                0.081363,
+                0.244337,
                 0.299212 - Units.inchesToMeters(0.125),
                 new Rotation3d(
                     0, Units.degreesToRadians(28), Units.degreesToRadians(180 - 20.220574))));
@@ -118,15 +125,51 @@ public final class Constants {
 
   public static class ExampeC {
 
-    public static final CanCoderConfig EXAMPE_CONFIG = new CanCoderConfig();
+    public static final Angle TURRERT_MAX = Rotations.of(0.5);
+    public static final Angle TURRERT_MIN = Rotations.of(-0.5);
+
+    public static final Pose3d TURD_CENTER =
+        new Pose3d(
+            0.031613,
+            0.183773,
+            0.215900,
+            new Rotation3d(0, 0, Units.degreesToRadians(180 - 20.220574)));
+
+    public static final ServoMotorSubsystemWithCancoderConfig SERVO_CONFIG =
+        new ServoMotorSubsystemWithCancoderConfig();
+    public static final TalonFXConfiguration EXAMPE_TALON_CONFIG = new TalonFXConfiguration();
+    public static final CanCoderConfig EXAMPE_CANCODER_CONFIG = new CanCoderConfig();
 
     static {
-      EXAMPE_CONFIG.CANID = new CANDeviceId(5);
-      EXAMPE_CONFIG.config = new CANcoderConfiguration();
-      EXAMPE_CONFIG.config.MagnetSensor.MagnetOffset = -0.36523433383028964;
-      EXAMPE_CONFIG.config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+      EXAMPE_CANCODER_CONFIG.CANID = new CANDeviceId(5);
+      EXAMPE_CANCODER_CONFIG.config = new CANcoderConfiguration();
+      EXAMPE_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = -0.36523433383028964;
+      EXAMPE_CANCODER_CONFIG.config.MagnetSensor.SensorDirection =
+          SensorDirectionValue.Clockwise_Positive;
+      EXAMPE_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
+
+      EXAMPE_TALON_CONFIG.Feedback.FeedbackRemoteSensorID =
+          EXAMPE_CANCODER_CONFIG.CANID.getDeviceNumber();
+      EXAMPE_TALON_CONFIG.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+      EXAMPE_TALON_CONFIG.Feedback.SensorToMechanismRatio = 1;
+      EXAMPE_TALON_CONFIG.Feedback.RotorToSensorRatio = 18.75;
+
+      EXAMPE_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TURRERT_MAX.in(Rotations);
+      EXAMPE_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TURRERT_MIN.in(Rotations);
+
+      EXAMPE_TALON_CONFIG.Slot0.kP = 15;
+      EXAMPE_TALON_CONFIG.Slot0.kI = 0;
+      EXAMPE_TALON_CONFIG.Slot0.kD = 0;
+      EXAMPE_TALON_CONFIG.Slot0.kS = 4.1;
+      SERVO_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
+
+      SERVO_CONFIG.talonCANID = new CANDeviceId(9);
+      SERVO_CONFIG.canCoderConfig = EXAMPE_CANCODER_CONFIG;
+      SERVO_CONFIG.isFusedCancoder = true;
+      SERVO_CONFIG.fxConfig = EXAMPE_TALON_CONFIG;
     }
 
-    public static final CanCoderIOCanCoder coder = new CanCoderIOCanCoder(EXAMPE_CONFIG);
+    public static final CanCoderIOCanCoder coder = new CanCoderIOCanCoder(EXAMPE_CANCODER_CONFIG);
+    public static final MotorIO motah = new MotorIOTalonFX(SERVO_CONFIG);
   }
 }

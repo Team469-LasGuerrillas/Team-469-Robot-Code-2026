@@ -117,6 +117,8 @@ public class MotorIOTalonFX implements MotorIO {
     inputs.motorVelocity = RotationsPerSecond.of(rotorToUnits(velocitySignal.getValueAsDouble()));
     inputs.motorAngularAcceleration =
         RotationsPerSecondPerSecond.of(rotorToUnits(accelSignal.getValueAsDouble()));
+    inputs.targetPosition = Rotations.of(rotorToUnits(targetPositionSignal.getValueAsDouble()));
+
     inputs.appliedVolts = Volts.of(voltageSignal.getValueAsDouble());
     inputs.supplyCurrent = Amps.of(currentSupplySignal.getValueAsDouble());
     inputs.statorCurrent = Amps.of(currentStatorSignal.getValueAsDouble());

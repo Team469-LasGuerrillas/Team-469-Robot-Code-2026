@@ -10,13 +10,16 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.subsystems.interfaces.CanCoderIO;
+import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.VisionIO;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.robot.commands.DriveCommands;
@@ -29,6 +32,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.FiducialVision;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.function.Function;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -74,7 +78,7 @@ public class RobotContainer {
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 Constants.VisionC.TURRET_MODIFICATIONS);
 
-        exampe = Exampe.createInstance(Constants.ExampeC.coder);
+        exampe = Exampe.createInstance(Constants.ExampeC.motah, Constants.ExampeC.coder);
 
         break;
 
@@ -105,7 +109,7 @@ public class RobotContainer {
 
         limelightTurd = new FiducialVision(new VisionIO() {}, null, null);
 
-        exampe = Exampe.createInstance(new CanCoderIO() {});
+        exampe = Exampe.createInstance(new MotorIO() {}, new CanCoderIO() {});
 
         break;
     }
@@ -148,6 +152,12 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
+    HashSet<Subsystem> tempList = new HashSet<Subsystem>();
+    tempList.add(exampe);
+
+    exampe.setDefaultCommand(
+        Commands.defer(
+            () -> Commands.run(() -> exampe.setTargetPoint(new Translation2d(6, 7))), tempList));
     // Lock to 0° when A button is held
     controller
         .a()
