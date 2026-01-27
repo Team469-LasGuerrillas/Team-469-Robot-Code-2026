@@ -170,6 +170,32 @@ public final class Constants {
     }
 
     public static final CanCoderIOCanCoder coder = new CanCoderIOCanCoder(EXAMPE_CANCODER_CONFIG);
-    public static final MotorIO motah = new MotorIOTalonFX(SERVO_CONFIG);
+  public static final MotorIO motah = new MotorIOTalonFX(SERVO_CONFIG);
   }
+    public static class Intake { 
+        public static final double INTAKE_VOLTAGE = 1;
+        public static final double OUTTAKE_VOLTAGE = INTAKE_VOLTAGE * -1;
+        public static final double DEFAULT_VOLTAGE = 0;
+        public static final double PIVOT_DEFAULT = 67;
+        public static final double PIVOT_RAISED = 6767;
+        public static final double PIVOT_LOWERED = 6.7;
+        public static final double IM_PREPARED_FOR_FUTURE_STUFF = 86;
+
+        public static final TalonFXConfiguration INTAKE_ROLLER_TALON_CONFIG = new TalonFXConfiguration();
+        public static final TalonFXConfiguration INTAKE_PIVOT_TALON_CONFIG = new TalonFXConfiguration();
+
+        public static final CanCoderConfig INTAKE_ROLLER_CANCODER_CONFIG = new CanCoderConfig();
+        public static final CanCoderConfig INTAKE_PIVOT_CANCODER_CONFIG = new CanCoderConfig();
+
+
+    }
+    public static class Spindexer {  
+        public static final double CLOCKWISE_VOLTAGE = 1;
+        public static final double REVERSE_VOLTAGE = CLOCKWISE_VOLTAGE * -1;
+        public static final double DEFAULT_VOLTAGE = 0;
+    
+        public static final TalonFXConfiguration SPINDEXER_MOTOR_CONFIG = new TalonFXConfiguration();
+        public static final CanCoderConfig SPINDEXER_CANCODER_CONFIG = new CanCoderConfig();
+
+    }
 }
