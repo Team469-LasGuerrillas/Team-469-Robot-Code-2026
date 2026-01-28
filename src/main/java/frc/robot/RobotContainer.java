@@ -11,6 +11,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,6 +23,7 @@ import frc.lib.subsystems.interfaces.CanCoderIO;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.VisionIO;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
+import frc.lib.utilities.math.ShootAndMove;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Exampe;
@@ -157,7 +159,15 @@ public class RobotContainer {
 
     exampe.setDefaultCommand(
         Commands.defer(
-            () -> Commands.run(() -> exampe.setTargetPoint(new Translation2d(6, 7))), tempList));
+            () ->
+                Commands.run(
+                    () ->
+                        exampe.setTargetPoint(
+                            ShootAndMove.getTransformed(
+                                Drive.getInstance().getFieldSpeedsFiltered(),
+                                Drive.getInstance().getPose(),
+                                new Translation2d(3, Units.feetToMeters(26.4 / 2))))),
+            tempList));
     // Lock to 0° when A button is held
     controller
         .a()

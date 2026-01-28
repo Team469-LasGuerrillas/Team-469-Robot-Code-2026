@@ -48,11 +48,6 @@ public class FiducialVision extends SubsystemBase {
               o.pose().toPose2d(),
               o.timestamp(),
               VecBuilder.fill(o.stdDevs()[0], o.stdDevs()[1], o.stdDevs()[2]));
-      // .addVisionMeasurement(
-      //     new Pose2d(
-      //         11 * 2, 7 * 2, Rotation2d.fromDegrees(-90).rotateBy(Rotation2d.fromDegrees(-90))),
-      //     Clock.time() - 0.001,
-      //     VecBuilder.fill(0.1, 0.1, 0.1));
     }
   }
 

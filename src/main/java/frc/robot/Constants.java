@@ -19,8 +19,12 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -66,6 +70,8 @@ public final class Constants {
 
     public static final Distance MAX_FIELD_X = Meters.of(WELDED_FIELD.getFieldLength());
     public static final Distance MAX_FIELD_Y = Meters.of(WELDED_FIELD.getFieldWidth());
+
+    public static final Matrix<N3, N1> FIELD_SPEEDS_STDS = VecBuilder.fill(0.067, 0.067, 0.08);
   }
 
   public static class VisionC {
@@ -157,10 +163,11 @@ public final class Constants {
       EXAMPE_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TURRERT_MAX.in(Rotations);
       EXAMPE_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TURRERT_MIN.in(Rotations);
 
-      EXAMPE_TALON_CONFIG.Slot0.kP = 15;
+      EXAMPE_TALON_CONFIG.Slot0.kP = 160;
       EXAMPE_TALON_CONFIG.Slot0.kI = 0;
-      EXAMPE_TALON_CONFIG.Slot0.kD = 0;
-      EXAMPE_TALON_CONFIG.Slot0.kS = 4.1;
+      EXAMPE_TALON_CONFIG.Slot0.kD = 20;
+      EXAMPE_TALON_CONFIG.Slot0.kS = 2.1;
+      EXAMPE_TALON_CONFIG.Slot0.kV = 1;
       SERVO_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
       SERVO_CONFIG.talonCANID = new CANDeviceId(9);

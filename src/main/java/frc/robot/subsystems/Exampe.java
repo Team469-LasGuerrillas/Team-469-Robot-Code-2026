@@ -15,7 +15,7 @@ import frc.lib.subsystems.interfaces.CanCoderIO;
 import frc.lib.subsystems.interfaces.CancoderInputsAutoLogged;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.MotorInputsAutoLogged;
-import frc.lib.util.GeomUtil;
+import frc.lib.utilities.math.GeomUtil;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -56,7 +56,7 @@ public class Exampe extends SubsystemBase {
 
   public void setTargetAngle(Angle angle) {
     turd.setMagicalPositionSetpoint(
-        angle, RotationsPerSecond.of(10), RotationsPerSecondPerSecond.of(100), 0, 0);
+        angle, RotationsPerSecond.of(9999), RotationsPerSecondPerSecond.of(9999), 0, 0);
   }
 
   public void setTargetPoint(Translation2d fieldSpace) {
