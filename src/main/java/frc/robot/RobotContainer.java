@@ -169,14 +169,7 @@ public class RobotContainer {
                                 new Translation2d(3, Units.feetToMeters(26.4 / 2))))),
             tempList));
     // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> Rotation2d.kZero));
+    controller.a().whileTrue(Drive.getInstance().followPath(AutonPaths.sixSevenExamplePath()));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
