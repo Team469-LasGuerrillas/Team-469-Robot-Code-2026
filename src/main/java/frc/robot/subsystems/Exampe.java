@@ -59,10 +59,12 @@ public class Exampe extends SubsystemBase {
         angle, RotationsPerSecond.of(9999), RotationsPerSecondPerSecond.of(9999), 0, 0);
   }
 
+  /**
+   * Sets the turret to face an X-Y coordinate in field space.
+   * @param fieldSpace
+   */
   public void setTargetPoint(Translation2d fieldSpace) {
-    Pose2d currentRobotPose = Drive.getInstance().getPose();
-    Transform2d turretTransform = GeomUtil.toTransform2d(Constants.ExampeC.TURD_CENTER.toPose2d());
-    Pose2d turretFieldPose = currentRobotPose.plus(turretTransform);
+    Pose2d turretFieldPose = getTurretPoseFieldSpace();
     Translation2d turretFieldTranslation = turretFieldPose.getTranslation();
 
     Rotation2d turretCenterToTarget = fieldSpace.minus(turretFieldTranslation).getAngle();
@@ -74,8 +76,16 @@ public class Exampe extends SubsystemBase {
     Logger.recordOutput(
         "Turret's target",
         GeomUtil.withRotation(
-                currentRobotPose, turretFieldPose.getRotation().plus(new Rotation2d(getPosition())))
-            .transformBy(new Transform2d(2, 0, new Rotation2d())));
+                Drive.getInstance().getPose(), turretFieldPose.getRotation().plus(new Rotation2d(getPosition())))
+            .transformBy(new Transform2d(1, 0, new Rotation2d())));
+  }
+
+  public Pose2d getTurretPoseFieldSpace() {
+    Pose2d currentRobotPose = Drive.getInstance().getPose();
+    Transform2d turretTransform = GeomUtil.toTransform2d(Constants.ShooterC.TURD_CENTER.toPose2d());
+    Pose2d turretFieldPose = currentRobotPose.plus(turretTransform);
+
+    return turretFieldPose;
   }
 
   public Angle getPosition() {

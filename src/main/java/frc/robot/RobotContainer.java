@@ -47,7 +47,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  // private final FiducialVision limelightDev;
+  private final FiducialVision limelightDev;
   public final FiducialVision limelightTurd;
   public final Exampe exampe;
 
@@ -72,7 +72,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        // limelightDev = new FiducialVision(Constants.VisionC.DEV_LIMELIGHT);
+        limelightDev = new FiducialVision(Constants.VisionC.DEV_LIMELIGHT, null, null);
 
         limelightTurd =
             new FiducialVision(
@@ -80,7 +80,7 @@ public class RobotContainer {
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 Constants.VisionC.TURRET_MODIFICATIONS);
 
-        exampe = Exampe.createInstance(Constants.ExampeC.motah, Constants.ExampeC.coder);
+        exampe = Exampe.createInstance(Constants.ShooterC.motah, Constants.ShooterC.coder);
 
         break;
 
@@ -107,7 +107,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
 
-        // limelightDev = new FiducialVision(new VisionIO() {});
+        limelightDev = new FiducialVision(new VisionIO() {}, null, null);
 
         limelightTurd = new FiducialVision(new VisionIO() {}, null, null);
 
@@ -154,8 +154,11 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    HashSet<Subsystem> tempList = new HashSet<Subsystem>();
-    tempList.add(exampe);
+    HashSet<Subsystem> driveList = new HashSet<Subsystem>();
+    driveList.add(Drive.getInstance());
+
+    HashSet<Subsystem> turretList = new HashSet<Subsystem>();
+    turretList.add(exampe);
 
     exampe.setDefaultCommand(
         Commands.defer(
@@ -167,9 +170,16 @@ public class RobotContainer {
                                 Drive.getInstance().getFieldSpeedsFiltered(),
                                 Drive.getInstance().getPose(),
                                 new Translation2d(3, Units.feetToMeters(26.4 / 2))))),
-            tempList));
+            turretList));
     // Lock to 0° when A button is held
-    controller.a().whileTrue(Drive.getInstance().followPath(AutonPaths.sixSevenExamplePath()));
+    controller
+        .a()
+        .whileTrue(
+            Commands.defer(
+                () ->
+                    Drive.getInstance()
+                        .followPath(AutonPaths.sixSevenExamplePath(Drive.getInstance().getPose())),
+                driveList));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));

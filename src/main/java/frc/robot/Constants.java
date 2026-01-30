@@ -67,7 +67,7 @@ public final class Constants {
 
   public static class DriveC {
     public static final PathConstraints defaultConstraints =
-        new PathConstraints(2, 2, 1 * Math.PI, 4 * Math.PI);
+        new PathConstraints(0.67, 3.3, 4 * Math.PI, 7 * Math.PI);
   }
 
   public static class Field {
@@ -135,7 +135,7 @@ public final class Constants {
                     0, Units.degreesToRadians(28), Units.degreesToRadians(180 - 20.220574))));
   }
 
-  public static class ExampeC {
+  public static class ShooterC {
 
     public static final Angle TURRERT_MAX = Rotations.of(0.5);
     public static final Angle TURRERT_MIN = Rotations.of(-0.5);

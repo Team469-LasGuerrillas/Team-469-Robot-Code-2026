@@ -89,7 +89,7 @@ public class Robot extends LoggedRobot {
     //     new Pose3d(0, 0, 1, new Rotation3d(new
     // Rotation2d(robotContainer.exampe.getPosition()))));
     robotContainer.limelightTurd.setPositionTurret(
-        robotContainer.exampe.getPosition(), Constants.ExampeC.TURD_CENTER);
+        robotContainer.exampe.getPosition(), Constants.ShooterC.TURD_CENTER);
     FiducialVision.applyUpdates();
 
     // Return to non-RT thread priority (do not modify the first argument)
