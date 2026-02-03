@@ -32,6 +32,14 @@ public interface MotorIO {
     public Current statorCurrent = Amps.of(0);
   }
 
+  default Angle clampPosition(Angle units) {
+    return null;
+  }
+
+  default Angle wrapPosition(Angle units) {
+    return null;
+  }
+
   default void readInputs(MotorInputsAutoLogged inputs) {}
 
   default void setOpenLoopDutyCycle(double dutyCycle) {}

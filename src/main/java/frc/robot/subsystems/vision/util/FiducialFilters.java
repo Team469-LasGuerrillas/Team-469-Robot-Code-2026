@@ -7,7 +7,7 @@ import static edu.wpi.first.units.Units.Meters;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservationType;
 import frc.robot.Constants;
-import frc.robot.subsystems.Exampe;
+import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.UnaryOperator;
 
@@ -23,7 +23,7 @@ public class FiducialFilters {
     }
 
     public static boolean badTurretAngularVelocity(PoseObservation toFilter) {
-      return (Exampe.getInstance().getAngularVelocity().abs(DegreesPerSecond)
+      return (Turret.getInstance().getAngularVelocity().abs(DegreesPerSecond)
           >= Constants.VisionC.BAD_TURRET_ANGULAR_VELOCITY.abs(DegreesPerSecond));
     }
 
@@ -94,12 +94,12 @@ public class FiducialFilters {
 
     public FiducialModifications withDistrustMt2WhileTurretSpinToFast() {
       if (observation.type() == PoseObservationType.MT2
-          && Exampe.getInstance().getAngularVelocity().abs(DegreesPerSecond)
+          && Turret.getInstance().getAngularVelocity().abs(DegreesPerSecond)
               >= Constants.VisionC.REASONABLE_TURRET_ANGULAR_VELOCITY_MT2.abs(DegreesPerSecond)) {
         observation.stdDevs()[0] *= Constants.VisionC.REASONABLE_TURRET_ANGULAR_VELOCITY_MT2_MULT;
         observation.stdDevs()[1] *= Constants.VisionC.REASONABLE_TURRET_ANGULAR_VELOCITY_MT2_MULT;
       } else if (observation.type() == PoseObservationType.MT1
-          && Exampe.getInstance().getAngularVelocity().abs(DegreesPerSecond)
+          && Turret.getInstance().getAngularVelocity().abs(DegreesPerSecond)
               >= Constants.VisionC.REASONABLE_TURRET_ANGULAR_VELOCITY_MT1.abs(DegreesPerSecond)) {
         observation.stdDevs()[0] *= Constants.VisionC.REASONABLE_TURRET_ANGULAR_VELOCITY_MT1_MULT;
         observation.stdDevs()[1] *= Constants.VisionC.REASONABLE_TURRET_ANGULAR_VELOCITY_MT1_MULT;

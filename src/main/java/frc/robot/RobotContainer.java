@@ -26,7 +26,7 @@ import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.lib.utilities.math.ShootAndMove;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Exampe;
+import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -49,7 +49,7 @@ public class RobotContainer {
   private final Drive drive;
   private final FiducialVision limelightDev;
   public final FiducialVision limelightTurd;
-  public final Exampe exampe;
+  public final Turret exampe;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -80,7 +80,7 @@ public class RobotContainer {
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 Constants.VisionC.TURRET_MODIFICATIONS);
 
-        exampe = Exampe.createInstance(Constants.ShooterC.motah, Constants.ShooterC.coder);
+        exampe = Turret.createInstance(Constants.ShooterC.motah, Constants.ShooterC.coder);
 
         break;
 
@@ -111,7 +111,7 @@ public class RobotContainer {
 
         limelightTurd = new FiducialVision(new VisionIO() {}, null, null);
 
-        exampe = Exampe.createInstance(new MotorIO() {}, new CanCoderIO() {});
+        exampe = Turret.createInstance(new MotorIO() {}, new CanCoderIO() {});
 
         break;
     }
@@ -169,7 +169,8 @@ public class RobotContainer {
                             ShootAndMove.getTransformed(
                                 Drive.getInstance().getFieldSpeedsFiltered(),
                                 Drive.getInstance().getPose(),
-                                new Translation2d(3, Units.feetToMeters(26.4 / 2))))),
+                                new Translation2d(3, Units.feetToMeters(26.4 / 2)),
+                                Constants.ShooterC.TURD_CENTER))),
             turretList));
     // Lock to 0° when A button is held
     controller
