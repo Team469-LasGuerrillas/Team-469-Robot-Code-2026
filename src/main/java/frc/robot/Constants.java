@@ -186,6 +186,12 @@ public final class Constants {
     public static final MotorIO motah = new MotorIOTalonFX(SERVO_CONFIG);
   }
 
+  public static class Climb {
+    public static final double L1_POS = 67;
+  //public static final double L2_POS = probably not gonna be used
+    public static final double L3_POS = 6767;
+  }
+
   public static class Intake {
     public static final double INTAKE_VOLTAGE = 1;
     public static final double OUTTAKE_VOLTAGE = INTAKE_VOLTAGE * -1;

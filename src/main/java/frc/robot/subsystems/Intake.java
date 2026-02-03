@@ -36,7 +36,7 @@ public class Intake extends SubsystemBase {
 
   private Intake(MotorIO intakeMotor, MotorIO intakeMotor2, CanCoderIO canCoder) {
     this.intakeRoller = intakeMotor;
-    this.intakePivot = intakeMotor;
+    this.intakePivot = intakeMotor2;
     this.canCoder = canCoder;
 
     intakeRoller.setEnableSoftLimits(true, true);
