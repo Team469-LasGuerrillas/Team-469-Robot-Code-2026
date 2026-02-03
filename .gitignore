@@ -181,3 +181,7 @@ ctre_sim/
 # clangd
 /.cache
 compile_commands.json
+
+bin/
+
+*.class

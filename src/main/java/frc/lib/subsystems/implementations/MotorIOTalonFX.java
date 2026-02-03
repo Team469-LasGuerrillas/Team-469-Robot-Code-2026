@@ -101,8 +101,17 @@ public class MotorIOTalonFX implements MotorIO {
     return rotor * config.unitToRotorRatio;
   }
 
-  private double clampPosition(double units) {
-    return unitsToRotor(MathUtil.clamp(units, config.kMinPositionUnits, config.kMaxPositionUnits));
+  @Override
+  public Angle clampPosition(Angle units) {
+    return Rotations.of(
+        unitsToRotor(
+            MathUtil.clamp(
+                units.in(Rotations), config.kMinPositionUnits, config.kMaxPositionUnits)));
+  }
+
+  @Override
+  public Angle wrapPosition(Angle units) {
+    return Rotations.of(unitsToRotor(((units.in(Rotations) + 0.5) % 1) - 0.5));
   }
 
   public double unitsToRotor(double units) {

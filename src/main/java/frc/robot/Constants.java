@@ -137,8 +137,8 @@ public final class Constants {
 
   public static class ShooterC {
 
-    public static final Angle TURRERT_MAX = Rotations.of(0.5);
-    public static final Angle TURRERT_MIN = Rotations.of(-0.5);
+    public static final Angle TURRERT_MAX = Rotations.of(0.6);
+    public static final Angle TURRERT_MIN = Rotations.of(-0.6);
 
     public static final Pose3d TURD_CENTER =
         new Pose3d(
@@ -166,9 +166,12 @@ public final class Constants {
       EXAMPE_TALON_CONFIG.Feedback.SensorToMechanismRatio = 1;
       EXAMPE_TALON_CONFIG.Feedback.RotorToSensorRatio = 18.75;
 
+      SERVO_CONFIG.kMaxPositionUnits = TURRERT_MAX.in(Rotations);
+      SERVO_CONFIG.kMinPositionUnits = TURRERT_MIN.in(Rotations);
+
+      EXAMPE_TALON_CONFIG.ClosedLoopGeneral.ContinuousWrap = false;
       EXAMPE_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TURRERT_MAX.in(Rotations);
       EXAMPE_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TURRERT_MIN.in(Rotations);
-
       EXAMPE_TALON_CONFIG.Slot0.kP = 160;
       EXAMPE_TALON_CONFIG.Slot0.kI = 0;
       EXAMPE_TALON_CONFIG.Slot0.kD = 20;
