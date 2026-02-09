@@ -135,6 +135,11 @@ public final class Constants {
                     0, Units.degreesToRadians(28), Units.degreesToRadians(180 - 20.220574))));
   }
 
+  public static class Shooter {
+    public static final double SHOOT_VOLTAGE = 1;
+    public static final double OUTTAKE_VOLTAGE = SHOOT_VOLTAGE * -1;
+    public static final double DEFAULT_VOLTAGE = 0;  }
+
   public static class ShooterC {
 
     public static final Angle TURRERT_MAX = Rotations.of(0.6);
