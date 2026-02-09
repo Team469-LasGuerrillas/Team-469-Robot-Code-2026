@@ -20,6 +20,9 @@ import frc.lib.subsystems.interfaces.MotorInputsAutoLogged;
 import frc.lib.utilities.math.GeomUtil;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
+import yams.units.EasyCRT;
+import yams.units.EasyCRTConfig;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -37,6 +40,9 @@ public class Turret extends SubsystemBase {
   private Angle previousCancoderPosition = Degrees.of(0);
   private Angle trueTurretRotation = Degrees.of(0);
 
+  private EasyCRTConfig easyCRTConfig;
+  private EasyCRT easyCRT;
+
   public static Turret createInstance(MotorIO turd, CanCoderIO canCoder) {
     instance = new Turret(turd, canCoder);
     return instance;
@@ -51,6 +57,9 @@ public class Turret extends SubsystemBase {
     this.canCoder = canCoder;
 
     turd.setEnableSoftLimits(true, true);
+
+    easyCRTConfig = new EasyCRTConfig(this::getPosition, this::getPosition).withEncoderRatios(numRotations, numRotations);
+    easyCRT = new EasyCRT(easyCRTConfig);
   }
 
   @Override
