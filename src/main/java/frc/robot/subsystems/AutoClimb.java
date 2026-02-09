@@ -6,19 +6,28 @@ import frc.robot.Constants;
 
 public class AutoClimb {
     
-    private static DoubleSupplier nextHookPos = () -> Constants.Climb.L3_POS;
+    public enum ClimbLevel {
+      L1,
+      L3
+    }
 
-    public static void setNextHookPos(DoubleSupplier newHookPos) {
-        nextHookPos = newHookPos;
+    private static ClimbLevel queuedClimbPosition = ClimbLevel.L1;
+
+    private static void setQueuedClimbPosition(ClimbLevel newClimbQueuedPosition) {
+        queuedClimbPosition = newClimbQueuedPosition;
     }
 
 
-    public static void autoClimbL3() {
-        setNextHookPos(() -> Constants.Climb.L3_POS);
+    private static void autoClimbL3() {
+        setQueuedClimbPosition(ClimbLevel.L3);
         
     }
 
     private static void autoClimbL1() {
-        setNextHookPos(() -> Constants.Climb.L1_POS);
+        setQueuedClimbPosition(ClimbLevel.L1);
+    }
+
+    public ClimbLevel getQueuedClimbLevel() {
+      return queuedClimbPosition;
     }
 }
