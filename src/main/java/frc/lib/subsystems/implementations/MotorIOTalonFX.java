@@ -29,6 +29,7 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import frc.lib.drivers.CANDeviceId;
 import frc.lib.drivers.CANStatusLogger;
 import frc.lib.drivers.CTREUtil;
 import frc.lib.subsystems.configs.ServoMotorSubsystemConfig;
@@ -213,5 +214,22 @@ public class MotorIOTalonFX implements MotorIO {
   @Override
   public void setCurrentPosition(Angle position) {
     talon.setPosition(unitsToRotor(position.in(Rotations)));
+  }
+
+  @Override
+  public void follow(CANDeviceId masterId, boolean opposeLeader) {
+    MotorAlignmentValue alignmentValue;
+
+    if (opposeLeader) {
+      alignmentValue = MotorAlignmentValue.Opposed;
+    } else {
+      alignmentValue = MotorAlignmentValue.Aligned;
+    }
+
+     CTREUtil.tryUntilOK(
+                () ->
+                        talon.setControl(
+                                followerControl.withLeaderID(masterId.getDeviceNumber()).withMotorAlignment(alignmentValue)),
+                this.config.talonCANID.getDeviceNumber());
   }
 }
