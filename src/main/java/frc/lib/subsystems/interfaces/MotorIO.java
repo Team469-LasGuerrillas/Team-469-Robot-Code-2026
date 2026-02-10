@@ -13,6 +13,8 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import frc.lib.drivers.CANDeviceId;
+
 import org.littletonrobotics.junction.AutoLog;
 
 public interface MotorIO {
@@ -69,4 +71,6 @@ public interface MotorIO {
   }
 
   default void setCurrentPosition(Angle position) {}
+
+  default void follow(CANDeviceId canId, boolean opposeLeader) {}
 }

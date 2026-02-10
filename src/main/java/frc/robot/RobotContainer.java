@@ -80,7 +80,7 @@ public class RobotContainer {
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 Constants.VisionC.TURRET_MODIFICATIONS);
 
-        exampe = Turret.createInstance(Constants.ShooterC.motah, Constants.ShooterC.coder);
+        exampe = Turret.createInstance(Constants.TurretC.motah, Constants.TurretC.coder);
 
         break;
 
@@ -170,7 +170,7 @@ public class RobotContainer {
                                 Drive.getInstance().getFieldSpeedsFiltered(),
                                 Drive.getInstance().getPose(),
                                 new Translation2d(3, Units.feetToMeters(26.4 / 2)),
-                                Constants.ShooterC.TURD_CENTER))),
+                                Constants.TurretC.TURD_CENTER))),
             turretList));
     // Lock to 0° when A button is held
     controller

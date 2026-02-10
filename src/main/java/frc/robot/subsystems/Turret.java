@@ -120,9 +120,9 @@ public class Turret extends SubsystemBase {
       closestAfter = afterMinus;
     }
 
-    if (closestAfter.in(Rotations) > Constants.ShooterC.TURRERT_MAX.in(Rotations)) {
+    if (closestAfter.in(Rotations) > Constants.TurretC.TURRERT_MAX.in(Rotations)) {
       closestAfter = closestAfter.minus(Rotations.of(1));
-    } else if (closestAfter.in(Rotations) < Constants.ShooterC.TURRERT_MIN.in(Rotations)) {
+    } else if (closestAfter.in(Rotations) < Constants.TurretC.TURRERT_MIN.in(Rotations)) {
       closestAfter = closestAfter.plus(Rotations.of(1));
     }
 
@@ -162,7 +162,7 @@ public class Turret extends SubsystemBase {
    */
   public Pose2d getTurretPoseFieldSpace() {
     Pose2d currentRobotPose = Drive.getInstance().getPose();
-    Transform2d turretTransform = GeomUtil.toTransform2d(Constants.ShooterC.TURD_CENTER.toPose2d());
+    Transform2d turretTransform = GeomUtil.toTransform2d(Constants.TurretC.TURD_CENTER.toPose2d());
     Pose2d turretFieldPose = currentRobotPose.plus(turretTransform);
 
     return turretFieldPose;
