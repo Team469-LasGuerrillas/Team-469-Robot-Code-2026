@@ -12,11 +12,10 @@ public class Spindexer extends SubsystemBase {
   private final MotorIO spindexer;
   private final MotorInputsAutoLogged talonInputs = new MotorInputsAutoLogged();
 
-  private final CanCoderIO canCoder;
-
   private double requestedDutycycle = 0;
 
-  public Spindexer createinstance() {
+  public Spindexer createinstance(MotorIO spindexer) {
+    instance = new Spindexer(spindexer);
     return instance;
   }
 
@@ -24,11 +23,8 @@ public class Spindexer extends SubsystemBase {
     return instance;
   }
 
-  private Spindexer(MotorIO spindexer, CanCoderIO canCoder) {
+  private Spindexer(MotorIO spindexer) {
     this.spindexer = spindexer;
-    this.canCoder = canCoder;
-
-    spindexer.setEnableSoftLimits(true, true);
   }
 
   public void setDutyCycle(double dutyCycle) {

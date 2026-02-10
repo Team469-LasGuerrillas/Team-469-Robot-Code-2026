@@ -27,7 +27,11 @@ public class Shooter extends SubsystemBase {
 
   private double requestedDutycycle = 0;
 
-  public Shooter createinstance() {
+  public Shooter createinstance(
+      ServoMotorSubsystemWithFollowersConfig leadConfig,
+      MotorIO leadIo,
+      MotorIO[] followerIo) {
+    instance = new Shooter(leadConfig, leadIo, followerIo);
     return instance;
   }
 
@@ -36,21 +40,19 @@ public class Shooter extends SubsystemBase {
   }
 
   private Shooter(
+      ServoMotorSubsystemWithFollowersConfig leadConfig,
+      MotorIO leadIo,
+      MotorIO[] followerIo) {
+    this.followerConfigs = leadConfig.followers;
 
-    ServoMotorSubsystemWithFollowersConfig leadConfig,
-     MotorIO leadIo,
-     MotorIO[] followerIo)
-     {
-      this.followerConfigs = leadConfig.followers;
+    for (int i = 0; i < followerConfigs.length; i++) {
+      MotorIO followerIO = followerIo[i];
+      followerIO.follow(leadConfig.talonCANID, followerConfigs[i].inverted);
+      ;
 
-      for (int i=0; i <  followerConfigs.length; i++) {
-        MotorIO followerIO = followerIo[i];
-        followerIO.follow(leadConfig.talonCANID, followerConfigs[i].inverted);;
+    }
 
-      }
-
-
-  this.leadFlywheel = leadIo;
+    this.leadFlywheel = leadIo;
 
   }
 
