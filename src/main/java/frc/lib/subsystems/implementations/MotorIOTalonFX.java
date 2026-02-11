@@ -226,10 +226,12 @@ public class MotorIOTalonFX implements MotorIO {
       alignmentValue = MotorAlignmentValue.Aligned;
     }
 
-     CTREUtil.tryUntilOK(
-                () ->
-                        talon.setControl(
-                                followerControl.withLeaderID(masterId.getDeviceNumber()).withMotorAlignment(alignmentValue)),
-                this.config.talonCANID.getDeviceNumber());
+    CTREUtil.tryUntilOK(
+        () ->
+            talon.setControl(
+                followerControl
+                    .withLeaderID(masterId.getDeviceNumber())
+                    .withMotorAlignment(alignmentValue)),
+        this.config.talonCANID.getDeviceNumber());
   }
 }

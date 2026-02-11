@@ -4,7 +4,6 @@ package frc.lib.drivers;
 // defined by the Elastic license:
 // https://github.com/Gold872/elastic_dashboard/blob/main/LICENSE
 
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

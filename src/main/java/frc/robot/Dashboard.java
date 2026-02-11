@@ -26,10 +26,6 @@ public class Dashboard {
 
     autonChooser.addOption("Null auton", Commands.none());
 
-    autonTab
-        .add("Auton Chooser", autonChooser)
-        .withSize(2, 5)
-        .withPosition(13, 0);
-
+    autonTab.add("Auton Chooser", autonChooser).withSize(2, 5).withPosition(13, 0);
   }
 }

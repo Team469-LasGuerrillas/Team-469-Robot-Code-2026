@@ -20,11 +20,10 @@ import frc.lib.subsystems.interfaces.MotorInputsAutoLogged;
 import frc.lib.utilities.math.GeomUtil;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
-import yams.units.EasyCRT;
-import yams.units.EasyCRTConfig;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import yams.units.EasyCRT;
+import yams.units.EasyCRTConfig;
 
 public class Turret extends SubsystemBase {
   private static Turret instance;
@@ -58,7 +57,9 @@ public class Turret extends SubsystemBase {
 
     turd.setEnableSoftLimits(true, true);
 
-    easyCRTConfig = new EasyCRTConfig(this::getPosition, this::getPosition).withEncoderRatios(numRotations, numRotations);
+    easyCRTConfig =
+        new EasyCRTConfig(this::getPosition, this::getPosition)
+            .withEncoderRatios(numRotations, numRotations);
     easyCRT = new EasyCRT(easyCRTConfig);
   }
 

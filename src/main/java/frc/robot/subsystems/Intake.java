@@ -54,7 +54,11 @@ public class Intake extends SubsystemBase {
   public void setTargetAngle(Angle newAngleRequest) {
     requestedAngle = newAngleRequest;
     pivotMotor.setMagicalPositionSetpoint(
-        newAngleRequest, RotationsPerSecond.of(1), RotationsPerSecondPerSecond.of(1), 0, calcFF(newAngleRequest));
+        newAngleRequest,
+        RotationsPerSecond.of(1),
+        RotationsPerSecondPerSecond.of(1),
+        0,
+        calcFF(newAngleRequest));
   }
 
   private double calcFF(Angle pivotAngle) {

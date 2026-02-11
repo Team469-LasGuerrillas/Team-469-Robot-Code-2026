@@ -1,11 +1,6 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.subsystems.interfaces.CanCoderIO;
-import frc.lib.subsystems.interfaces.CancoderInputsAutoLogged;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.MotorInputsAutoLogged;
 import org.littletonrobotics.junction.Logger;
