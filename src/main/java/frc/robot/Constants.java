@@ -29,6 +29,8 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
@@ -136,6 +138,55 @@ public final class Constants {
     public static final double SHOOT_VOLTAGE = 1;
     public static final double OUTTAKE_VOLTAGE = SHOOT_VOLTAGE * -1;
     public static final double DEFAULT_VOLTAGE = 0;
+
+    public static double phaseDelay;
+    
+    public static final InterpolatingDoubleTreeMap FLYWHEEL_SHOT_SPEEDMAP = new InterpolatingDoubleTreeMap();
+
+    public static final InterpolatingDoubleTreeMap TIME_OF_FLIGHT_MAP = new InterpolatingDoubleTreeMap();
+
+    public static final InterpolatingDoubleTreeMap SHOOTER_HOOD_MAP = new InterpolatingDoubleTreeMap();
+
+   static {
+    phaseDelay = 67;
+
+
+    FLYWHEEL_SHOT_SPEEDMAP.put(6.7,6.7);
+    FLYWHEEL_SHOT_SPEEDMAP.put(6.71, 6.71);
+    FLYWHEEL_SHOT_SPEEDMAP.put(6.72, 6.72);
+    FLYWHEEL_SHOT_SPEEDMAP.put(6.73, 6.73);
+    FLYWHEEL_SHOT_SPEEDMAP.put(6.71, 6.71);
+    FLYWHEEL_SHOT_SPEEDMAP.put(6.71, 6.71);
+    FLYWHEEL_SHOT_SPEEDMAP.put(6.71, 6.71);
+    FLYWHEEL_SHOT_SPEEDMAP.put(6.71, 6.71);
+    FLYWHEEL_SHOT_SPEEDMAP.put(6.71, 6.71);
+    FLYWHEEL_SHOT_SPEEDMAP.put(53.2, 348.2);
+
+    TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
+    TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
+    TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
+    TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
+    TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
+    TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
+    TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
+    TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
+    TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
+    TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
+
+    SHOOTER_HOOD_MAP.put(43.9, 89.2);
+    SHOOTER_HOOD_MAP.put(43.9, 89.2);
+    SHOOTER_HOOD_MAP.put(43.9, 89.2);
+    SHOOTER_HOOD_MAP.put(43.9, 89.2);
+    SHOOTER_HOOD_MAP.put(43.9, 89.2);
+    SHOOTER_HOOD_MAP.put(43.9, 89.2);
+    SHOOTER_HOOD_MAP.put(43.9, 89.2);
+    SHOOTER_HOOD_MAP.put(43.9, 89.2);
+    SHOOTER_HOOD_MAP.put(43.9, 89.2);
+    SHOOTER_HOOD_MAP.put(43.9, 89.2);
+  }
+
+
+
 
     public static final ServoMotorSubsystemWithFollowersConfig LAUNCHER_CONFIG = new ServoMotorSubsystemWithFollowersConfig();
 
