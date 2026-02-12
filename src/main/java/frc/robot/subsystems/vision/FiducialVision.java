@@ -48,6 +48,8 @@ public class FiducialVision extends SubsystemBase {
               o.pose().toPose2d(),
               o.timestamp(),
               VecBuilder.fill(o.stdDevs()[0], o.stdDevs()[1], o.stdDevs()[2]));
+
+      Drive.getInstance().getCameraField().setRobotPose(o.pose().toPose2d());
     }
   }
 

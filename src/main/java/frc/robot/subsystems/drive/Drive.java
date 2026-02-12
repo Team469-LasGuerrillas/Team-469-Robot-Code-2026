@@ -37,6 +37,8 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -53,6 +55,9 @@ import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
   private static Drive instance;
+
+  private final Field2d localizationField = new Field2d();
+  private final Field2d cameraField = new Field2d();
 
   // TunerConstants doesn't include these constants, so they are declared locally
   static final double ODOMETRY_FREQUENCY = TunerConstants.kCANBus.isNetworkFD() ? 250.0 : 100.0;
@@ -246,6 +251,10 @@ public class Drive extends SubsystemBase {
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode == Mode.REAL);
+
+    // Update dashboard display
+    localizationField.setRobotPose(getPose());
+    SmartDashboard.putData(localizationField);
   }
 
   public Command followPath(PathPlannerPath path) {
@@ -373,6 +382,10 @@ public class Drive extends SubsystemBase {
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
+  }
+
+  public Field2d getCameraField() {
+    return cameraField;
   }
 
   /** Returns the current odometry rotation. */
