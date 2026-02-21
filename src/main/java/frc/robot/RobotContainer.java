@@ -12,8 +12,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -25,7 +23,9 @@ import frc.lib.subsystems.interfaces.VisionIO;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.lib.utilities.math.ShootAndMove;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.IntakeCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -50,6 +50,7 @@ public class RobotContainer {
   private final FiducialVision limelightDev;
   public final FiducialVision limelightTurd;
   public final Turret exampe;
+  public final Intake intake;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -81,6 +82,11 @@ public class RobotContainer {
                 Constants.VisionC.TURRET_MODIFICATIONS);
 
         exampe = Turret.createInstance(Constants.TurretC.motah, Constants.TurretC.coder);
+        intake =
+            Intake.createinstance(
+                Constants.IntakeC.ROLLER_MOTOR,
+                Constants.IntakeC.PIVOT_MOTOR,
+                Constants.IntakeC.coder);
 
         break;
 
@@ -112,6 +118,7 @@ public class RobotContainer {
         limelightTurd = new FiducialVision(new VisionIO() {}, null, null);
 
         exampe = Turret.createInstance(new MotorIO() {}, new CanCoderIO() {});
+        intake = Intake.createinstance(new MotorIO() {}, new MotorIO() {}, new CanCoderIO() {});
 
         break;
     }
@@ -135,17 +142,12 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    // Configure the button bindings
+    // Configure the button
+    configureDefaultCommands();
     configureButtonBindings();
   }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void configureButtonBindings() {
+  private void configureDefaultCommands() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -153,9 +155,6 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
-
-    HashSet<Subsystem> driveList = new HashSet<Subsystem>();
-    driveList.add(Drive.getInstance());
 
     HashSet<Subsystem> turretList = new HashSet<Subsystem>();
     turretList.add(exampe);
@@ -172,6 +171,14 @@ public class RobotContainer {
                                 new Translation2d(3, Units.feetToMeters(26.4 / 2)),
                                 Constants.TurretC.TURD_CENTER))),
             turretList));
+
+    intake.setDefaultCommand(IntakeCommands.stow());
+  }
+
+  private void configureButtonBindings() {
+    HashSet<Subsystem> driveList = new HashSet<Subsystem>();
+    driveList.add(Drive.getInstance());
+
     // Lock to 0° when A button is held
     controller
         .a()
@@ -195,6 +202,8 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
+
+    controller.leftBumper().toggleOnTrue(IntakeCommands.deployAndRun());
   }
 
   /**

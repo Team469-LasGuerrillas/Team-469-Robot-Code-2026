@@ -3,8 +3,6 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -82,7 +80,7 @@ public class Turret extends SubsystemBase {
       numRotations++;
     }
 
-    System.out.println(numRotations);
+    // System.out.println(numRotations);
 
     // Calculate actual turret rotation
     trueTurretRotation = ccInputs.absolutePosition.plus(Rotations.of(numRotations));
@@ -127,8 +125,8 @@ public class Turret extends SubsystemBase {
 
     Logger.recordOutput("TurretState/Target", closestAfter.in(Rotations));
 
-    turd.setMagicalPositionSetpoint(
-        closestAfter, RotationsPerSecond.of(9999), RotationsPerSecondPerSecond.of(9999), 0, 0);
+    // turd.setMagicalPositionSetpoint(
+    //     closestAfter, RotationsPerSecond.of(9999), RotationsPerSecondPerSecond.of(9999), 0, 0);
   }
 
   /**

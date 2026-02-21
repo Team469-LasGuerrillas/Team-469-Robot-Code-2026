@@ -9,7 +9,7 @@ public class RobotState {
     UNLOCKED
   }
 
-  @AutoLogOutput (key="TurretState")
+  @AutoLogOutput(key = "TurretState")
   private static TurretState turretState = TurretState.UNLOCKED;
 
   public static void setTurretState(TurretState state) {
@@ -25,7 +25,7 @@ public class RobotState {
     UNLOCKED
   }
 
-  @AutoLogOutput (key="HoodState")
+  @AutoLogOutput(key = "HoodState")
   private static HoodState hoodState = HoodState.UNLOCKED;
 
   public static void setHoodState(HoodState state) {
@@ -41,7 +41,7 @@ public class RobotState {
     UNLOCKED
   }
 
-  @AutoLogOutput (key="FlywheelState")
+  @AutoLogOutput(key = "FlywheelState")
   private static FlywheelState flywheelState = FlywheelState.UNLOCKED;
 
   public static void setFlywheelState(FlywheelState state) {
@@ -51,7 +51,7 @@ public class RobotState {
   public static FlywheelState getFlywheelState() {
     return flywheelState;
   }
-  
+
   public enum ClimbElevatorState {
     L1,
     L3,
@@ -59,7 +59,7 @@ public class RobotState {
     OFFTARGET
   }
 
-  @AutoLogOutput (key="ClimbElevatorState")
+  @AutoLogOutput(key = "ClimbElevatorState")
   private static ClimbElevatorState climbelevatorState = ClimbElevatorState.OFFTARGET;
 
   public static void setClimbElevatorState(ClimbElevatorState state) {
@@ -75,7 +75,7 @@ public class RobotState {
     DEPLOYED
   }
 
-  @AutoLogOutput (key="ClimbHookState")
+  @AutoLogOutput(key = "ClimbHookState")
   private static ClimbHookState climbHookState = ClimbHookState.STOWED;
 
   public static void setClimbHookDeployed() {
@@ -92,7 +92,7 @@ public class RobotState {
     OFFTARGET
   }
 
-  @AutoLogOutput (key="IntakeState")
+  @AutoLogOutput(key = "IntakeState")
   private static IntakeState intakeState = IntakeState.STOWED;
 
   public static void setIntakeState(IntakeState state) {
@@ -110,7 +110,7 @@ public class RobotState {
     TOPOINT_ONTARGET
   }
 
-  @AutoLogOutput (key="DriveState")
+  @AutoLogOutput(key = "DriveState")
   private static DriveState driveState = DriveState.TELEOP;
 
   public static void setDrivestate(DriveState state) {
@@ -120,6 +120,4 @@ public class RobotState {
   public static DriveState getDriveState() {
     return driveState;
   }
-
 }
-

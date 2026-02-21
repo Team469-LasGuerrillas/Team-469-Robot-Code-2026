@@ -1,11 +1,13 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
-import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.subsystems.interfaces.CanCoderIO;
+import frc.lib.subsystems.interfaces.CancoderInputsAutoLogged;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.MotorInputsAutoLogged;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -20,25 +22,28 @@ public class Intake extends SubsystemBase {
 
   private final MotorIO rollerMotor;
   private final MotorIO pivotMotor;
+  private final CanCoderIO coder;
+  private final CancoderInputsAutoLogged coderInputs = new CancoderInputsAutoLogged();
   private final MotorInputsAutoLogged rollerInputs = new MotorInputsAutoLogged();
   private final MotorInputsAutoLogged pivotInputs = new MotorInputsAutoLogged();
 
   private double requestedDutycycle = 0;
 
-  private Angle requestedAngle = Units.Degrees.of(0);
+  private Angle requestedAngle = Radians.of(0);
 
-  public Intake createinstance(MotorIO rollerMotor, MotorIO pivotMotor) {
-    instance = new Intake(rollerMotor, pivotMotor);
+  public static Intake createinstance(MotorIO rollerMotor, MotorIO pivotMotor, CanCoderIO coder) {
+    instance = new Intake(rollerMotor, pivotMotor, coder);
     return instance;
   }
 
-  public static Intake Getinstance() {
+  public static Intake getInstance() {
     return instance;
   }
 
-  private Intake(MotorIO rollerMotor, MotorIO pivotMotor) {
+  private Intake(MotorIO rollerMotor, MotorIO pivotMotor, CanCoderIO coder) {
     this.rollerMotor = rollerMotor;
     this.pivotMotor = pivotMotor;
+    this.coder = coder;
 
     pivotMotor.setEnableSoftLimits(true, true);
   }
@@ -49,6 +54,20 @@ public class Intake extends SubsystemBase {
     Logger.processInputs(getName() + "Roller Motor", rollerInputs);
     pivotMotor.readInputs(pivotInputs);
     Logger.processInputs(getName() + "Pivot Motor", pivotInputs);
+    coder.readInputs(coderInputs);
+    Logger.processInputs(getName() + "Cancoder", coderInputs);
+
+    pivotMotor.setMagicalPositionSetpoint(
+        requestedAngle,
+        RotationsPerSecond.of(9999),
+        RotationsPerSecondPerSecond.of(9999),
+        0,
+        calcFF(requestedAngle));
+  }
+
+  @AutoLogOutput(key = "Intake/TargetAngle")
+  public Angle getTargetAngle() {
+    return requestedAngle;
   }
 
   public void setDutyCycle(double dutyCycle) {
@@ -58,12 +77,6 @@ public class Intake extends SubsystemBase {
 
   public void setTargetAngle(Angle newAngleRequest) {
     requestedAngle = newAngleRequest;
-    pivotMotor.setMagicalPositionSetpoint(
-        newAngleRequest,
-        RotationsPerSecond.of(1),
-        RotationsPerSecondPerSecond.of(1),
-        0,
-        calcFF(newAngleRequest));
   }
 
   private double calcFF(Angle pivotAngle) {

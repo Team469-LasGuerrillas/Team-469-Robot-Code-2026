@@ -9,12 +9,14 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 import com.pathplanner.lib.path.PathConstraints;
@@ -197,7 +199,7 @@ public final class Constants {
       TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
       TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
       TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
-      
+
       TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
       TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
       TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
@@ -287,7 +289,7 @@ public final class Constants {
     public static final CanCoderConfig EXAMPE_CANCODER_CONFIG = new CanCoderConfig();
 
     static {
-      EXAMPE_CANCODER_CONFIG.CANID = new CANDeviceId(5);
+      EXAMPE_CANCODER_CONFIG.CANID = new CANDeviceId(6);
       EXAMPE_CANCODER_CONFIG.config = new CANcoderConfiguration();
       EXAMPE_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = -0.36523433383028964;
       EXAMPE_CANCODER_CONFIG.config.MagnetSensor.SensorDirection =
@@ -306,14 +308,14 @@ public final class Constants {
       EXAMPE_TALON_CONFIG.ClosedLoopGeneral.ContinuousWrap = false;
       EXAMPE_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TURRERT_MAX.in(Rotations);
       EXAMPE_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TURRERT_MIN.in(Rotations);
-      EXAMPE_TALON_CONFIG.Slot0.kP = 160;
+      EXAMPE_TALON_CONFIG.Slot0.kP = 0;
       EXAMPE_TALON_CONFIG.Slot0.kI = 0;
-      EXAMPE_TALON_CONFIG.Slot0.kD = 20;
-      EXAMPE_TALON_CONFIG.Slot0.kS = 2.1;
-      EXAMPE_TALON_CONFIG.Slot0.kV = 1;
+      EXAMPE_TALON_CONFIG.Slot0.kD = 0;
+      EXAMPE_TALON_CONFIG.Slot0.kS = 0;
+      EXAMPE_TALON_CONFIG.Slot0.kV = 0;
       SERVO_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
-      SERVO_CONFIG.talonCANID = new CANDeviceId(9);
+      SERVO_CONFIG.talonCANID = new CANDeviceId(20);
       SERVO_CONFIG.canCoderConfig = EXAMPE_CANCODER_CONFIG;
       SERVO_CONFIG.isFusedCancoder = true;
       SERVO_CONFIG.fxConfig = EXAMPE_TALON_CONFIG;
@@ -323,30 +325,78 @@ public final class Constants {
     public static final MotorIO motah = new MotorIOTalonFX(SERVO_CONFIG);
   }
 
-  public static class Climb {
+  public static class ClimbC {
     public static final double L1_POS = 67;
     // public static final double L2_POS = probably not gonna be used
     public static final double L3_POS = 6767;
   }
 
-  public static class Intake {
+  public static class IntakeC {
     public static final double INTAKE_VOLTAGE = 1;
     public static final double OUTTAKE_VOLTAGE = INTAKE_VOLTAGE * -1;
     public static final double DEFAULT_VOLTAGE = 0;
     public static final double PIVOT_DEFAULT = 67;
-    public static final double PIVOT_RAISED = 6767;
-    public static final double PIVOT_LOWERED = 6.7;
+    public static final Angle PIVOT_RAISED = Radians.of(0.33);
+    public static final Angle PIVOT_LOWERED = Radians.of(2.187);
     public static final double IM_PREPARED_FOR_FUTURE_STUFF = 86;
+
+    public static final ServoMotorSubsystemWithCancoderConfig DROP_CONFIG =
+        new ServoMotorSubsystemWithCancoderConfig();
+    public static final ServoMotorSubsystemWithCancoderConfig ROLLER_CONFIG =
+        new ServoMotorSubsystemWithCancoderConfig();
+    public static final TalonFXConfiguration INTAKE_PIVOT_TALON_CONFIG = new TalonFXConfiguration();
+    public static final CanCoderConfig INTAKE_PIVOT_CANCODER_CONFIG = new CanCoderConfig();
 
     public static final TalonFXConfiguration INTAKE_ROLLER_TALON_CONFIG =
         new TalonFXConfiguration();
-    public static final TalonFXConfiguration INTAKE_PIVOT_TALON_CONFIG = new TalonFXConfiguration();
 
-    public static final CanCoderConfig INTAKE_ROLLER_CANCODER_CONFIG = new CanCoderConfig();
-    public static final CanCoderConfig INTAKE_PIVOT_CANCODER_CONFIG = new CanCoderConfig();
+    static {
+      INTAKE_PIVOT_CANCODER_CONFIG.CANID = new CANDeviceId(5);
+      INTAKE_PIVOT_CANCODER_CONFIG.config = new CANcoderConfiguration();
+      INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset =
+          Units.radiansToRotations(-1.33) + 1;
+      INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.SensorDirection =
+          SensorDirectionValue.CounterClockwise_Positive;
+      INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
+
+      INTAKE_PIVOT_TALON_CONFIG.Feedback.FeedbackRemoteSensorID =
+          INTAKE_PIVOT_CANCODER_CONFIG.CANID.getDeviceNumber();
+      INTAKE_PIVOT_TALON_CONFIG.Feedback.FeedbackSensorSource =
+          FeedbackSensorSourceValue.FusedCANcoder;
+      INTAKE_PIVOT_TALON_CONFIG.Feedback.SensorToMechanismRatio = 1;
+      INTAKE_PIVOT_TALON_CONFIG.Feedback.RotorToSensorRatio = 32;
+      INTAKE_PIVOT_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+      INTAKE_PIVOT_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+      INTAKE_PIVOT_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+      INTAKE_PIVOT_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 100;
+      INTAKE_PIVOT_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -100;
+
+      INTAKE_PIVOT_TALON_CONFIG.ClosedLoopGeneral.ContinuousWrap = false;
+      INTAKE_PIVOT_TALON_CONFIG.Slot0.kP = 300;
+      INTAKE_PIVOT_TALON_CONFIG.Slot0.kI = 0;
+      INTAKE_PIVOT_TALON_CONFIG.Slot0.kD = 50;
+      INTAKE_PIVOT_TALON_CONFIG.Slot0.kS = 0;
+      INTAKE_PIVOT_TALON_CONFIG.Slot0.kV = 0;
+      DROP_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
+
+      DROP_CONFIG.talonCANID = new CANDeviceId(9);
+      DROP_CONFIG.canCoderConfig = INTAKE_PIVOT_CANCODER_CONFIG;
+      DROP_CONFIG.isFusedCancoder = true;
+      DROP_CONFIG.fxConfig = INTAKE_PIVOT_TALON_CONFIG;
+
+      ROLLER_CONFIG.talonCANID = new CANDeviceId(10);
+      ROLLER_CONFIG.fxConfig = INTAKE_ROLLER_TALON_CONFIG;
+    }
+
+    public static final CanCoderIOCanCoder coder =
+        new CanCoderIOCanCoder(INTAKE_PIVOT_CANCODER_CONFIG);
+    public static final MotorIO PIVOT_MOTOR = new MotorIOTalonFX(DROP_CONFIG);
+
+    public static final MotorIO ROLLER_MOTOR = new MotorIOTalonFX(ROLLER_CONFIG);
   }
 
-  public static class Spindexer {
+  public static class SpindexerC {
     public static final double CLOCKWISE_VOLTAGE = 1;
     public static final double REVERSE_VOLTAGE = CLOCKWISE_VOLTAGE * -1;
     public static final double DEFAULT_VOLTAGE = 0;
