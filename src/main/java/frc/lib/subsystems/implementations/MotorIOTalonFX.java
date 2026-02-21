@@ -94,7 +94,7 @@ public class MotorIOTalonFX implements MotorIO {
     CANStatusLogger.getInstance().registerTalonFX(config.name, talon, config.talonCANID);
 
     CTREUtil.tryUntilOK(
-        () -> BaseStatusSignal.setUpdateFrequencyForAll(50.0, signals), talon.getDeviceID());
+        () -> BaseStatusSignal.setUpdateFrequencyForAll(50, signals), talon.getDeviceID());
     CTREUtil.tryUntilOK(() -> talon.optimizeBusUtilization(), talon.getDeviceID());
   }
 

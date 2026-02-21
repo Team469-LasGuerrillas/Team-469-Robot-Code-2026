@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Radians;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,15 +19,23 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.subsystems.configs.ServoMotorSubsystemWithFollowersConfig;
 import frc.lib.subsystems.interfaces.CanCoderIO;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.VisionIO;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.lib.utilities.math.ShootAndMove;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.FeederCommands;
+import frc.robot.commands.HoodCommands;
 import frc.robot.commands.IntakeCommands;
+import frc.robot.commands.ShooterCommands;
+import frc.robot.commands.SpindexerCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Spindexer;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.drive.Drive;
@@ -53,6 +63,9 @@ public class RobotContainer {
   public final Turret exampe;
   public final Intake intake;
   public final Spindexer spindexer;
+  public final Shooter shooter;
+  public final Feeder feeder;
+  public final Hood hood;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -93,6 +106,16 @@ public class RobotContainer {
 
         spindexer = Spindexer.createinstance(Constants.SpindexerC.SPINDEXER_MOTOR);
 
+        shooter =
+            Shooter.createinstance(
+                Constants.LauncherC.LAUNCHER_CONFIG,
+                Constants.LauncherC.LAUNCHER_MOTOR,
+                Constants.LauncherC.FOLLOWER_MOTORS);
+
+        feeder = Feeder.createinstance(Constants.FeederC.FEEDER_MOTOR);
+
+        hood = Hood.createinstance(Constants.HoodC.PIVOT_MOTOR);
+
         break;
 
         /*
@@ -127,6 +150,14 @@ public class RobotContainer {
         intake = Intake.createinstance(new MotorIO() {}, new MotorIO() {}, new CanCoderIO() {});
 
         spindexer = Spindexer.createinstance(new MotorIO() {});
+
+        shooter =
+            Shooter.createinstance(
+                new ServoMotorSubsystemWithFollowersConfig() {}, new MotorIO() {}, null);
+
+        feeder = Feeder.createinstance(new MotorIO() {});
+
+        hood = Hood.createinstance(new MotorIO() {});
 
         break;
     }
@@ -181,6 +212,14 @@ public class RobotContainer {
             turretList));
 
     intake.setDefaultCommand(IntakeCommands.stow());
+
+    spindexer.setDefaultCommand(SpindexerCommands.idleCommand());
+
+    shooter.setDefaultCommand(ShooterCommands.idleCommand());
+
+    feeder.setDefaultCommand(FeederCommands.idleCommand());
+
+    hood.setDefaultCommand(HoodCommands.stowHood());
   }
 
   private void configureButtonBindings() {
@@ -212,6 +251,20 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     controller.leftBumper().toggleOnTrue(IntakeCommands.deployAndRun());
+
+    controller
+        .rightBumper()
+        .whileTrue(
+            Commands.sequence(
+                Commands.deadline(
+                    Commands.waitSeconds(0.67),
+                    ShooterCommands.rampSpeed(),
+                    HoodCommands.setHoodSetpoint(Radians.of(0.44))),
+                Commands.parallel(
+                    SpindexerCommands.runPositive(),
+                    FeederCommands.runPositive(),
+                    ShooterCommands.maintainSpeed(),
+                    HoodCommands.setHoodSetpoint(Radians.of(0.44)))));
   }
 
   /**
