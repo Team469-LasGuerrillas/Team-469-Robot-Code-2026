@@ -26,6 +26,7 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Spindexer;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -51,6 +52,7 @@ public class RobotContainer {
   public final FiducialVision limelightTurd;
   public final Turret exampe;
   public final Intake intake;
+  public final Spindexer spindexer;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -82,11 +84,14 @@ public class RobotContainer {
                 Constants.VisionC.TURRET_MODIFICATIONS);
 
         exampe = Turret.createInstance(Constants.TurretC.motah, Constants.TurretC.coder);
+
         intake =
             Intake.createinstance(
                 Constants.IntakeC.ROLLER_MOTOR,
                 Constants.IntakeC.PIVOT_MOTOR,
                 Constants.IntakeC.coder);
+
+        spindexer = Spindexer.createinstance(Constants.SpindexerC.SPINDEXER_MOTOR);
 
         break;
 
@@ -118,7 +123,10 @@ public class RobotContainer {
         limelightTurd = new FiducialVision(new VisionIO() {}, null, null);
 
         exampe = Turret.createInstance(new MotorIO() {}, new CanCoderIO() {});
+
         intake = Intake.createinstance(new MotorIO() {}, new MotorIO() {}, new CanCoderIO() {});
+
+        spindexer = Spindexer.createinstance(new MotorIO() {});
 
         break;
     }
