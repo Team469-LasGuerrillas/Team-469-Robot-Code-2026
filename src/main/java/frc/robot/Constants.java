@@ -144,50 +144,92 @@ public final class Constants {
 
     public static double phaseDelay;
 
-    public static final InterpolatingDoubleTreeMap FLYWHEEL_SHOT_SPEEDMAP =
+    public static final InterpolatingDoubleTreeMap FLYWHEEL_SHOT_SPEEDMAP_SHOOTING =
         new InterpolatingDoubleTreeMap();
 
-    public static final InterpolatingDoubleTreeMap TIME_OF_FLIGHT_MAP =
+    public static final InterpolatingDoubleTreeMap TIME_OF_FLIGHT_MAP_SHOOTING =
         new InterpolatingDoubleTreeMap();
 
-    public static final InterpolatingDoubleTreeMap SHOOTER_HOOD_MAP =
+    public static final InterpolatingDoubleTreeMap SHOOTER_HOOD_MAP_SHOOTING =
+        new InterpolatingDoubleTreeMap();
+
+    public static final InterpolatingDoubleTreeMap FLYWHEEL_SHOT_SPEEDMAP_PASSING =
+        new InterpolatingDoubleTreeMap();
+
+    public static final InterpolatingDoubleTreeMap TIME_OF_FLIGHT_MAP_PASSING =
+        new InterpolatingDoubleTreeMap();
+
+    public static final InterpolatingDoubleTreeMap SHOOTER_HOOD_MAP_PASSING =
         new InterpolatingDoubleTreeMap();
 
     static {
       phaseDelay = 67;
 
-      FLYWHEEL_SHOT_SPEEDMAP.put(6.7, 6.7);
-      FLYWHEEL_SHOT_SPEEDMAP.put(6.71, 6.71);
-      FLYWHEEL_SHOT_SPEEDMAP.put(6.72, 6.72);
-      FLYWHEEL_SHOT_SPEEDMAP.put(6.73, 6.73);
-      FLYWHEEL_SHOT_SPEEDMAP.put(6.71, 6.71);
-      FLYWHEEL_SHOT_SPEEDMAP.put(6.71, 6.71);
-      FLYWHEEL_SHOT_SPEEDMAP.put(6.71, 6.71);
-      FLYWHEEL_SHOT_SPEEDMAP.put(6.71, 6.71);
-      FLYWHEEL_SHOT_SPEEDMAP.put(6.71, 6.71);
-      FLYWHEEL_SHOT_SPEEDMAP.put(53.2, 348.2);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.7, 6.7);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.71, 6.71);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.72, 6.72);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.73, 6.73);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.71, 6.71);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.71, 6.71);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.71, 6.71);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.71, 6.71);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.71, 6.71);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(53.2, 348.2);
 
-      TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP.put(12.1, 21.3);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(6.7, 6.7);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(6.71, 6.71);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(6.72, 6.72);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(6.73, 6.73);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(6.71, 6.71);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(6.71, 6.71);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(6.71, 6.71);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(6.71, 6.71);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(6.71, 6.71);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(53.2, 348.2);
 
-      SHOOTER_HOOD_MAP.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP.put(43.9, 89.2);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
+      
+      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
+
+      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
+
+      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
     }
 
     public static final ServoMotorSubsystemWithFollowersConfig LAUNCHER_CONFIG =

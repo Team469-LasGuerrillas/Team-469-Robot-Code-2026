@@ -1,5 +1,7 @@
 package frc.robot;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 public class RobotState {
 
   public enum TurretState {
@@ -7,6 +9,7 @@ public class RobotState {
     UNLOCKED
   }
 
+  @AutoLogOutput (key="TurretState")
   private static TurretState turretState = TurretState.UNLOCKED;
 
   public static void setTurretState(TurretState state) {
@@ -22,6 +25,7 @@ public class RobotState {
     UNLOCKED
   }
 
+  @AutoLogOutput (key="HoodState")
   private static HoodState hoodState = HoodState.UNLOCKED;
 
   public static void setHoodState(HoodState state) {
@@ -31,4 +35,91 @@ public class RobotState {
   public static HoodState getHoodState() {
     return hoodState;
   }
+
+  public enum FlywheelState {
+    LOCKED,
+    UNLOCKED
+  }
+
+  @AutoLogOutput (key="FlywheelState")
+  private static FlywheelState flywheelState = FlywheelState.UNLOCKED;
+
+  public static void setFlywheelState(FlywheelState state) {
+    flywheelState = state;
+  }
+
+  public static FlywheelState getFlywheelState() {
+    return flywheelState;
+  }
+  
+  public enum ClimbElevatorState {
+    L1,
+    L3,
+    STOWED,
+    OFFTARGET
+  }
+
+  @AutoLogOutput (key="ClimbElevatorState")
+  private static ClimbElevatorState climbelevatorState = ClimbElevatorState.OFFTARGET;
+
+  public static void setClimbElevatorState(ClimbElevatorState state) {
+    climbelevatorState = state;
+  }
+
+  public static ClimbElevatorState getClimbElevatorState() {
+    return climbelevatorState;
+  }
+
+  public enum ClimbHookState {
+    STOWED,
+    DEPLOYED
+  }
+
+  @AutoLogOutput (key="ClimbHookState")
+  private static ClimbHookState climbHookState = ClimbHookState.STOWED;
+
+  public static void setClimbHookDeployed() {
+    climbHookState = ClimbHookState.DEPLOYED;
+  }
+
+  public static ClimbHookState getClimbHookState() {
+    return climbHookState;
+  }
+
+  public enum IntakeState {
+    STOWED,
+    DEPLOYED,
+    OFFTARGET
+  }
+
+  @AutoLogOutput (key="IntakeState")
+  private static IntakeState intakeState = IntakeState.STOWED;
+
+  public static void setIntakeState(IntakeState state) {
+    intakeState = state;
+  }
+
+  public static IntakeState getIntakeState() {
+    return intakeState;
+  }
+
+  public enum DriveState {
+    TELEOP,
+    PATHPLANNER,
+    TOPOINT_ALIGNING,
+    TOPOINT_ONTARGET
+  }
+
+  @AutoLogOutput (key="DriveState")
+  private static DriveState driveState = DriveState.TELEOP;
+
+  public static void setDrivestate(DriveState state) {
+    driveState = state;
+  }
+
+  public static DriveState getDriveState() {
+    return driveState;
+  }
+
 }
+

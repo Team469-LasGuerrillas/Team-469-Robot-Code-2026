@@ -90,13 +90,11 @@ public class Turret extends SubsystemBase {
     // Save previous
     previousCancoderPosition = Rotations.of(cancoderRotationValue);
 
-    Logger.recordOutput("True Turret Rotation", trueTurretRotation.in(Rotations));
+    Logger.recordOutput("TurretState/Position", trueTurretRotation.in(Rotations));
   }
 
   public void setTargetAngle(Angle angle) {
     targetAngle = angle;
-
-    Logger.recordOutput("Before Position", angle);
 
     Angle after = angle;
 
@@ -127,7 +125,7 @@ public class Turret extends SubsystemBase {
       closestAfter = closestAfter.plus(Rotations.of(1));
     }
 
-    Logger.recordOutput("Intermediate Position", closestAfter.in(Rotations));
+    Logger.recordOutput("TurretState/Target", closestAfter.in(Rotations));
 
     turd.setMagicalPositionSetpoint(
         closestAfter, RotationsPerSecond.of(9999), RotationsPerSecondPerSecond.of(9999), 0, 0);
