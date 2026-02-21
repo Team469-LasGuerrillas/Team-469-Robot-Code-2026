@@ -8,10 +8,15 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.MotorInputsAutoLogged;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
 
 public class Intake extends SubsystemBase {
   private static Intake instance;
+
+  @AutoLogOutput(key = "Intake/Visualization")
+  private LoggedMechanism2d intakeMechanism = new LoggedMechanism2d(0, 0);
 
   private final MotorIO rollerMotor;
   private final MotorIO pivotMotor;
