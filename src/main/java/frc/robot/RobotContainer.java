@@ -96,7 +96,7 @@ public class RobotContainer {
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 Constants.VisionC.TURRET_MODIFICATIONS);
 
-        exampe = Turret.createInstance(Constants.TurretC.motah, Constants.TurretC.coder);
+        exampe = Turret.createInstance(Constants.TurretC.motah, Constants.TurretC.coderA, Constants.TurretC.coderB);
 
         intake =
             Intake.createinstance(
@@ -145,7 +145,7 @@ public class RobotContainer {
 
         limelightTurd = new FiducialVision(new VisionIO() {}, null, null);
 
-        exampe = Turret.createInstance(new MotorIO() {}, new CanCoderIO() {});
+        exampe = Turret.createInstance(new MotorIO() {}, new CanCoderIO() {}, new CanCoderIO() {});
 
         intake = Intake.createinstance(new MotorIO() {}, new MotorIO() {}, new CanCoderIO() {});
 

@@ -26,8 +26,11 @@ import yams.units.EasyCRTConfig;
 public class Turret extends SubsystemBase {
   private static Turret instance;
 
-  private final CanCoderIO canCoder;
-  private final CancoderInputsAutoLogged ccInputs = new CancoderInputsAutoLogged();
+  private final CanCoderIO canCoderA;
+  private final CancoderInputsAutoLogged ccAInputs = new CancoderInputsAutoLogged();
+
+  private final CanCoderIO canCoderB;
+  private final CancoderInputsAutoLogged ccBInputs = new CancoderInputsAutoLogged();
 
   private final MotorIO turd;
   private final MotorInputsAutoLogged talonInputs = new MotorInputsAutoLogged();
@@ -40,8 +43,8 @@ public class Turret extends SubsystemBase {
   private EasyCRTConfig easyCRTConfig;
   private EasyCRT easyCRT;
 
-  public static Turret createInstance(MotorIO turd, CanCoderIO canCoder) {
-    instance = new Turret(turd, canCoder);
+  public static Turret createInstance(MotorIO turd, CanCoderIO canCoderA, CanCoderIO canCoderB) {
+    instance = new Turret(turd, canCoderA, canCoderB);
     return instance;
   }
 
@@ -49,15 +52,18 @@ public class Turret extends SubsystemBase {
     return instance;
   }
 
-  private Turret(MotorIO turd, CanCoderIO canCoder) {
+  private Turret(MotorIO turd, CanCoderIO canCoderA, CanCoderIO canCoderB) {
     this.turd = turd;
-    this.canCoder = canCoder;
+    this.canCoderA = canCoderA;
+    this.canCoderB = canCoderB;
 
     turd.setEnableSoftLimits(true, true);
 
-    easyCRTConfig =
-        new EasyCRTConfig(this::getPosition, this::getPosition)
-            .withEncoderRatios(numRotations, numRotations);
+    easyCRTConfig = new EasyCRTConfig(this::getCCAPosition, this::getCCBPosition)
+        .withEncoderRatios(26.0 / 168.0, 28.0 / 168.0)
+        .withAbsoluteEncoder1Inverted(false)
+        .withAbsoluteEncoder2Inverted(false)
+        .withAbsoluteEncoderOffsets(Rotations.of(0), Rotations.of(0));
     easyCRT = new EasyCRT(easyCRTConfig);
   }
 
@@ -65,11 +71,13 @@ public class Turret extends SubsystemBase {
   public void periodic() {
     turd.readInputs(talonInputs);
     Logger.processInputs(getName() + " Motor", talonInputs);
-    canCoder.readInputs(ccInputs);
-    Logger.processInputs(getName() + " CanCoder", ccInputs);
+    canCoderA.readInputs(ccAInputs);
+    Logger.processInputs(getName() + " CanCoder A", ccAInputs);
+    canCoderB.readInputs(ccBInputs);
+    Logger.processInputs(getName() + " CanCoder B", ccAInputs);
 
     // Get Cancoder Value [0.5-0.5) Rotations
-    double cancoderRotationValue = ccInputs.absolutePosition.in(Rotations);
+    double cancoderRotationValue = ccAInputs.absolutePosition.in(Rotations);
 
     // Check if we wrapped
     if (cancoderRotationValue - previousCancoderPosition.in(Rotations) >= 0.5) {
@@ -83,7 +91,7 @@ public class Turret extends SubsystemBase {
     // System.out.println(numRotations);
 
     // Calculate actual turret rotation
-    trueTurretRotation = ccInputs.absolutePosition.plus(Rotations.of(numRotations));
+    trueTurretRotation = ccAInputs.absolutePosition.plus(Rotations.of(numRotations));
 
     // Save previous
     previousCancoderPosition = Rotations.of(cancoderRotationValue);
@@ -126,7 +134,8 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("TurretState/Target", closestAfter.in(Rotations));
 
     // turd.setMagicalPositionSetpoint(
-    //     closestAfter, RotationsPerSecond.of(9999), RotationsPerSecondPerSecond.of(9999), 0, 0);
+    // closestAfter, RotationsPerSecond.of(9999),
+    // RotationsPerSecondPerSecond.of(9999), 0, 0);
   }
 
   /**
@@ -146,13 +155,14 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput(
         "Turret's target",
         GeomUtil.withRotation(
-                Drive.getInstance().getPose(),
-                turretFieldPose.getRotation().plus(new Rotation2d(getPosition())))
+            Drive.getInstance().getPose(),
+            turretFieldPose.getRotation().plus(new Rotation2d(getAngle())))
             .transformBy(new Transform2d(1, 0, new Rotation2d())));
   }
 
   /**
-   * Returns the turret's pose in field space by applying the turret's robot-relative pose as a
+   * Returns the turret's pose in field space by applying the turret's
+   * robot-relative pose as a
    * transform to the robot's pose.
    *
    * @return The pose of the turret.
@@ -165,24 +175,37 @@ public class Turret extends SubsystemBase {
     return turretFieldPose;
   }
 
-  /**
-   * Returns this CCW Positive angle of the turret in turret space. This can be added onto the
-   * turret's pose to figure out where it is now looking.
-   *
-   * @return
-   */
-  public Angle getPosition() {
-    return ccInputs.absolutePosition;
+  public Angle getAngle() {
+    return easyCRT.getAngleOptional().get();
   }
 
   /**
-   * Returns the angular velocity of the turret. This can be added onto the robot's angular velocity
+   * Returns this CCW Positive angle of the primary encoder in turret space.
+   *
+   * @return
+   */
+  public Angle getCCAPosition() {
+    return ccAInputs.absolutePosition;
+  }
+
+  /**
+   * Returns this CCW Positive angle of the secondary encoder in turret space.
+   *
+   * @return
+   */
+  public Angle getCCBPosition() {
+    return ccBInputs.absolutePosition;
+  }
+
+  /**
+   * Returns the angular velocity of the turret. This can be added onto the
+   * robot's angular velocity
    * to figure out the turret's angular velocity in field Space.
    *
    * @return
    */
   public AngularVelocity getAngularVelocity() {
-    return ccInputs.velocity;
+    return ccAInputs.velocity;
   }
 
   @AutoLogOutput(key = "TurretTarget")

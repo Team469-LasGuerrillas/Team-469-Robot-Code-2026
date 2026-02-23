@@ -335,18 +335,26 @@ public final class Constants {
     private static final ServoMotorSubsystemWithCancoderConfig SERVO_CONFIG =
         new ServoMotorSubsystemWithCancoderConfig();
     private static final TalonFXConfiguration TURRET_TALON_CONFIG = new TalonFXConfiguration();
-    private static final CanCoderConfig TURRET_CANCODER_CONFIG = new CanCoderConfig();
+    private static final CanCoderConfig TURRETA_CANCODER_CONFIG = new CanCoderConfig();
+    private static final CanCoderConfig TURRETB_CANCODER_CONFIG = new CanCoderConfig();
 
     static {
-      TURRET_CANCODER_CONFIG.CANID = new CANDeviceId(6);
-      TURRET_CANCODER_CONFIG.config = new CANcoderConfiguration();
-      TURRET_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = -0.36523433383028964;
-      TURRET_CANCODER_CONFIG.config.MagnetSensor.SensorDirection =
+      TURRETA_CANCODER_CONFIG.CANID = new CANDeviceId(6);
+      TURRETA_CANCODER_CONFIG.config = new CANcoderConfiguration();
+      TURRETA_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = 0;
+      TURRETA_CANCODER_CONFIG.config.MagnetSensor.SensorDirection =
           SensorDirectionValue.Clockwise_Positive;
-      TURRET_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
+      TURRETA_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
+
+      TURRETA_CANCODER_CONFIG.CANID = new CANDeviceId(7);
+      TURRETA_CANCODER_CONFIG.config = new CANcoderConfiguration();
+      TURRETA_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = 0;
+      TURRETA_CANCODER_CONFIG.config.MagnetSensor.SensorDirection =
+          SensorDirectionValue.Clockwise_Positive;
+      TURRETA_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
 
       TURRET_TALON_CONFIG.Feedback.FeedbackRemoteSensorID =
-          TURRET_CANCODER_CONFIG.CANID.getDeviceNumber();
+          TURRETA_CANCODER_CONFIG.CANID.getDeviceNumber();
       TURRET_TALON_CONFIG.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
       TURRET_TALON_CONFIG.Feedback.SensorToMechanismRatio = 1;
       TURRET_TALON_CONFIG.Feedback.RotorToSensorRatio = 18.75;
@@ -368,12 +376,13 @@ public final class Constants {
       TURRET_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 70;
 
       SERVO_CONFIG.talonCANID = new CANDeviceId(20);
-      SERVO_CONFIG.canCoderConfig = TURRET_CANCODER_CONFIG;
+      SERVO_CONFIG.canCoderConfig = TURRETA_CANCODER_CONFIG;
       SERVO_CONFIG.isFusedCancoder = true;
       SERVO_CONFIG.fxConfig = TURRET_TALON_CONFIG;
     }
 
-    public static final CanCoderIOCanCoder coder = new CanCoderIOCanCoder(TURRET_CANCODER_CONFIG);
+    public static final CanCoderIOCanCoder coderA = new CanCoderIOCanCoder(TURRETA_CANCODER_CONFIG);
+    public static final CanCoderIOCanCoder coderB = new CanCoderIOCanCoder(TURRETB_CANCODER_CONFIG);
     public static final MotorIO motah = new MotorIOTalonFX(SERVO_CONFIG);
   }
 
