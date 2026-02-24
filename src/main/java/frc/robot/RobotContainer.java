@@ -96,7 +96,9 @@ public class RobotContainer {
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 Constants.VisionC.TURRET_MODIFICATIONS);
 
-        exampe = Turret.createInstance(Constants.TurretC.motah, Constants.TurretC.coderA, Constants.TurretC.coderB);
+        exampe =
+            Turret.createInstance(
+                Constants.TurretC.motah, Constants.TurretC.coderA, Constants.TurretC.coderB);
 
         intake =
             Intake.createinstance(

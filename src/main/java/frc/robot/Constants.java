@@ -322,15 +322,13 @@ public final class Constants {
 
   public static class TurretC {
 
-    public static final Angle TURRERT_MAX = Rotations.of(0.6);
-    public static final Angle TURRERT_MIN = Rotations.of(-0.6);
+    public static final Angle TURRERT_MAX = Rotations.of(0.41);
+    public static final Angle TURRERT_MIN = Rotations.of(-0.96);
+
+    public static final Angle MOTOR_POSITION_OFFSET = Rotations.of(0.283691 - 0.000189);
 
     public static final Pose3d TURD_CENTER =
-        new Pose3d(
-            0.031613,
-            0.183773,
-            0.215900,
-            new Rotation3d(0, 0, Units.degreesToRadians(180 - 20.220574)));
+        new Pose3d(-0.107950, -0.158750, 0.414338, new Rotation3d(0, 0, Units.degreesToRadians(0)));
 
     private static final ServoMotorSubsystemWithCancoderConfig SERVO_CONFIG =
         new ServoMotorSubsystemWithCancoderConfig();
@@ -346,34 +344,46 @@ public final class Constants {
           SensorDirectionValue.Clockwise_Positive;
       TURRETA_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
 
-      TURRETA_CANCODER_CONFIG.CANID = new CANDeviceId(7);
-      TURRETA_CANCODER_CONFIG.config = new CANcoderConfiguration();
-      TURRETA_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = 0;
-      TURRETA_CANCODER_CONFIG.config.MagnetSensor.SensorDirection =
+      TURRETB_CANCODER_CONFIG.CANID = new CANDeviceId(7);
+      TURRETB_CANCODER_CONFIG.config = new CANcoderConfiguration();
+      TURRETB_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = 0;
+      TURRETB_CANCODER_CONFIG.config.MagnetSensor.SensorDirection =
           SensorDirectionValue.Clockwise_Positive;
-      TURRETA_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
+      TURRETB_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
 
       TURRET_TALON_CONFIG.Feedback.FeedbackRemoteSensorID =
           TURRETA_CANCODER_CONFIG.CANID.getDeviceNumber();
       TURRET_TALON_CONFIG.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-      TURRET_TALON_CONFIG.Feedback.SensorToMechanismRatio = 1;
-      TURRET_TALON_CONFIG.Feedback.RotorToSensorRatio = 18.75;
+      TURRET_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-      SERVO_CONFIG.kMaxPositionUnits = TURRERT_MAX.in(Rotations);
-      SERVO_CONFIG.kMinPositionUnits = TURRERT_MIN.in(Rotations);
+      // 168t main gear, 26t cancoder A,
+      TURRET_TALON_CONFIG.Feedback.SensorToMechanismRatio = 168.0 / 26.0;
+      TURRET_TALON_CONFIG.Feedback.RotorToSensorRatio =
+          ((52.0 / 10.0) * (168.0 / 18.0) * (26.0 / 168.0));
+
+      SERVO_CONFIG.cancoderToUnitsRatio = 26.0 / 168.0;
+      // SERVO_CONFIG.unitToRotorRatio = (10.0 / 52.0) * (18.0 / 168.0) * (168.0 / 26.0); // Do not
+      // use
+
+      SERVO_CONFIG.kMaxPositionUnits = TURRERT_MAX.plus(MOTOR_POSITION_OFFSET).in(Rotations);
+      SERVO_CONFIG.kMinPositionUnits = TURRERT_MIN.plus(MOTOR_POSITION_OFFSET).in(Rotations);
 
       TURRET_TALON_CONFIG.ClosedLoopGeneral.ContinuousWrap = false;
-      TURRET_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TURRERT_MAX.in(Rotations);
-      TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TURRERT_MIN.in(Rotations);
-      TURRET_TALON_CONFIG.Slot0.kP = 0;
+      TURRET_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+          TURRERT_MAX.plus(MOTOR_POSITION_OFFSET).in(Rotations);
+      TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+          TURRERT_MIN.plus(MOTOR_POSITION_OFFSET).in(Rotations);
+      TURRET_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+      TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+      TURRET_TALON_CONFIG.Slot0.kP = 17;
       TURRET_TALON_CONFIG.Slot0.kI = 0;
       TURRET_TALON_CONFIG.Slot0.kD = 0;
       TURRET_TALON_CONFIG.Slot0.kS = 0;
       TURRET_TALON_CONFIG.Slot0.kV = 0;
       SERVO_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
-      TURRET_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
-      TURRET_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 70;
+      TURRET_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 5;
+      TURRET_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 5;
 
       SERVO_CONFIG.talonCANID = new CANDeviceId(20);
       SERVO_CONFIG.canCoderConfig = TURRETA_CANCODER_CONFIG;
@@ -460,9 +470,9 @@ public final class Constants {
   }
 
   public static class SpindexerC {
-    public static final double FEEDING_DC = 0.67;
+    public static final double FEEDING_DC = -0.67;
     public static final double REVERSE_DC = -0.67;
-    public static final double IDLE_DC = 0.1;
+    public static final double IDLE_DC = -0.1;
 
     private static final ServoMotorSubsystemWithCancoderConfig SERVO_CONFIG =
         new ServoMotorSubsystemWithCancoderConfig();

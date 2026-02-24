@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -59,11 +61,14 @@ public class Turret extends SubsystemBase {
 
     turd.setEnableSoftLimits(true, true);
 
-    easyCRTConfig = new EasyCRTConfig(this::getCCAPosition, this::getCCBPosition)
-        .withEncoderRatios(26.0 / 168.0, 28.0 / 168.0)
-        .withAbsoluteEncoder1Inverted(false)
-        .withAbsoluteEncoder2Inverted(false)
-        .withAbsoluteEncoderOffsets(Rotations.of(0), Rotations.of(0));
+    easyCRTConfig =
+        new EasyCRTConfig(this::getCCAPosition, this::getCCBPosition)
+            .withEncoderRatios(168.0 / 26.0, 168.0 / 28.0)
+            .withAbsoluteEncoder1Inverted(false)
+            .withAbsoluteEncoder2Inverted(false)
+            .withMatchTolerance(Degrees.of(6.7))
+            .withMechanismRange(Rotations.of(-0.99), Rotations.of(0.99))
+            .withAbsoluteEncoderOffsets(Radians.of(-1.059981), Radians.of(1.986505));
     easyCRT = new EasyCRT(easyCRTConfig);
   }
 
@@ -74,8 +79,9 @@ public class Turret extends SubsystemBase {
     canCoderA.readInputs(ccAInputs);
     Logger.processInputs(getName() + " CanCoder A", ccAInputs);
     canCoderB.readInputs(ccBInputs);
-    Logger.processInputs(getName() + " CanCoder B", ccAInputs);
+    Logger.processInputs(getName() + " CanCoder B", ccBInputs);
 
+    /*/
     // Get Cancoder Value [0.5-0.5) Rotations
     double cancoderRotationValue = ccAInputs.absolutePosition.in(Rotations);
 
@@ -95,6 +101,9 @@ public class Turret extends SubsystemBase {
 
     // Save previous
     previousCancoderPosition = Rotations.of(cancoderRotationValue);
+    */
+
+    trueTurretRotation = getAngle();
 
     Logger.recordOutput("TurretState/Position", trueTurretRotation.in(Rotations));
   }
@@ -104,7 +113,7 @@ public class Turret extends SubsystemBase {
 
     Angle after = angle;
 
-    after = after.plus(Rotations.of(numRotations));
+    after = after.plus(Rotations.of(Math.round(trueTurretRotation.in(Rotations))));
 
     Angle afterPlus = after.plus(Rotations.of(1));
     Angle afterMinus = after.minus(Rotations.of(1));
@@ -133,9 +142,12 @@ public class Turret extends SubsystemBase {
 
     Logger.recordOutput("TurretState/Target", closestAfter.in(Rotations));
 
-    // turd.setMagicalPositionSetpoint(
-    // closestAfter, RotationsPerSecond.of(9999),
-    // RotationsPerSecondPerSecond.of(9999), 0, 0);
+    turd.setMagicalPositionSetpoint(
+        closestAfter.plus(Constants.TurretC.MOTOR_POSITION_OFFSET),
+        RotationsPerSecond.of(9999),
+        RotationsPerSecondPerSecond.of(9999),
+        0,
+        0);
   }
 
   /**
@@ -155,14 +167,13 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput(
         "Turret's target",
         GeomUtil.withRotation(
-            Drive.getInstance().getPose(),
-            turretFieldPose.getRotation().plus(new Rotation2d(getAngle())))
+                Drive.getInstance().getPose(),
+                turretFieldPose.getRotation().plus(new Rotation2d(getAngle())))
             .transformBy(new Transform2d(1, 0, new Rotation2d())));
   }
 
   /**
-   * Returns the turret's pose in field space by applying the turret's
-   * robot-relative pose as a
+   * Returns the turret's pose in field space by applying the turret's robot-relative pose as a
    * transform to the robot's pose.
    *
    * @return The pose of the turret.
@@ -175,8 +186,13 @@ public class Turret extends SubsystemBase {
     return turretFieldPose;
   }
 
+  @AutoLogOutput(key = "Turret/Angle")
   public Angle getAngle() {
-    return easyCRT.getAngleOptional().get();
+    if (easyCRT.getAngleOptional().isPresent()) {
+      return easyCRT.getAngleOptional().get();
+    } else {
+      return Rotations.of(0);
+    }
   }
 
   /**
@@ -198,8 +214,7 @@ public class Turret extends SubsystemBase {
   }
 
   /**
-   * Returns the angular velocity of the turret. This can be added onto the
-   * robot's angular velocity
+   * Returns the angular velocity of the turret. This can be added onto the robot's angular velocity
    * to figure out the turret's angular velocity in field Space.
    *
    * @return
