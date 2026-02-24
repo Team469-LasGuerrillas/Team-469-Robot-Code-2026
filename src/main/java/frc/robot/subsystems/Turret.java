@@ -45,6 +45,8 @@ public class Turret extends SubsystemBase {
   private EasyCRTConfig easyCRTConfig;
   private EasyCRT easyCRT;
 
+  private boolean offsetHasBeenSet;
+
   public static Turret createInstance(MotorIO turd, CanCoderIO canCoderA, CanCoderIO canCoderB) {
     instance = new Turret(turd, canCoderA, canCoderB);
     return instance;
@@ -80,6 +82,11 @@ public class Turret extends SubsystemBase {
     Logger.processInputs(getName() + " CanCoder A", ccAInputs);
     canCoderB.readInputs(ccBInputs);
     Logger.processInputs(getName() + " CanCoder B", ccBInputs);
+
+    if (!offsetHasBeenSet && getAngle().in(Rotations) != 0) {
+      turd.setCurrentPosition(getAngle());
+      offsetHasBeenSet = true;
+    }
 
     /*/
     // Get Cancoder Value [0.5-0.5) Rotations
@@ -143,7 +150,7 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("TurretState/Target", closestAfter.in(Rotations));
 
     turd.setMagicalPositionSetpoint(
-        closestAfter.plus(Constants.TurretC.MOTOR_POSITION_OFFSET),
+        closestAfter,
         RotationsPerSecond.of(9999),
         RotationsPerSecondPerSecond.of(9999),
         0,

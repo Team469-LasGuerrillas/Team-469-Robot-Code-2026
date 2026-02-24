@@ -325,7 +325,7 @@ public final class Constants {
     public static final Angle TURRERT_MAX = Rotations.of(0.41);
     public static final Angle TURRERT_MIN = Rotations.of(-0.96);
 
-    public static final Angle MOTOR_POSITION_OFFSET = Rotations.of(0.283691 - 0.000189);
+    // public static final Angle MOTOR_POSITION_OFFSET = Rotations.of(0.283691 - 0.000189);
 
     public static final Pose3d TURD_CENTER =
         new Pose3d(-0.107950, -0.158750, 0.414338, new Rotation3d(0, 0, Units.degreesToRadians(0)));
@@ -365,14 +365,14 @@ public final class Constants {
       // SERVO_CONFIG.unitToRotorRatio = (10.0 / 52.0) * (18.0 / 168.0) * (168.0 / 26.0); // Do not
       // use
 
-      SERVO_CONFIG.kMaxPositionUnits = TURRERT_MAX.plus(MOTOR_POSITION_OFFSET).in(Rotations);
-      SERVO_CONFIG.kMinPositionUnits = TURRERT_MIN.plus(MOTOR_POSITION_OFFSET).in(Rotations);
+      SERVO_CONFIG.kMaxPositionUnits = TURRERT_MAX.in(Rotations);
+      SERVO_CONFIG.kMinPositionUnits = TURRERT_MIN.in(Rotations);
 
       TURRET_TALON_CONFIG.ClosedLoopGeneral.ContinuousWrap = false;
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-          TURRERT_MAX.plus(MOTOR_POSITION_OFFSET).in(Rotations);
+          TURRERT_MAX.in(Rotations);
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-          TURRERT_MIN.plus(MOTOR_POSITION_OFFSET).in(Rotations);
+          TURRERT_MIN.in(Rotations);
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
       TURRET_TALON_CONFIG.Slot0.kP = 17;
