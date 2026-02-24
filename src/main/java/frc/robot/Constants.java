@@ -27,6 +27,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
@@ -59,6 +60,14 @@ public final class Constants {
   public static final Mode simMode = Mode.REAL;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
+  public static final SwerveModulePosition[] EMPTY_MODULE_POSITIONS = new SwerveModulePosition[4];
+
+  static {
+    for (int i = 0; i < 4; i++) {
+      EMPTY_MODULE_POSITIONS[i] = new SwerveModulePosition();
+    }
+  }
+
   public static enum Mode {
     /** Running on a real robot. */
     REAL,
@@ -83,6 +92,7 @@ public final class Constants {
     public static final Distance MAX_FIELD_Y = Meters.of(WELDED_FIELD.getFieldWidth());
 
     public static final Matrix<N3, N1> FIELD_SPEEDS_STDS = VecBuilder.fill(0.067, 0.067, 0.08);
+    public static final Matrix<N3, N1> TURRET_SPEEDS_STDS = VecBuilder.fill(0.1, 0.1, 0.1);
   }
 
   public static class VisionC {
@@ -325,6 +335,7 @@ public final class Constants {
     public static final Angle TURRERT_MAX = Rotations.of(0.41);
     public static final Angle TURRERT_MIN = Rotations.of(-0.96);
 
+    // Should be unnecessary if motor position is set directly with CRT
     // public static final Angle MOTOR_POSITION_OFFSET = Rotations.of(0.283691 - 0.000189);
 
     public static final Pose3d TURD_CENTER =

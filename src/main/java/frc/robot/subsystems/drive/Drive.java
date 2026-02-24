@@ -96,9 +96,9 @@ public class Drive extends SubsystemBase {
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
-  private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
+  public SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
   private Rotation2d rawGyroRotation = Rotation2d.kZero;
-  private SwerveModulePosition[] lastModulePositions = // For delta tracking
+  public SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
         new SwerveModulePosition(),
         new SwerveModulePosition(),
@@ -109,7 +109,7 @@ public class Drive extends SubsystemBase {
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, Pose2d.kZero);
 
   private SwerveDrivePoseEstimator fieldSpeedEstimator =
-      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, Pose2d.kZero);
+      new SwerveDrivePoseEstimator(kinematics, new Rotation2d(), lastModulePositions, Pose2d.kZero);
 
   public static Drive getInstance(
       GyroIO gyroIO,
@@ -239,13 +239,8 @@ public class Drive extends SubsystemBase {
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
 
-    SwerveModulePosition[] emptyPositions = new SwerveModulePosition[4];
-    for (int i = 0; i < 4; i++) {
-      emptyPositions[i] = new SwerveModulePosition();
-    }
-
     fieldSpeedEstimator.updateWithTime(
-        Clock.time(), new Rotation2d(getChassisSpeeds().omegaRadiansPerSecond), emptyPositions);
+        Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
     fieldSpeedEstimator.addVisionMeasurement(
         GeomUtil.toPose2d(getFieldSpeeds()), Clock.time(), Constants.Field.FIELD_SPEEDS_STDS);
 
