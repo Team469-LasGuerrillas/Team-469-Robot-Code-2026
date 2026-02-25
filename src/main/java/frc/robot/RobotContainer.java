@@ -8,6 +8,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -215,7 +216,7 @@ public class RobotContainer {
 
     intake.setDefaultCommand(IntakeCommands.stow());
 
-    spindexer.setDefaultCommand(SpindexerCommands.idleCommand());
+    spindexer.setDefaultCommand(SpindexerCommands.agitate());
 
     shooter.setDefaultCommand(ShooterCommands.idleCommand());
 
@@ -265,7 +266,7 @@ public class RobotContainer {
                 Commands.parallel(
                     SpindexerCommands.runPositive(),
                     FeederCommands.runPositive(),
-                    ShooterCommands.maintainSpeed(),
+                    ShooterCommands.maintainSpeed(RadiansPerSecond.of(350)),
                     HoodCommands.setHoodSetpoint(Radians.of(0.44)))));
   }
 

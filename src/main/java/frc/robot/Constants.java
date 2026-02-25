@@ -12,11 +12,13 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 import com.pathplanner.lib.path.PathConstraints;
@@ -124,11 +126,7 @@ public final class Constants {
     }
 
     public static final Pose3d TURD_CENTER =
-        new Pose3d(
-            0.031613,
-            0.183773,
-            0.215900,
-            new Rotation3d(0, 0, Units.degreesToRadians(180 - 20.220574)));
+        new Pose3d(0.031613, 0.183773, 0.215900, new Rotation3d(0, 0, Units.degreesToRadians(0)));
 
     public static final VisionIOLimelight DEV_LIMELIGHT =
         VisionIOLimelight.getInstance(
@@ -154,6 +152,10 @@ public final class Constants {
     public static final double RAMP_DC = 1;
     public static final double UNJAM_DC = -0.5;
     public static final double IDLE_DC = 0.1;
+
+    public static final AngularVelocity HUB_SPEED_TOLERANCE = RotationsPerSecond.of(0.5);
+    public static final AngularVelocity PASS_SPEED_TOLERANCE = RotationsPerSecond.of(1);
+    public static final AngularVelocity RAMP_SPEED_TOLERANCE = RotationsPerSecond.of(2);
 
     public static double phaseDelay;
 
@@ -289,6 +291,8 @@ public final class Constants {
       LAUNCHER_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
       LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 70;
 
+      LAUNCHER_TALON_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
       FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
       FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 70;
       FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
@@ -341,8 +345,7 @@ public final class Constants {
     public static final Pose3d TURD_CENTER =
         new Pose3d(-0.107950, -0.158750, 0.414338, new Rotation3d(0, 0, Units.degreesToRadians(0)));
 
-    private static final ServoMotorSubsystemWithCancoderConfig SERVO_CONFIG =
-        new ServoMotorSubsystemWithCancoderConfig();
+    private static final ServoMotorSubsystemConfig SERVO_CONFIG = new ServoMotorSubsystemConfig();
     private static final TalonFXConfiguration TURRET_TALON_CONFIG = new TalonFXConfiguration();
     private static final CanCoderConfig TURRETA_CANCODER_CONFIG = new CanCoderConfig();
     private static final CanCoderConfig TURRETB_CANCODER_CONFIG = new CanCoderConfig();
@@ -362,43 +365,33 @@ public final class Constants {
           SensorDirectionValue.Clockwise_Positive;
       TURRETB_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
 
-      TURRET_TALON_CONFIG.Feedback.FeedbackRemoteSensorID =
-          TURRETA_CANCODER_CONFIG.CANID.getDeviceNumber();
-      TURRET_TALON_CONFIG.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
       TURRET_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
       // 168t main gear, 26t cancoder A,
-      TURRET_TALON_CONFIG.Feedback.SensorToMechanismRatio = 168.0 / 26.0;
-      TURRET_TALON_CONFIG.Feedback.RotorToSensorRatio =
-          ((52.0 / 10.0) * (168.0 / 18.0) * (26.0 / 168.0));
-
-      SERVO_CONFIG.cancoderToUnitsRatio = 26.0 / 168.0;
-      // SERVO_CONFIG.unitToRotorRatio = (10.0 / 52.0) * (18.0 / 168.0) * (168.0 / 26.0); // Do not
-      // use
+      TURRET_TALON_CONFIG.Feedback.SensorToMechanismRatio = ((52.0 / 10.0) * (168.0 / 18.0));
+      TURRET_TALON_CONFIG.Feedback.RotorToSensorRatio = ((52.0 / 10.0) * (168.0 / 18.0));
 
       SERVO_CONFIG.kMaxPositionUnits = TURRERT_MAX.in(Rotations);
       SERVO_CONFIG.kMinPositionUnits = TURRERT_MIN.in(Rotations);
 
       TURRET_TALON_CONFIG.ClosedLoopGeneral.ContinuousWrap = false;
-      TURRET_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-          TURRERT_MAX.in(Rotations);
-      TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-          TURRERT_MIN.in(Rotations);
+      TURRET_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TURRERT_MAX.in(Rotations);
+      TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TURRERT_MIN.in(Rotations);
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-      TURRET_TALON_CONFIG.Slot0.kP = 17;
+      TURRET_TALON_CONFIG.Slot0.kP = 120;
       TURRET_TALON_CONFIG.Slot0.kI = 0;
-      TURRET_TALON_CONFIG.Slot0.kD = 0;
+      TURRET_TALON_CONFIG.Slot0.kD = 20;
       TURRET_TALON_CONFIG.Slot0.kS = 0;
       TURRET_TALON_CONFIG.Slot0.kV = 0;
       SERVO_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
-      TURRET_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 5;
-      TURRET_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 5;
+      TURRET_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 40;
+      TURRET_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 20;
 
       SERVO_CONFIG.talonCANID = new CANDeviceId(20);
-      SERVO_CONFIG.canCoderConfig = TURRETA_CANCODER_CONFIG;
-      SERVO_CONFIG.isFusedCancoder = true;
+      // SERVO_CONFIG.canCoderConfig = TURRETA_CANCODER_CONFIG;
+      // SERVO_CONFIG.isFusedCancoder = true;
       SERVO_CONFIG.fxConfig = TURRET_TALON_CONFIG;
     }
 
@@ -481,9 +474,10 @@ public final class Constants {
   }
 
   public static class SpindexerC {
-    public static final double FEEDING_DC = -0.67;
+    public static final double FEEDING_DC = 0.33;
     public static final double REVERSE_DC = -0.67;
-    public static final double IDLE_DC = -0.1;
+    public static final double IDLE_DC = 0.1;
+    public static final double IDLE_REVERSE_DC = -0.1;
 
     private static final ServoMotorSubsystemWithCancoderConfig SERVO_CONFIG =
         new ServoMotorSubsystemWithCancoderConfig();

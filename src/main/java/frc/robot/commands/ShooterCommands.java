@@ -1,14 +1,29 @@
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.lib.utilities.math.ToleranceUtil;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 
 public class ShooterCommands {
   private static Shooter shooter = Shooter.getInstance();
+
+  public static Command targetLaunchSpeed(AngularVelocity speed) {
+    return Commands.sequence(
+        Commands.deadline(
+            Commands.waitUntil(
+                () ->
+                    ToleranceUtil.epsilonEquals(
+                        Shooter.getInstance().getSpeed().in(RotationsPerSecond),
+                        speed.in(RotationsPerSecond),
+                        Constants.LauncherC.RAMP_SPEED_TOLERANCE.in(RotationsPerSecond))),
+            rampSpeed()),
+        maintainSpeed(speed));
+  }
 
   public static Command rampSpeed() {
     return Commands.startRun(
@@ -17,10 +32,10 @@ public class ShooterCommands {
         shooter);
   }
 
-  public static Command maintainSpeed() {
+  public static Command maintainSpeed(AngularVelocity speed) {
     return Commands.startRun(
-        () -> shooter.setWatermarkTorqueCurrentFOC(RadiansPerSecond.of(350)),
-        () -> shooter.setWatermarkTorqueCurrentFOC(RadiansPerSecond.of(350)),
+        () -> shooter.setWatermarkTorqueCurrentFOC(speed),
+        () -> shooter.setWatermarkTorqueCurrentFOC(speed),
         shooter);
   }
 

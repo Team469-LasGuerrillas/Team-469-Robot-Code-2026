@@ -8,6 +8,12 @@ import frc.robot.subsystems.Spindexer;
 public class SpindexerCommands {
   private static Spindexer spindexer = Spindexer.getInstance();
 
+  public static Command agitate() {
+    return Commands.repeatingSequence(
+        Commands.deadline(Commands.waitSeconds(0.5), idleCommand()),
+        Commands.deadline(Commands.waitSeconds(0.5), idleReverseCommand()));
+  }
+
   public static Command runPositive() {
     return Commands.startRun(
         () -> spindexer.setOpenLoopDutyCycle(Constants.SpindexerC.FEEDING_DC),
@@ -26,6 +32,13 @@ public class SpindexerCommands {
     return Commands.startRun(
         () -> spindexer.setOpenLoopDutyCycle(Constants.SpindexerC.IDLE_DC),
         () -> spindexer.setOpenLoopDutyCycle(Constants.SpindexerC.IDLE_DC),
+        spindexer);
+  }
+
+  public static Command idleReverseCommand() {
+    return Commands.startRun(
+        () -> spindexer.setOpenLoopDutyCycle(Constants.SpindexerC.IDLE_REVERSE_DC),
+        () -> spindexer.setOpenLoopDutyCycle(Constants.SpindexerC.IDLE_REVERSE_DC),
         spindexer);
   }
 }

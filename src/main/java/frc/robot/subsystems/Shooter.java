@@ -60,4 +60,8 @@ public class Shooter extends SubsystemBase {
     leadFlywheel.readInputs(leadInputs);
     Logger.processInputs(getName() + "flywheelLead", leadInputs);
   }
+
+  public AngularVelocity getSpeed() {
+    return leadInputs.motorVelocity;
+  }
 }
