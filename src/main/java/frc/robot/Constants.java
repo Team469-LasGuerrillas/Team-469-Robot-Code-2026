@@ -28,6 +28,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
@@ -95,6 +96,11 @@ public final class Constants {
 
     public static final Matrix<N3, N1> FIELD_SPEEDS_STDS = VecBuilder.fill(0.067, 0.067, 0.08);
     public static final Matrix<N3, N1> TURRET_SPEEDS_STDS = VecBuilder.fill(0.1, 0.1, 0.1);
+
+    public static final Translation2d BLUE_HUB =
+        new Translation2d(4.62, Units.feetToMeters(26.4 / 2));
+    public static final Translation2d RED_HUB =
+        new Translation2d(MAX_FIELD_X.in(Meters) - 4.62, Units.feetToMeters(26.4 / 2));
   }
 
   public static class VisionC {
@@ -155,7 +161,7 @@ public final class Constants {
 
     public static final AngularVelocity HUB_SPEED_TOLERANCE = RotationsPerSecond.of(0.5);
     public static final AngularVelocity PASS_SPEED_TOLERANCE = RotationsPerSecond.of(1);
-    public static final AngularVelocity RAMP_SPEED_TOLERANCE = RotationsPerSecond.of(2);
+    public static final AngularVelocity RAMP_SPEED_TOLERANCE = RotationsPerSecond.of(5);
 
     public static double phaseDelay;
 
@@ -191,16 +197,9 @@ public final class Constants {
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.71, 6.71);
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(53.2, 348.2);
 
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(6.7, 6.7);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(6.71, 6.71);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(6.72, 6.72);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(6.73, 6.73);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(6.71, 6.71);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(6.71, 6.71);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(6.71, 6.71);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(6.71, 6.71);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(6.71, 6.71);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(53.2, 348.2);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(2.0, 50.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(5.0, 60.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(10.0, 70.0);
 
       TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
       TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
@@ -235,16 +234,9 @@ public final class Constants {
       SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
       SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
 
-      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP_PASSING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_PASSING.put(2.0, 3.0);
+      SHOOTER_HOOD_MAP_PASSING.put(5.0, 10.0);
+      SHOOTER_HOOD_MAP_PASSING.put(10.0, 20.0);
     }
 
     public static final ServoMotorSubsystemWithFollowersConfig LAUNCHER_CONFIG =
@@ -272,8 +264,6 @@ public final class Constants {
     public static final TalonFXConfiguration TALON_FOLLOWER3_CONFIG = new TalonFXConfiguration();
 
     static {
-      LAUNCHER_CONFIG.unitToRotorRatio = 0;
-
       LAUNCHER_CONFIG.name = "Launcher";
       LAUNCHER_CONFIG.talonCANID = new CANDeviceId(13);
 
@@ -283,22 +273,22 @@ public final class Constants {
 
       LAUNCHER_TALON_CONFIG.MotorOutput.ControlTimesyncFreqHz = 0;
       LAUNCHER_TALON_CONFIG.Slot0.kP = 3.3 * Math.pow(10, 38);
-      LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+      LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakForwardTorqueCurrent = 20;
       LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakReverseTorqueCurrent = 0;
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakForwardDutyCycle = 1;
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakReverseDutyCycle = 0;
 
       LAUNCHER_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
-      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 70;
+      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
       FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
-      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 70;
+      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 60;
       FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
-      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 70;
+      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 60;
       FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
-      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 70;
+      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 60;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
@@ -335,6 +325,8 @@ public final class Constants {
   }
 
   public static class TurretC {
+
+    public static final Angle TURRET_TOLERANCE = Degrees.of(5);
 
     public static final Angle TURRERT_MAX = Rotations.of(0.41);
     public static final Angle TURRERT_MIN = Rotations.of(-0.96);
@@ -519,6 +511,8 @@ public final class Constants {
   }
 
   public static class HoodC {
+    public static final Angle HOOD_TOLERANCE = Degrees.of(5);
+
     public static final Angle HOOD_STOW = Radians.of(0);
     public static final Angle HOOD_MAX = Radians.of(0.5);
 

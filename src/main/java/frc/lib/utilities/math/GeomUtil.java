@@ -23,6 +23,16 @@ public class GeomUtil {
   /**
    * Creates a pure translating transform
    *
+   * @param translation The translation to create the transform with
+   * @return The resulting transform
+   */
+  public static Translation2d toTranslation2d(Pose2d pose) {
+    return new Translation2d(pose.getX(), pose.getY());
+  }
+
+  /**
+   * Creates a pure translating transform
+   *
    * @param x The x coordinate of the translation
    * @param y The y coordinate of the translation
    * @return The resulting transform

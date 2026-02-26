@@ -21,7 +21,10 @@ import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.MotorInputsAutoLogged;
 import frc.lib.utilities.field.Clock;
 import frc.lib.utilities.math.GeomUtil;
+import frc.lib.utilities.math.ToleranceUtil;
 import frc.robot.Constants;
+import frc.robot.RobotState;
+import frc.robot.RobotState.TurretState;
 import frc.robot.subsystems.drive.Drive;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -134,10 +137,21 @@ public class Turret extends SubsystemBase {
     trueTurretRotation = getAngle();
 
     Logger.recordOutput("TurretState/Position", trueTurretRotation.in(Rotations));
+
+    boolean onTarget =
+        ToleranceUtil.epsilonEquals(
+            getAngle().in(Rotations),
+            targetAngle.in(Rotations),
+            Constants.TurretC.TURRET_TOLERANCE.in(Rotations));
+
+    if (onTarget) {
+      RobotState.setTurretState(TurretState.LOCKED);
+    } else {
+      RobotState.setTurretState(TurretState.UNLOCKED);
+    }
   }
 
   public void setTargetAngle(Angle angle) {
-    targetAngle = angle;
 
     Angle after = angle;
 
@@ -169,6 +183,8 @@ public class Turret extends SubsystemBase {
     }
 
     Logger.recordOutput("TurretState/Target", closestAfter.in(Rotations));
+
+    targetAngle = closestAfter;
 
     turd.setMagicalPositionSetpoint(
         closestAfter, RotationsPerSecond.of(0.67), RotationsPerSecondPerSecond.of(10), 0, 0);

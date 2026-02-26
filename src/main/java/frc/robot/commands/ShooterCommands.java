@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.lib.utilities.math.ToleranceUtil;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 
@@ -17,10 +16,9 @@ public class ShooterCommands {
         Commands.deadline(
             Commands.waitUntil(
                 () ->
-                    ToleranceUtil.epsilonEquals(
-                        Shooter.getInstance().getSpeed().in(RotationsPerSecond),
-                        speed.in(RotationsPerSecond),
-                        Constants.LauncherC.RAMP_SPEED_TOLERANCE.in(RotationsPerSecond))),
+                    speed.in(RotationsPerSecond)
+                            - Shooter.getInstance().getSpeed().in(RotationsPerSecond)
+                        < Constants.LauncherC.RAMP_SPEED_TOLERANCE.in(RotationsPerSecond)),
             rampSpeed()),
         maintainSpeed(speed));
   }

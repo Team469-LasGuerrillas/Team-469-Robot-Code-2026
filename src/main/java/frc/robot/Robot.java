@@ -77,7 +77,7 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
     // Optionally switch the thread to high priority to improve loop
     // timing (see the template project documentation for details)
-    // Threads.setCurrentThreadPriority(true, 99);
+    // Threads.setCurrentThreadPriority(true, 1);
 
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled commands, running already-scheduled commands, removing
@@ -91,6 +91,7 @@ public class Robot extends LoggedRobot {
     robotContainer.limelightTurd.setPositionTurret(
         robotContainer.exampe.getAngle(), Constants.TurretC.TURD_CENTER);
     FiducialVision.applyUpdates();
+    Logger.recordOutput("WeLocked/Pass", RobotState.weLockedPass());
 
     // Return to non-RT thread priority (do not modify the first argument)
     // Threads.setCurrentThreadPriority(false, 10);

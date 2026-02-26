@@ -7,6 +7,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.subsystems.configs.ServoMotorSubsystemWithFollowersConfig;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.MotorInputsAutoLogged;
+import frc.lib.utilities.math.ToleranceUtil;
+import frc.robot.Constants;
+import frc.robot.RobotState;
+import frc.robot.RobotState.FlywheelState;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -59,6 +63,26 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     leadFlywheel.readInputs(leadInputs);
     Logger.processInputs(getName() + "flywheelLead", leadInputs);
+
+    boolean onTargetHub =
+        ToleranceUtil.epsilonEquals(
+            getSpeed().in(RotationsPerSecond),
+            requestedAngularVelocity.in(RotationsPerSecond),
+            Constants.LauncherC.HUB_SPEED_TOLERANCE.in(RotationsPerSecond));
+
+    boolean onTargetPass =
+        ToleranceUtil.epsilonEquals(
+            getSpeed().in(RotationsPerSecond),
+            requestedAngularVelocity.in(RotationsPerSecond),
+            Constants.LauncherC.PASS_SPEED_TOLERANCE.in(RotationsPerSecond));
+
+    if (onTargetHub) {
+      RobotState.setFlywheelState(FlywheelState.HUBLOCKED);
+    } else if (onTargetPass) {
+      RobotState.setFlywheelState(FlywheelState.PASSLOCKED);
+    } else {
+      RobotState.setFlywheelState(FlywheelState.UNLOCKED);
+    }
   }
 
   public AngularVelocity getSpeed() {

@@ -4,12 +4,25 @@ import org.littletonrobotics.junction.AutoLogOutput;
 
 public class RobotState {
 
+  public static boolean weLockedPass() {
+    return getTurretState() == TurretState.LOCKED
+        && getHoodState() == HoodState.LOCKED
+        && (getFlywheelState() == FlywheelState.PASSLOCKED
+            || getFlywheelState() == FlywheelState.HUBLOCKED);
+  }
+
+  public static boolean weLockedHub() {
+    return getTurretState() == TurretState.LOCKED
+        && getHoodState() == HoodState.LOCKED
+        && getFlywheelState() == FlywheelState.HUBLOCKED;
+  }
+
   public enum TurretState {
     LOCKED,
     UNLOCKED
   }
 
-  @AutoLogOutput(key = "TurretState")
+  @AutoLogOutput(key = "State/TurretState")
   private static TurretState turretState = TurretState.UNLOCKED;
 
   public static void setTurretState(TurretState state) {
@@ -25,7 +38,7 @@ public class RobotState {
     UNLOCKED
   }
 
-  @AutoLogOutput(key = "HoodState")
+  @AutoLogOutput(key = "State/HoodState")
   private static HoodState hoodState = HoodState.UNLOCKED;
 
   public static void setHoodState(HoodState state) {
@@ -37,11 +50,12 @@ public class RobotState {
   }
 
   public enum FlywheelState {
-    LOCKED,
+    HUBLOCKED,
+    PASSLOCKED,
     UNLOCKED
   }
 
-  @AutoLogOutput(key = "FlywheelState")
+  @AutoLogOutput(key = "State/FlywheelState")
   private static FlywheelState flywheelState = FlywheelState.UNLOCKED;
 
   public static void setFlywheelState(FlywheelState state) {
@@ -59,7 +73,7 @@ public class RobotState {
     OFFTARGET
   }
 
-  @AutoLogOutput(key = "ClimbElevatorState")
+  @AutoLogOutput(key = "State/ClimbElevatorState")
   private static ClimbElevatorState climbelevatorState = ClimbElevatorState.OFFTARGET;
 
   public static void setClimbElevatorState(ClimbElevatorState state) {
@@ -75,7 +89,7 @@ public class RobotState {
     DEPLOYED
   }
 
-  @AutoLogOutput(key = "ClimbHookState")
+  @AutoLogOutput(key = "State/ClimbHookState")
   private static ClimbHookState climbHookState = ClimbHookState.STOWED;
 
   public static void setClimbHookDeployed() {
@@ -92,7 +106,7 @@ public class RobotState {
     OFFTARGET
   }
 
-  @AutoLogOutput(key = "IntakeState")
+  @AutoLogOutput(key = "State/IntakeState")
   private static IntakeState intakeState = IntakeState.STOWED;
 
   public static void setIntakeState(IntakeState state) {
@@ -110,7 +124,7 @@ public class RobotState {
     TOPOINT_ONTARGET
   }
 
-  @AutoLogOutput(key = "DriveState")
+  @AutoLogOutput(key = "State/DriveState")
   private static DriveState driveState = DriveState.TELEOP;
 
   public static void setDrivestate(DriveState state) {

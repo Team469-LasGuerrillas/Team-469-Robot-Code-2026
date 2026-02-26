@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
@@ -8,6 +9,10 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.MotorInputsAutoLogged;
+import frc.lib.utilities.math.ToleranceUtil;
+import frc.robot.Constants;
+import frc.robot.RobotState;
+import frc.robot.RobotState.HoodState;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -48,6 +53,18 @@ public class Hood extends SubsystemBase {
         RotationsPerSecondPerSecond.of(9999),
         0,
         calcFF(requestedAngle));
+
+    boolean onTarget =
+        ToleranceUtil.epsilonEquals(
+            getCurrentAngle().in(Rotations),
+            getTargetAngle().in(Rotations),
+            Constants.HoodC.HOOD_TOLERANCE.in(Rotations));
+
+    if (onTarget) {
+      RobotState.setHoodState(HoodState.LOCKED);
+    } else {
+      RobotState.setHoodState(HoodState.UNLOCKED);
+    }
   }
 
   @AutoLogOutput(key = "Hood/TargetAngle")
@@ -57,6 +74,10 @@ public class Hood extends SubsystemBase {
 
   public void setTargetAngle(Angle newAngleRequest) {
     requestedAngle = newAngleRequest;
+  }
+
+  public Angle getCurrentAngle() {
+    return pivotInputs.motorPosition;
   }
 
   private double calcFF(Angle pivotAngle) {
