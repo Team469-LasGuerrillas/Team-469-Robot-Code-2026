@@ -58,24 +58,14 @@ public class CommandFactory {
 
   private static Command feedWhenReadyPass() {
     return Commands.repeatingSequence(
-      Commands.deadline(
-        Commands.waitUntil(() -> RobotState.weLockedPass()),
-        readyToFeed()),
-      Commands.deadline(
-        Commands.waitUntil(() -> !RobotState.weLockedPass()),
-        feed())
-    );
+        Commands.deadline(Commands.waitUntil(() -> RobotState.weLockedPass()), readyToFeed()),
+        Commands.deadline(Commands.waitUntil(() -> !RobotState.weLockedPass()), feed()));
   }
 
   private static Command feedWhenReadyHub() {
     return Commands.repeatingSequence(
-      Commands.deadline(
-        Commands.waitUntil(() -> RobotState.weLockedHub()),
-        readyToFeed()),
-      Commands.deadline(
-        Commands.waitUntil(() -> !RobotState.weLockedHub()),
-        feed())
-    );
+        Commands.deadline(Commands.waitUntil(() -> RobotState.weLockedHub()), readyToFeed()),
+        Commands.deadline(Commands.waitUntil(() -> !RobotState.weLockedHub()), feed()));
   }
 
   private static Command feed() {
