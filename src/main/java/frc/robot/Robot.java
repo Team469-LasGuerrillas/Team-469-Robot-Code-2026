@@ -92,6 +92,7 @@ public class Robot extends LoggedRobot {
         robotContainer.exampe.getAngle(), Constants.TurretC.TURD_CENTER);
     FiducialVision.applyUpdates();
     Logger.recordOutput("WeLocked/Pass", RobotState.weLockedPass());
+    Logger.recordOutput("WeLocked/Hub", RobotState.weLockedHub());
 
     // Return to non-RT thread priority (do not modify the first argument)
     // Threads.setCurrentThreadPriority(false, 10);

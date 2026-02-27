@@ -43,14 +43,16 @@ public class MotorIOTalonFX implements MotorIO {
   protected final DutyCycleOut dutyCycleControl = new DutyCycleOut(0.0);
   private final PositionVoltage positionVoltageControl = new PositionVoltage(0.0);
   private final PositionTorqueCurrentFOC positionTorqueCurrentFOC = new PositionTorqueCurrentFOC(0);
-  private final DynamicMotionMagicVoltage magicalPositionVoltageControl = new DynamicMotionMagicVoltage(0, 0, 0);
-  private final DynamicMotionMagicTorqueCurrentFOC magicalPositionTorqueCurrentFOC = new DynamicMotionMagicTorqueCurrentFOC(
-      0, 0, 0);
+  private final DynamicMotionMagicVoltage magicalPositionVoltageControl =
+      new DynamicMotionMagicVoltage(0, 0, 0);
+  private final DynamicMotionMagicTorqueCurrentFOC magicalPositionTorqueCurrentFOC =
+      new DynamicMotionMagicTorqueCurrentFOC(0, 0, 0);
   private final VelocityVoltage velocityVoltageControl = new VelocityVoltage(0.0);
   private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
-  private final MotionMagicVelocityVoltage magicalVelocityVoltgaeControl = new MotionMagicVelocityVoltage(0);
-  private final MotionMagicVelocityTorqueCurrentFOC magicalVelocityTorqueCurrentFOC = new MotionMagicVelocityTorqueCurrentFOC(
-      0);
+  private final MotionMagicVelocityVoltage magicalVelocityVoltgaeControl =
+      new MotionMagicVelocityVoltage(0);
+  private final MotionMagicVelocityTorqueCurrentFOC magicalVelocityTorqueCurrentFOC =
+      new MotionMagicVelocityTorqueCurrentFOC(0);
   private final Follower followerControl = new Follower(0, MotorAlignmentValue.Aligned);
 
   private final StatusSignal<Angle> positionSignal;
@@ -87,19 +89,26 @@ public class MotorIOTalonFX implements MotorIO {
 
     torqueCurrentSignal = talon.getTorqueCurrent();
 
-    signals = new BaseStatusSignal[] {
-        positionSignal, velocitySignal, voltageSignal,
-        currentStatorSignal, currentSupplySignal, rawRotorPositionSignal
-    };
+    signals =
+        new BaseStatusSignal[] {
+          positionSignal, velocitySignal, voltageSignal,
+          currentStatorSignal, currentSupplySignal, rawRotorPositionSignal
+        };
 
     CANStatusLogger.getInstance().registerTalonFX(config.name, talon, config.talonCANID);
 
     CTREUtil.tryUntilOK(
-        () -> BaseStatusSignal.setUpdateFrequencyForAll(100, signals), talon.getDeviceID());
+        () -> BaseStatusSignal.setUpdateFrequencyForAll(50, signals), talon.getDeviceID());
 
-    CTREUtil.tryUntilOK(
-        () -> BaseStatusSignal.setUpdateFrequencyForAll(1000, torqueCurrentSignal), talon.getDeviceID());
-      
+    if (talon.getDeviceID() == 13) {
+      CTREUtil.tryUntilOK(
+          () -> BaseStatusSignal.setUpdateFrequencyForAll(1000, torqueCurrentSignal),
+          talon.getDeviceID());
+    } else {
+      CTREUtil.tryUntilOK(
+          () -> BaseStatusSignal.setUpdateFrequencyForAll(50, torqueCurrentSignal),
+          talon.getDeviceID());
+    }
     CTREUtil.tryUntilOK(() -> talon.optimizeBusUtilization(), talon.getDeviceID());
   }
 
@@ -130,7 +139,8 @@ public class MotorIOTalonFX implements MotorIO {
 
     inputs.motorPosition = Rotations.of(rotorToUnits(positionSignal.getValueAsDouble()));
     inputs.motorVelocity = RotationsPerSecond.of(rotorToUnits(velocitySignal.getValueAsDouble()));
-    inputs.motorAngularAcceleration = RotationsPerSecondPerSecond.of(rotorToUnits(accelSignal.getValueAsDouble()));
+    inputs.motorAngularAcceleration =
+        RotationsPerSecondPerSecond.of(rotorToUnits(accelSignal.getValueAsDouble()));
     inputs.targetPosition = Rotations.of(rotorToUnits(targetPositionSignal.getValueAsDouble()));
 
     inputs.appliedVolts = Volts.of(voltageSignal.getValueAsDouble());
@@ -147,16 +157,10 @@ public class MotorIOTalonFX implements MotorIO {
   @Override
   public void setPositionSetpoint(Angle position, double ff) {
     if (config.outputMode == ClosedLoopOutputType.TorqueCurrentFOC) {
-      talon.setControl(
-          positionTorqueCurrentFOC
-              .withPosition(position)
-              .withFeedForward(ff));
+      talon.setControl(positionTorqueCurrentFOC.withPosition(position).withFeedForward(ff));
     } else {
       talon.setControl(
-          positionVoltageControl
-              .withPosition(position)
-              .withFeedForward(ff)
-              .withEnableFOC(true));
+          positionVoltageControl.withPosition(position).withFeedForward(ff).withEnableFOC(true));
     }
   }
 
@@ -189,8 +193,7 @@ public class MotorIOTalonFX implements MotorIO {
   public void setVelocitySetpiont(AngularVelocity velocity) {
     if (config.outputMode == ClosedLoopOutputType.TorqueCurrentFOC) {
       talon.setControl(
-          velocityTorqueCurrentFOC
-              .withVelocity(unitsToRotor(velocity.in(RotationsPerSecond))));
+          velocityTorqueCurrentFOC.withVelocity(unitsToRotor(velocity.in(RotationsPerSecond))));
     } else {
       talon.setControl(
           velocityVoltageControl
@@ -244,10 +247,11 @@ public class MotorIOTalonFX implements MotorIO {
     }
 
     CTREUtil.tryUntilOK(
-        () -> talon.setControl(
-            followerControl
-                .withLeaderID(masterId.getDeviceNumber())
-                .withMotorAlignment(alignmentValue)),
+        () ->
+            talon.setControl(
+                followerControl
+                    .withLeaderID(masterId.getDeviceNumber())
+                    .withMotorAlignment(alignmentValue)),
         this.config.talonCANID.getDeviceNumber());
   }
 }

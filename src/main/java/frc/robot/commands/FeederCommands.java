@@ -30,8 +30,6 @@ public class FeederCommands {
   }
 
   public static Command retract() {
-    return Commands.sequence(
-        Commands.deadline(Commands.waitSeconds(0.2), runReverse()),
-        Commands.deadline(Commands.waitSeconds(0.08), idleCommand()));
+    return Commands.deadline(Commands.waitSeconds(0.2), runReverse());
   }
 }

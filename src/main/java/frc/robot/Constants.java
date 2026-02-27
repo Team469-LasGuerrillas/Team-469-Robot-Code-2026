@@ -272,9 +272,12 @@ public final class Constants {
       LAUNCHER_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.ControlTimesyncFreqHz = 0;
-      LAUNCHER_TALON_CONFIG.Slot0.kP = 3.3 * Math.pow(10, 38);
-      LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakForwardTorqueCurrent = 20;
-      LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakReverseTorqueCurrent = 0;
+      LAUNCHER_TALON_CONFIG.Slot0.kP = 2;
+      LAUNCHER_TALON_CONFIG.Slot0.kI = 0;
+      LAUNCHER_TALON_CONFIG.Slot0.kD = 0;
+      LAUNCHER_TALON_CONFIG.Slot0.kV = 0.25;
+      // LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakForwardTorqueCurrent = 80;
+      // LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakReverseTorqueCurrent = 0;
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakForwardDutyCycle = 1;
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakReverseDutyCycle = 0;
 

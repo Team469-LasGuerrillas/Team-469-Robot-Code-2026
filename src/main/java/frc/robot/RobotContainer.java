@@ -242,7 +242,7 @@ public class RobotContainer {
 
     controller.leftBumper().toggleOnTrue(IntakeCommands.deployAndRun());
 
-    controller.rightBumper().whileTrue(CommandFactory.scoring());
+    controller.rightBumper().whileTrue(CommandFactory.passing());
   }
 
   /**

@@ -100,7 +100,7 @@ public class Turret extends SubsystemBase {
     turretSpeedEstimator.addVisionMeasurement(
         GeomUtil.toPose2d(getTurretPoseFieldSpace().minus(lastTurretPoseFieldSpace).div(0.02)),
         Clock.time(),
-        Constants.Field.FIELD_SPEEDS_STDS);
+        Constants.Field.TURRET_SPEEDS_STDS);
 
     lastTurretPoseFieldSpace = getTurretPoseFieldSpace();
 
@@ -108,35 +108,6 @@ public class Turret extends SubsystemBase {
       turd.setCurrentPosition(getAngle());
       offsetHasBeenSet = true;
     }
-
-    /*
-     * /
-     * // Get Cancoder Value [0.5-0.5) Rotations
-     * double cancoderRotationValue = ccAInputs.absolutePosition.in(Rotations);
-     *
-     * // Check if we wrapped
-     * if (cancoderRotationValue - previousCancoderPosition.in(Rotations) >= 0.5) {
-     * // Yes, we wrapped pos->neg (+1 rotation)
-     * numRotations--;
-     * } else if (cancoderRotationValue - previousCancoderPosition.in(Rotations) <=
-     * -0.5) {
-     * // Yes, we wrapped neg->pos (-1 rotation)
-     * numRotations++;
-     * }
-     *
-     * // System.out.println(numRotations);
-     *
-     * // Calculate actual turret rotation
-     * trueTurretRotation =
-     * ccAInputs.absolutePosition.plus(Rotations.of(numRotations));
-     *
-     * // Save previous
-     * previousCancoderPosition = Rotations.of(cancoderRotationValue);
-     */
-
-    trueTurretRotation = getAngle();
-
-    Logger.recordOutput("TurretState/Position", trueTurretRotation.in(Rotations));
 
     boolean onTarget =
         ToleranceUtil.epsilonEquals(

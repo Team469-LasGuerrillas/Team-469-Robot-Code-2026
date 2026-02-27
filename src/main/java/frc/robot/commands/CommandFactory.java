@@ -21,8 +21,7 @@ public class CommandFactory {
             Commands.startRun(
                 () -> ShootTarget.updateGoal(Constants.Field.BLUE_HUB, true),
                 () -> ShootTarget.updateGoal(Constants.Field.BLUE_HUB, true)),
-            () -> Station.isRed()
-        ),
+            () -> Station.isRed()),
         TurretCommands.targetPoint(ShootTarget.getTranslationToTarget()),
         HoodCommands.setHoodSetpoint(
             Degrees.of(
@@ -35,7 +34,7 @@ public class CommandFactory {
         feedWhenReadyPass());
   }
 
-    public static Command scoring() {
+  public static Command scoring() {
     return Commands.parallel(
         Commands.either(
             Commands.startRun(
@@ -44,8 +43,7 @@ public class CommandFactory {
             Commands.startRun(
                 () -> ShootTarget.updateGoal(Constants.Field.BLUE_HUB, false),
                 () -> ShootTarget.updateGoal(Constants.Field.BLUE_HUB, false)),
-            () -> Station.isRed()
-        ),
+            () -> Station.isRed()),
         TurretCommands.targetPoint(ShootTarget.getTranslationToTarget()),
         HoodCommands.setHoodSetpoint(
             Degrees.of(
@@ -59,15 +57,32 @@ public class CommandFactory {
   }
 
   private static Command feedWhenReadyPass() {
-    return Commands.either(feed(), readyToFeed(), RobotState::weLockedPass);
+    return Commands.repeatingSequence(
+      Commands.deadline(
+        Commands.waitUntil(() -> RobotState.weLockedPass()),
+        readyToFeed()),
+      Commands.deadline(
+        Commands.waitUntil(() -> !RobotState.weLockedPass()),
+        feed())
+    );
   }
 
   private static Command feedWhenReadyHub() {
-    return Commands.either(feed(), readyToFeed(), RobotState::weLockedHub);
+    return Commands.repeatingSequence(
+      Commands.deadline(
+        Commands.waitUntil(() -> RobotState.weLockedHub()),
+        readyToFeed()),
+      Commands.deadline(
+        Commands.waitUntil(() -> !RobotState.weLockedHub()),
+        feed())
+    );
   }
 
   private static Command feed() {
-    return Commands.parallel(SpindexerCommands.runPositive(), FeederCommands.runPositive());
+    return Commands.parallel(
+        FeederCommands.runPositive(),
+        SpindexerCommands.runPositive(),
+        Commands.run(() -> System.out.println("ROBO")));
   }
 
   private static Command readyToFeed() {

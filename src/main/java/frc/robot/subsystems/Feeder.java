@@ -28,6 +28,7 @@ public class Feeder extends SubsystemBase {
 
   public void setOpenLoopDutyCycle(double dutyCycle) {
     requestedDutycycle = dutyCycle;
+    System.out.println(dutyCycle);
     feeder.setOpenLoopDutyCycle(requestedDutycycle);
   }
 
