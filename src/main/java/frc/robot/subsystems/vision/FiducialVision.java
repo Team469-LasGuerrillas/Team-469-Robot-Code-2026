@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.subsystems.interfaces.VisionIO;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
@@ -70,6 +71,12 @@ public class FiducialVision extends SubsystemBase {
         Drive.getInstance().getRotation(),
         RadiansPerSecond.of(Drive.getInstance().getFieldSpeeds().omegaRadiansPerSecond));
     Logger.processInputs(getCameraName(), visionInputs);
+
+    if (DriverStation.isDisabled()) {
+      io.setThrottle(100);
+    } else {
+      io.setThrottle(0);
+    }
 
     if (!hasOriginalPoseBeenSet) {
       originalCameraPose = visionInputs.cameraPose;
