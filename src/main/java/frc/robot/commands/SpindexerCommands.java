@@ -10,7 +10,7 @@ public class SpindexerCommands {
 
   public static Command agitate() {
     return Commands.repeatingSequence(
-        Commands.deadline(Commands.waitSeconds(0.5), idleCommand()),
+        Commands.deadline(Commands.waitSeconds(0.05), idleCommand()),
         Commands.deadline(Commands.waitSeconds(0.5), idleReverseCommand()));
   }
 

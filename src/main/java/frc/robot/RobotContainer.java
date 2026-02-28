@@ -43,9 +43,11 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.FiducialVision;
+import frc.robot.subsystems.vision.util.FiducialFilters.FiducialModifications;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -87,7 +89,11 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        limelightDev = new FiducialVision(Constants.VisionC.DEV_LIMELIGHT, null, null);
+        limelightDev =
+            new FiducialVision(
+                Constants.VisionC.DEV_LIMELIGHT,
+                new ArrayList<Function<PoseObservation, Boolean>>(),
+                new ArrayList<UnaryOperator<FiducialModifications>>());
 
         limelightTurd =
             new FiducialVision(
@@ -242,7 +248,7 @@ public class RobotContainer {
 
     controller.leftBumper().toggleOnTrue(IntakeCommands.deployAndRun());
 
-    controller.rightBumper().whileTrue(CommandFactory.passing());
+    controller.rightBumper().whileTrue(CommandFactory.scoring());
   }
 
   /**

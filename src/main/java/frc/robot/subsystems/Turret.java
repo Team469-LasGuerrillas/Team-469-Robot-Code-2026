@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -98,7 +99,13 @@ public class Turret extends SubsystemBase {
     turretSpeedEstimator.updateWithTime(
         Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
     turretSpeedEstimator.addVisionMeasurement(
-        GeomUtil.toPose2d(getTurretPoseFieldSpace().minus(lastTurretPoseFieldSpace).div(0.02)),
+        GeomUtil.withRotation(
+            GeomUtil.toPose2d(
+                GeomUtil.toPose2d(getTurretTranslationFieldSpace())
+                    .minus(lastTurretPoseFieldSpace)
+                    .div(0.02)),
+            Rotation2d.fromRadians(
+                Drive.getInstance().getFieldSpeedsFiltered().omegaRadiansPerSecond)),
         Clock.time(),
         Constants.Field.TURRET_SPEEDS_STDS);
 
@@ -158,7 +165,11 @@ public class Turret extends SubsystemBase {
     targetAngle = closestAfter;
 
     turd.setMagicalPositionSetpoint(
-        closestAfter, RotationsPerSecond.of(0.67), RotationsPerSecondPerSecond.of(10), 0, 0);
+        closestAfter,
+        RotationsPerSecond.of(90),
+        RotationsPerSecondPerSecond.of(9999),
+        0,
+        calculateFF());
   }
 
   /**
@@ -189,6 +200,7 @@ public class Turret extends SubsystemBase {
    *
    * @return The pose of the turret.
    */
+  @AutoLogOutput(key = "Turret/FieldPose")
   public Pose2d getTurretPoseFieldSpace() {
     Pose2d currentRobotPose = Drive.getInstance().getPose();
     Transform2d turretTransform = GeomUtil.toTransform2d(Constants.TurretC.TURD_CENTER.toPose2d());
@@ -197,11 +209,22 @@ public class Turret extends SubsystemBase {
     return turretFieldPose;
   }
 
+  public Translation2d getTurretTranslationFieldSpace() {
+    Pose2d currentRobotPose = Drive.getInstance().getPose();
+    Transform2d turretTransform =
+        GeomUtil.toTransform2d(
+            GeomUtil.withRotation(Constants.TurretC.TURD_CENTER.toPose2d(), new Rotation2d()));
+    Pose2d turretFieldPose = currentRobotPose.plus(turretTransform);
+
+    return turretFieldPose.getTranslation();
+  }
+
   /**
    * Returns the turret's speeds in field space by putting deltas through a kalman filter
    *
    * @return The pose of the turret.
    */
+  @AutoLogOutput(key = "Turret/TurretSpeedsFieldSpace")
   public ChassisSpeeds getTurretSpeedsFieldSpace() {
     return GeomUtil.toChassisSpeeds(turretSpeedEstimator.getEstimatedPosition());
   }
@@ -243,10 +266,16 @@ public class Turret extends SubsystemBase {
     return ccAInputs.velocity;
   }
 
-  @AutoLogOutput(key = "TurretTarget")
+  @AutoLogOutput(key = "Turret/TurretTarget")
   public Pose2d getTurretTarget() {
     // TODO: Output the theoretical "target" based on current turret angle and
     // flywheel velocity.
     return new Pose2d();
+  }
+
+  @AutoLogOutput(key = "Turret/FF")
+  private double calculateFF() {
+    return Units.radiansToRotations(getTurretSpeedsFieldSpace().omegaRadiansPerSecond)
+        * -Constants.TurretC.ROTATION_SPEED_FF;
   }
 }

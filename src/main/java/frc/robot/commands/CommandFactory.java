@@ -22,15 +22,20 @@ public class CommandFactory {
                 () -> ShootTarget.updateGoal(Constants.Field.BLUE_HUB, true),
                 () -> ShootTarget.updateGoal(Constants.Field.BLUE_HUB, true)),
             () -> Station.isRed()),
-        TurretCommands.targetPoint(ShootTarget.getTranslationToTarget()),
-        HoodCommands.setHoodSetpoint(
-            Degrees.of(
-                Constants.LauncherC.SHOOTER_HOOD_MAP_PASSING.get(
-                    ShootTarget.getDistanceToTarget().in(Meters)))),
-        ShooterCommands.targetLaunchSpeed(
-            RotationsPerSecond.of(
-                Constants.LauncherC.FLYWHEEL_SHOT_SPEEDMAP_PASSING.get(
-                    ShootTarget.getDistanceToTarget().in(Meters)))),
+        Commands.deferredProxy(
+            () -> TurretCommands.targetPoint(ShootTarget.getTranslationToTarget())),
+        Commands.deferredProxy(
+            () ->
+                HoodCommands.setHoodSetpoint(
+                    Degrees.of(
+                        Constants.LauncherC.SHOOTER_HOOD_MAP_PASSING.get(
+                            ShootTarget.getDistanceToTarget().in(Meters))))),
+        Commands.deferredProxy(
+            () ->
+                ShooterCommands.targetLaunchSpeed(
+                    RotationsPerSecond.of(
+                        Constants.LauncherC.FLYWHEEL_SHOT_SPEEDMAP_PASSING.get(
+                            ShootTarget.getDistanceToTarget().in(Meters))))),
         feedWhenReadyPass());
   }
 
@@ -44,15 +49,20 @@ public class CommandFactory {
                 () -> ShootTarget.updateGoal(Constants.Field.BLUE_HUB, false),
                 () -> ShootTarget.updateGoal(Constants.Field.BLUE_HUB, false)),
             () -> Station.isRed()),
-        TurretCommands.targetPoint(ShootTarget.getTranslationToTarget()),
-        HoodCommands.setHoodSetpoint(
-            Degrees.of(
-                Constants.LauncherC.SHOOTER_HOOD_MAP_SHOOTING.get(
-                    ShootTarget.getDistanceToTarget().in(Meters)))),
-        ShooterCommands.targetLaunchSpeed(
-            RotationsPerSecond.of(
-                Constants.LauncherC.FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.get(
-                    ShootTarget.getDistanceToTarget().in(Meters)))),
+        Commands.deferredProxy(
+            () -> TurretCommands.targetPoint(ShootTarget.getTranslationToTarget())),
+        Commands.deferredProxy(
+            () ->
+                HoodCommands.setHoodSetpoint(
+                    Degrees.of(
+                        Constants.LauncherC.SHOOTER_HOOD_MAP_SHOOTING.get(
+                            ShootTarget.getDistanceToTarget().in(Meters))))),
+        Commands.deferredProxy(
+            () ->
+                ShooterCommands.targetLaunchSpeed(
+                    RotationsPerSecond.of(
+                        Constants.LauncherC.FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.get(
+                            ShootTarget.getDistanceToTarget().in(Meters))))),
         feedWhenReadyHub());
   }
 

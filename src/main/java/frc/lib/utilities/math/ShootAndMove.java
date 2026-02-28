@@ -44,7 +44,7 @@ public class ShootAndMove {
     double turretTangentY = turretTangentVelocity * Math.sin(turretTangentAngle.in(Radians));
 
     while (Math.abs((lastLoopTimeOfFlight - thisLoopTimeOfFlight) / thisLoopTimeOfFlight) > 0.01
-        || loopCount < 1) {
+        || loopCount < 2) {
       lastLoopTimeOfFlight = thisLoopTimeOfFlight;
 
       Translation2d offset =
@@ -56,9 +56,11 @@ public class ShootAndMove {
       Distance updatedDist = Meters.of(returnTarget.getDistance(currentPose.getTranslation()));
 
       if (isPassing) {
-        thisLoopTimeOfFlight = Constants.LauncherC.TIME_OF_FLIGHT_MAP_PASSING.get(dist.in(Meters));
+        thisLoopTimeOfFlight =
+            Constants.LauncherC.TIME_OF_FLIGHT_MAP_PASSING.get(updatedDist.in(Meters));
       } else {
-        thisLoopTimeOfFlight = Constants.LauncherC.TIME_OF_FLIGHT_MAP_SHOOTING.get(dist.in(Meters));
+        thisLoopTimeOfFlight =
+            Constants.LauncherC.TIME_OF_FLIGHT_MAP_SHOOTING.get(updatedDist.in(Meters));
       }
       loopCount++;
 

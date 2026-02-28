@@ -98,9 +98,9 @@ public final class Constants {
     public static final Matrix<N3, N1> TURRET_SPEEDS_STDS = VecBuilder.fill(0.1, 0.1, 0.1);
 
     public static final Translation2d BLUE_HUB =
-        new Translation2d(4.62, Units.feetToMeters(26.4 / 2));
+        new Translation2d(4.82, Units.feetToMeters(26.4 / 2));
     public static final Translation2d RED_HUB =
-        new Translation2d(MAX_FIELD_X.in(Meters) - 4.62, Units.feetToMeters(26.4 / 2));
+        new Translation2d(MAX_FIELD_X.in(Meters) - 4.82, Units.feetToMeters(26.4 / 2));
   }
 
   public static class VisionC {
@@ -136,12 +136,12 @@ public final class Constants {
 
     public static final VisionIOLimelight DEV_LIMELIGHT =
         VisionIOLimelight.getInstance(
-            "limelight-dev",
+            "limelight-right",
             new Pose3d(
-                Units.inchesToMeters(-3.127),
-                Units.inchesToMeters(-8.552080),
-                Units.inchesToMeters(6.158800 - 0.125),
-                new Rotation3d(0, Units.degreesToRadians(26), Units.degreesToRadians(15))));
+                -0.152400,
+                -0.328701,
+                0.294779 - Units.inchesToMeters(0.0125),
+                new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(-90))));
 
     public static final VisionIOLimelight TURD_LIMELIGHT =
         VisionIOLimelight.getInstance(
@@ -186,53 +186,27 @@ public final class Constants {
     static {
       phaseDelay = 67;
 
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.7, 6.7);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.71, 6.71);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.72, 6.72);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.73, 6.73);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.71, 6.71);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.71, 6.71);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.71, 6.71);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.71, 6.71);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.71, 6.71);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(53.2, 348.2);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(0.1, 40.0);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(5.0, 45.0);
 
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(2.0, 50.0);
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(5.0, 60.0);
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(10.0, 70.0);
 
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.0, 0.0001);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(3.0, 0.0002);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(9.0, 0.0003);
 
-      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
-      TIME_OF_FLIGHT_MAP_PASSING.put(12.1, 21.3);
+      TIME_OF_FLIGHT_MAP_PASSING.put(1.0, 0.0001);
+      TIME_OF_FLIGHT_MAP_PASSING.put(3.0, 0.0002);
+      TIME_OF_FLIGHT_MAP_PASSING.put(9.0, 0.0003);
 
-      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
-      SHOOTER_HOOD_MAP_SHOOTING.put(43.9, 89.2);
+      SHOOTER_HOOD_MAP_SHOOTING.put(0.2, 0.0);
+      SHOOTER_HOOD_MAP_SHOOTING.put(0.8, 2.0);
+      SHOOTER_HOOD_MAP_SHOOTING.put(1.5, 4.0);
+      SHOOTER_HOOD_MAP_SHOOTING.put(2.2, 8.0);
+      SHOOTER_HOOD_MAP_SHOOTING.put(3.75, 15.0);
+      SHOOTER_HOOD_MAP_SHOOTING.put(5.0, 25.0);
 
       SHOOTER_HOOD_MAP_PASSING.put(2.0, 3.0);
       SHOOTER_HOOD_MAP_PASSING.put(5.0, 10.0);
@@ -272,10 +246,10 @@ public final class Constants {
       LAUNCHER_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.ControlTimesyncFreqHz = 0;
-      LAUNCHER_TALON_CONFIG.Slot0.kP = 2;
+      LAUNCHER_TALON_CONFIG.Slot0.kP = 3;
       LAUNCHER_TALON_CONFIG.Slot0.kI = 0;
       LAUNCHER_TALON_CONFIG.Slot0.kD = 0;
-      LAUNCHER_TALON_CONFIG.Slot0.kV = 0.25;
+      LAUNCHER_TALON_CONFIG.Slot0.kV = 0.29;
       // LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakForwardTorqueCurrent = 80;
       // LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakReverseTorqueCurrent = 0;
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakForwardDutyCycle = 1;
@@ -331,19 +305,25 @@ public final class Constants {
 
     public static final Angle TURRET_TOLERANCE = Degrees.of(5);
 
-    public static final Angle TURRERT_MAX = Rotations.of(0.41);
-    public static final Angle TURRERT_MIN = Rotations.of(-0.96);
+    public static final Angle TURRERT_MAX = Rotations.of(0.39);
+    public static final Angle TURRERT_MIN = Rotations.of(-0.94);
 
     // Should be unnecessary if motor position is set directly with CRT
     // public static final Angle MOTOR_POSITION_OFFSET = Rotations.of(0.283691 - 0.000189);
 
     public static final Pose3d TURD_CENTER =
-        new Pose3d(-0.107950, -0.158750, 0.414338, new Rotation3d(0, 0, Units.degreesToRadians(0)));
+        new Pose3d(
+            -0.107950,
+            -0.158750,
+            0.414338,
+            new Rotation3d(0, 0, Units.rotationsToRadians(0.25 - 0.025542)));
 
     private static final ServoMotorSubsystemConfig SERVO_CONFIG = new ServoMotorSubsystemConfig();
     private static final TalonFXConfiguration TURRET_TALON_CONFIG = new TalonFXConfiguration();
     private static final CanCoderConfig TURRETA_CANCODER_CONFIG = new CanCoderConfig();
     private static final CanCoderConfig TURRETB_CANCODER_CONFIG = new CanCoderConfig();
+
+    public static final double ROTATION_SPEED_FF = 800;
 
     static {
       TURRETA_CANCODER_CONFIG.CANID = new CANDeviceId(6);
@@ -374,15 +354,15 @@ public final class Constants {
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TURRERT_MIN.in(Rotations);
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-      TURRET_TALON_CONFIG.Slot0.kP = 120;
+      TURRET_TALON_CONFIG.Slot0.kP = 4414 * 3;
       TURRET_TALON_CONFIG.Slot0.kI = 0;
-      TURRET_TALON_CONFIG.Slot0.kD = 20;
-      TURRET_TALON_CONFIG.Slot0.kS = 0;
+      TURRET_TALON_CONFIG.Slot0.kD = 987;
+      TURRET_TALON_CONFIG.Slot0.kS = 4.5;
       TURRET_TALON_CONFIG.Slot0.kV = 0;
       SERVO_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
-      TURRET_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 40;
-      TURRET_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 20;
+      TURRET_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
+      TURRET_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 70;
 
       SERVO_CONFIG.talonCANID = new CANDeviceId(20);
       // SERVO_CONFIG.canCoderConfig = TURRETA_CANCODER_CONFIG;
@@ -471,8 +451,8 @@ public final class Constants {
   public static class SpindexerC {
     public static final double FEEDING_DC = 0.33;
     public static final double REVERSE_DC = -0.67;
-    public static final double IDLE_DC = 0.1;
-    public static final double IDLE_REVERSE_DC = -0.1;
+    public static final double IDLE_DC = 0.02;
+    public static final double IDLE_REVERSE_DC = -0.01;
 
     private static final ServoMotorSubsystemWithCancoderConfig SERVO_CONFIG =
         new ServoMotorSubsystemWithCancoderConfig();

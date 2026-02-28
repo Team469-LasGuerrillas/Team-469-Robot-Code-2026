@@ -24,10 +24,12 @@ public class ShootTarget {
   }
 
   public static Translation2d getTranslationToTarget() {
-    return goal;
+    return new Translation2d(goal.getX(), goal.getY());
   }
 
   public static Distance getDistanceToTarget() {
-    return Meters.of(goal.getDistance(GeomUtil.toTranslation2d(Drive.getInstance().getPose())));
+    return Meters.of(
+        getTranslationToTarget()
+            .getDistance(GeomUtil.toTranslation2d(Drive.getInstance().getPose())));
   }
 }
