@@ -131,7 +131,7 @@ public class Turret extends SubsystemBase {
 
   public void setTargetAngle(Angle angle) {
 
-    Angle after = angle;
+    Angle after = angle.minus(Rotations.of(Constants.TurretC.LEAD_SHOT_OFFSET * Units.radiansToRotations(getTurretSpeedsFieldSpace().omegaRadiansPerSecond)));
 
     after = after.plus(Rotations.of(Math.round(trueTurretRotation.in(Rotations))));
 

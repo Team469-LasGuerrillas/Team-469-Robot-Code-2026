@@ -308,9 +308,6 @@ public final class Constants {
     public static final Angle TURRERT_MAX = Rotations.of(0.39);
     public static final Angle TURRERT_MIN = Rotations.of(-0.94);
 
-    // Should be unnecessary if motor position is set directly with CRT
-    // public static final Angle MOTOR_POSITION_OFFSET = Rotations.of(0.283691 - 0.000189);
-
     public static final Pose3d TURD_CENTER =
         new Pose3d(
             -0.107950,
@@ -324,6 +321,7 @@ public final class Constants {
     private static final CanCoderConfig TURRETB_CANCODER_CONFIG = new CanCoderConfig();
 
     public static final double ROTATION_SPEED_FF = 800;
+    public static final double LEAD_SHOT_OFFSET = 0.2; // Rotations per RPS of turret base
 
     static {
       TURRETA_CANCODER_CONFIG.CANID = new CANDeviceId(6);
@@ -354,10 +352,10 @@ public final class Constants {
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TURRERT_MIN.in(Rotations);
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-      TURRET_TALON_CONFIG.Slot0.kP = 4414 * 3;
+      TURRET_TALON_CONFIG.Slot0.kP = 4414 * 1.8;
       TURRET_TALON_CONFIG.Slot0.kI = 0;
       TURRET_TALON_CONFIG.Slot0.kD = 987;
-      TURRET_TALON_CONFIG.Slot0.kS = 4.5;
+      TURRET_TALON_CONFIG.Slot0.kS = 4;
       TURRET_TALON_CONFIG.Slot0.kV = 0;
       SERVO_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
