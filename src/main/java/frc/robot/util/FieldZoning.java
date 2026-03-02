@@ -21,13 +21,13 @@ public class FieldZoning {
     boolean blueFromRight =
         turretSpeedsFieldSpace.vxMetersPerSecond < 0
             && turretCurrentPose.getX() > Constants.Field.BLUE_TRENCH_SCORING.in(Meters)
-            && turretCurrentPose.getY() > Constants.Field.BLUE_SIDE_MIN.in(Meters)
-            && turretCurrentPose.getY() < Constants.Field.MAX_FIELD_Y.in(Meters);
+            && turretCurrentPose.getX() < Constants.Field.FIELD_MIDDLE.in(Meters)
+            && turretCurrentPose.getX() > 0;
     boolean blueFromLeft =
         turretSpeedsFieldSpace.vxMetersPerSecond > 0
             && turretCurrentPose.getX() < Constants.Field.BLUE_TRENCH_SCORING.in(Meters)
-            && turretCurrentPose.getY() > Constants.Field.BLUE_SIDE_MIN.in(Meters)
-            && turretCurrentPose.getY() < Constants.Field.MAX_FIELD_Y.in(Meters);
+            && turretCurrentPose.getX() < Constants.Field.FIELD_MIDDLE.in(Meters)
+            && turretCurrentPose.getX() > 0;
 
 
 
@@ -36,13 +36,13 @@ public class FieldZoning {
     boolean redFromRight =
         turretSpeedsFieldSpace.vxMetersPerSecond < 0
             && turretCurrentPose.getX() > Constants.Field.RED_TRENCH_SCORING.in(Meters)
-            && turretCurrentPose.getY() < Constants.Field.BLUE_SIDE_MIN.in(Meters)
-            && turretCurrentPose.getY() > 0;
+            && turretCurrentPose.getX() > Constants.Field.FIELD_MIDDLE.in(Meters)
+            && turretCurrentPose.getX() < Constants.Field.MAX_FIELD_X.in(Meters);
     boolean redFromLeft =
         turretSpeedsFieldSpace.vxMetersPerSecond > 0
             && turretCurrentPose.getX() < Constants.Field.RED_TRENCH_SCORING.in(Meters)
-            && turretCurrentPose.getY() < Constants.Field.BLUE_SIDE_MIN.in(Meters)
-            && turretCurrentPose.getY() > 0;
+            && turretCurrentPose.getX() > Constants.Field.FIELD_MIDDLE.in(Meters)
+            && turretCurrentPose.getX() < Constants.Field.MAX_FIELD_X.in(Meters);
 
 
     double updatedZoneBlue = Constants.Field.REGULAR_DECAPITATION_ZONE.in(Meters);
