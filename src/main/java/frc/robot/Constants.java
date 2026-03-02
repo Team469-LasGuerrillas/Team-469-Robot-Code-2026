@@ -96,6 +96,8 @@ public final class Constants {
 
     public static final Distance MAX_FIELD_X = Meters.of(WELDED_FIELD.getFieldLength());
     public static final Distance MAX_FIELD_Y = Meters.of(WELDED_FIELD.getFieldWidth());
+    public static final Distance BLUE_SIDE_MIN = MAX_FIELD_Y.div(2); //also red max
+
 
     public static final Matrix<N3, N1> FIELD_SPEEDS_STDS = VecBuilder.fill(0.067, 0.067, 0.08);
     public static final Matrix<N3, N1> TURRET_SPEEDS_STDS = VecBuilder.fill(0.1, 0.1, 0.1);

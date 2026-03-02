@@ -20,19 +20,30 @@ public class FieldZoning {
     // Blue
     boolean blueFromRight =
         turretSpeedsFieldSpace.vxMetersPerSecond < 0
-            && turretCurrentPose.getX() > Constants.Field.BLUE_TRENCH_SCORING.in(Meters);
+            && turretCurrentPose.getX() > Constants.Field.BLUE_TRENCH_SCORING.in(Meters)
+            && turretCurrentPose.getY() > Constants.Field.BLUE_SIDE_MIN.in(Meters)
+            && turretCurrentPose.getY() < Constants.Field.MAX_FIELD_Y.in(Meters);
     boolean blueFromLeft =
         turretSpeedsFieldSpace.vxMetersPerSecond > 0
-            && turretCurrentPose.getX() < Constants.Field.BLUE_TRENCH_SCORING.in(Meters);
+            && turretCurrentPose.getX() < Constants.Field.BLUE_TRENCH_SCORING.in(Meters)
+            && turretCurrentPose.getY() > Constants.Field.BLUE_SIDE_MIN.in(Meters)
+            && turretCurrentPose.getY() < Constants.Field.MAX_FIELD_Y.in(Meters);
+
+
 
     // Red
 
     boolean redFromRight =
         turretSpeedsFieldSpace.vxMetersPerSecond < 0
-            && turretCurrentPose.getX() > Constants.Field.RED_TRENCH_SCORING.in(Meters);
+            && turretCurrentPose.getX() > Constants.Field.RED_TRENCH_SCORING.in(Meters)
+            && turretCurrentPose.getY() < Constants.Field.BLUE_SIDE_MIN.in(Meters)
+            && turretCurrentPose.getY() > 0;
     boolean redFromLeft =
         turretSpeedsFieldSpace.vxMetersPerSecond > 0
-            && turretCurrentPose.getX() < Constants.Field.RED_TRENCH_SCORING.in(Meters);
+            && turretCurrentPose.getX() < Constants.Field.RED_TRENCH_SCORING.in(Meters)
+            && turretCurrentPose.getY() < Constants.Field.BLUE_SIDE_MIN.in(Meters)
+            && turretCurrentPose.getY() > 0;
+
 
     double updatedZoneBlue = Constants.Field.REGULAR_DECAPITATION_ZONE.in(Meters);
     double updatedZoneRed = Constants.Field.REGULAR_DECAPITATION_ZONE.in(Meters);
