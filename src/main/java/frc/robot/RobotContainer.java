@@ -91,9 +91,9 @@ public class RobotContainer {
 
         limelightRight =
             new FiducialVision(
-                Constants.VisionC.DEV_LIMELIGHT,
+                Constants.VisionC.LIMELIGHT_RIGHT,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
-                new ArrayList<UnaryOperator<FiducialModifications>>());
+                Constants.VisionC.LL3G_MODIFICATIONS);
 
         limelightLeft =
             new FiducialVision(
