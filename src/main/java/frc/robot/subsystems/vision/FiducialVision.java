@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.drivers.LimelightHelpers;
 import frc.lib.subsystems.interfaces.VisionIO;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservationComparator;
@@ -74,8 +75,11 @@ public class FiducialVision extends SubsystemBase {
 
     if (DriverStation.isDisabled()) {
       io.setThrottle(100);
+      LimelightHelpers.SetIMUMode(visionInputs.cameraName, 1);
     } else {
       io.setThrottle(0);
+      LimelightHelpers.SetIMUMode(visionInputs.cameraName, 4);
+      LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.005);
     }
 
     if (!hasOriginalPoseBeenSet) {
@@ -90,7 +94,6 @@ public class FiducialVision extends SubsystemBase {
         && visionInputs.targettingType == TargettingType.FIDUCIAL
         && visionInputs.fiducialCount >= 1) {
       for (PoseObservation observation : visionInputs.poseObservations) {
-        // TODO: Apply rejection
         boolean reject =
             FiducialFilters.FiducialRejections.badAmbiguity(observation)
                 || FiducialFilters.FiducialRejections.badYaw(observation)

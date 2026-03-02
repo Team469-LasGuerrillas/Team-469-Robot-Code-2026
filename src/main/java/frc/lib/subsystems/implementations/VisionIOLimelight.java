@@ -56,8 +56,6 @@ public class VisionIOLimelight implements VisionIO {
     detections = LimelightHelpers.getRawDetections(limelightName);
 
     setPoseRobotSpace(cameraPose);
-
-    LimelightHelpers.SetIMUMode(limelightName, 4);
   }
 
   public static VisionIOLimelight getInstance(String limelightName, Pose3d cameraPose) {
