@@ -7,16 +7,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
+import java.util.function.Supplier;
 
 public class ShooterCommands {
   private static Shooter shooter = Shooter.getInstance();
 
-  public static Command targetLaunchSpeed(AngularVelocity speed) {
+  public static Command targetLaunchSpeed(Supplier<AngularVelocity> speed) {
     return Commands.sequence(
         Commands.deadline(
             Commands.waitUntil(
                 () ->
-                    speed.in(RotationsPerSecond)
+                    speed.get().in(RotationsPerSecond)
                             - Shooter.getInstance().getSpeed().in(RotationsPerSecond)
                         < Constants.LauncherC.RAMP_SPEED_TOLERANCE.in(RotationsPerSecond)),
             rampSpeed()),
@@ -30,10 +31,10 @@ public class ShooterCommands {
         shooter);
   }
 
-  public static Command maintainSpeed(AngularVelocity speed) {
+  public static Command maintainSpeed(Supplier<AngularVelocity> speed) {
     return Commands.startRun(
-        () -> shooter.setWatermarkTorqueCurrentFOC(speed),
-        () -> shooter.setWatermarkTorqueCurrentFOC(speed),
+        () -> shooter.setWatermarkTorqueCurrentFOC(speed.get()),
+        () -> shooter.setWatermarkTorqueCurrentFOC(speed.get()),
         shooter);
   }
 

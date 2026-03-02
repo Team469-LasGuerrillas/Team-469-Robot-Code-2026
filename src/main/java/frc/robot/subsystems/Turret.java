@@ -45,6 +45,7 @@ public class Turret extends SubsystemBase {
   private final MotorInputsAutoLogged talonInputs = new MotorInputsAutoLogged();
 
   private Angle targetAngle = Degrees.of(0);
+  private Angle lastTargetAngle = Degrees.of(0);
   private Angle trueTurretRotation = Degrees.of(0);
 
   private EasyCRTConfig easyCRTConfig;
@@ -116,11 +117,25 @@ public class Turret extends SubsystemBase {
       offsetHasBeenSet = true;
     }
 
+    double wrapOffset =
+        Math.abs(
+            Constants.TurretC.WRAPAROUND_PREDICTION_FACOTR
+                * talonInputs.motorVelocity.in(RotationsPerSecond));
+
+    boolean nearWrapMax =
+        Math.abs(Constants.TurretC.TURRERT_MAX.in(Rotations) - getAngle().in(Rotations))
+            < wrapOffset;
+    boolean nearWrapMin =
+        Math.abs(Constants.TurretC.TURRERT_MIN.in(Rotations) - getAngle().in(Rotations))
+            < wrapOffset;
+
     boolean onTarget =
-        ToleranceUtil.epsilonEquals(
-            getAngle().in(Rotations),
-            targetAngle.in(Rotations),
-            Constants.TurretC.TURRET_TOLERANCE.in(Rotations));
+        !nearWrapMax
+            && !nearWrapMin
+            && ToleranceUtil.epsilonEquals(
+                getAngle().in(Rotations),
+                targetAngle.in(Rotations),
+                Constants.TurretC.TURRET_TOLERANCE.in(Rotations));
 
     if (onTarget) {
       RobotState.setTurretState(TurretState.LOCKED);
@@ -131,7 +146,11 @@ public class Turret extends SubsystemBase {
 
   public void setTargetAngle(Angle angle) {
 
-    Angle after = angle.minus(Rotations.of(Constants.TurretC.LEAD_SHOT_OFFSET * Units.radiansToRotations(getTurretSpeedsFieldSpace().omegaRadiansPerSecond)));
+    Angle after =
+        angle.minus(
+            Rotations.of(
+                Constants.TurretC.LEAD_SHOT_OFFSET
+                    * Units.radiansToRotations(getTurretSpeedsFieldSpace().omegaRadiansPerSecond)));
 
     after = after.plus(Rotations.of(Math.round(trueTurretRotation.in(Rotations))));
 
@@ -163,13 +182,14 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("TurretState/Target", closestAfter.in(Rotations));
 
     targetAngle = closestAfter;
-
     turd.setMagicalPositionSetpoint(
         closestAfter,
         RotationsPerSecond.of(90),
         RotationsPerSecondPerSecond.of(9999),
         0,
         calculateFF());
+
+    lastTargetAngle = closestAfter;
   }
 
   /**
@@ -238,6 +258,14 @@ public class Turret extends SubsystemBase {
     }
   }
 
+  public Angle getAngleForTurretLL() {
+    if (getAngle().in(Rotations) != 0) {
+      return getAngle();
+    } else {
+      return talonInputs.motorPosition;
+    }
+  }
+
   /**
    * Returns this CCW Positive angle of the primary encoder in turret space.
    *
@@ -263,14 +291,12 @@ public class Turret extends SubsystemBase {
    * @return
    */
   public AngularVelocity getAngularVelocity() {
-    return ccAInputs.velocity;
+    return talonInputs.motorVelocity;
   }
 
   @AutoLogOutput(key = "Turret/TurretTarget")
-  public Pose2d getTurretTarget() {
-    // TODO: Output the theoretical "target" based on current turret angle and
-    // flywheel velocity.
-    return new Pose2d();
+  public Angle getTurretTarget() {
+    return targetAngle;
   }
 
   @AutoLogOutput(key = "Turret/FF")

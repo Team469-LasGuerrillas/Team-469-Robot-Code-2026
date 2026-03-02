@@ -26,6 +26,12 @@ public class IntakeCommands {
         Commands.startRun(() -> intake.setDutyCycle(0), () -> intake.setDutyCycle(0)));
   }
 
+  public static Command agitate() {
+    return Commands.repeatingSequence(
+        Commands.deadline(Commands.waitSeconds(0.5), stow()),
+        Commands.deadline(Commands.waitSeconds(1.2), deployAndRun()));
+  }
+
   public static Command homeAxis() {
     return Commands.none();
   }

@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.subsystems.interfaces.MotorIO;
@@ -47,18 +48,37 @@ public class Hood extends SubsystemBase {
     hoodMotor.readInputs(pivotInputs);
     Logger.processInputs(getName() + " Motor", pivotInputs);
 
+    Angle updatedRequestedAngle = requestedAngle;
+
+    // if (FieldZoning.retractHood()) {
+    //   updatedRequestedAngle = Constants.HoodC.HOOD_STOW;
+    // }
+
     hoodMotor.setMagicalPositionSetpoint(
-        requestedAngle,
+        updatedRequestedAngle,
         RotationsPerSecond.of(9999),
         RotationsPerSecondPerSecond.of(9999),
         0,
         calcFF(requestedAngle));
 
-    boolean onTarget =
+    boolean lowHood =
         ToleranceUtil.epsilonEquals(
             getCurrentAngle().in(Rotations),
-            getTargetAngle().in(Rotations),
-            Constants.HoodC.HOOD_TOLERANCE.in(Rotations));
+            Constants.HoodC.HOOD_STOW.in(Rotations),
+            Units.degreesToRotations(0.02));
+    boolean highHood =
+        ToleranceUtil.epsilonEquals(
+            getCurrentAngle().in(Rotations),
+            Constants.HoodC.HOOD_MAX.in(Rotations),
+            Units.degreesToRotations(0.02));
+
+    boolean onTarget =
+        !lowHood
+            && !highHood
+            && ToleranceUtil.epsilonEquals(
+                getCurrentAngle().in(Rotations),
+                getTargetAngle().in(Rotations),
+                Constants.HoodC.HOOD_TOLERANCE.in(Rotations));
 
     if (onTarget) {
       RobotState.setHoodState(HoodState.LOCKED);

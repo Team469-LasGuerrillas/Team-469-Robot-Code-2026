@@ -7,8 +7,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Rotations;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -44,6 +42,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.FiducialVision;
 import frc.robot.subsystems.vision.util.FiducialFilters.FiducialModifications;
+import frc.robot.util.ShootTarget;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.function.Function;
@@ -59,7 +58,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final FiducialVision limelightDev;
+  private final FiducialVision limelightRight;
+  private final FiducialVision limelightLeft;
   public final FiducialVision limelightTurd;
   public final Turret exampe;
   public final Intake intake;
@@ -89,9 +89,15 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        limelightDev =
+        limelightRight =
             new FiducialVision(
                 Constants.VisionC.DEV_LIMELIGHT,
+                new ArrayList<Function<PoseObservation, Boolean>>(),
+                new ArrayList<UnaryOperator<FiducialModifications>>());
+
+        limelightLeft =
+            new FiducialVision(
+                Constants.VisionC.LIMELIGHT_LEFT,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 new ArrayList<UnaryOperator<FiducialModifications>>());
 
@@ -148,7 +154,9 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
 
-        limelightDev = new FiducialVision(new VisionIO() {}, null, null);
+        limelightRight = new FiducialVision(new VisionIO() {}, null, null);
+
+        limelightLeft = new FiducialVision(new VisionIO() {}, null, null);
 
         limelightTurd = new FiducialVision(new VisionIO() {}, null, null);
 
@@ -205,7 +213,11 @@ public class RobotContainer {
     HashSet<Subsystem> turretList = new HashSet<Subsystem>();
     turretList.add(exampe);
 
-    exampe.setDefaultCommand(TurretCommands.targetAngle(Rotations.of(0)));
+    // exampe.setDefaultCommand(TurretCommands.targetAngle(Rotations.of(0)));
+
+    exampe.setDefaultCommand(
+        Commands.defer(
+            () -> TurretCommands.targetPoint(ShootTarget.getTranslationToTarget()), turretList));
 
     intake.setDefaultCommand(IntakeCommands.stow());
 
@@ -248,7 +260,7 @@ public class RobotContainer {
 
     controller.leftBumper().toggleOnTrue(IntakeCommands.deployAndRun());
 
-    controller.rightBumper().whileTrue(CommandFactory.scoring());
+    controller.rightBumper().toggleOnTrue(CommandFactory.scoring());
   }
 
   /**

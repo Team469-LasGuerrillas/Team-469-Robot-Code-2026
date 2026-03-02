@@ -105,7 +105,7 @@ public class MotorIOTalonFX implements MotorIO {
 
     if (talon.getDeviceID() == 13) {
       CTREUtil.tryUntilOK(
-          () -> BaseStatusSignal.setUpdateFrequencyForAll(1000, torqueCurrentSignal),
+          () -> BaseStatusSignal.setUpdateFrequencyForAll(500, torqueCurrentSignal),
           talon.getDeviceID());
     } else {
       CTREUtil.tryUntilOK(

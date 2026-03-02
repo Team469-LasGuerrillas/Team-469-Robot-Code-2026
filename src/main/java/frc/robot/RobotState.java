@@ -1,6 +1,7 @@
 package frc.robot;
 
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 public class RobotState {
 
@@ -22,11 +23,11 @@ public class RobotState {
     UNLOCKED
   }
 
-  @AutoLogOutput(key = "State/TurretState")
   private static TurretState turretState = TurretState.UNLOCKED;
 
   public static void setTurretState(TurretState state) {
     turretState = state;
+    Logger.recordOutput("State/TurretState", state);
   }
 
   public static TurretState getTurretState() {
@@ -38,11 +39,11 @@ public class RobotState {
     UNLOCKED
   }
 
-  @AutoLogOutput(key = "State/HoodState")
   private static HoodState hoodState = HoodState.UNLOCKED;
 
   public static void setHoodState(HoodState state) {
     hoodState = state;
+    Logger.recordOutput("State/HoodState", hoodState);
   }
 
   public static HoodState getHoodState() {
@@ -55,11 +56,11 @@ public class RobotState {
     UNLOCKED
   }
 
-  @AutoLogOutput(key = "State/FlywheelState")
   private static FlywheelState flywheelState = FlywheelState.UNLOCKED;
 
   public static void setFlywheelState(FlywheelState state) {
     flywheelState = state;
+    Logger.recordOutput("State/FlywheelState", state);
   }
 
   public static FlywheelState getFlywheelState() {

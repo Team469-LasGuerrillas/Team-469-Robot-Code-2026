@@ -217,6 +217,9 @@ public class VisionIOLimelight implements VisionIO {
 
   @Override
   public void setThrottle(int value) {
-    NetworkTableInstance.getDefault().getTable(limelightName).getEntry("throttle_set").setNumber(value);
+    NetworkTableInstance.getDefault()
+        .getTable(limelightName)
+        .getEntry("throttle_set")
+        .setNumber(value);
   }
 }

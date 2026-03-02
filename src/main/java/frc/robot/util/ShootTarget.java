@@ -11,7 +11,7 @@ import frc.robot.subsystems.drive.Drive;
 
 public class ShootTarget {
 
-  public static Translation2d goal = new Translation2d();
+  public static Translation2d goal = Constants.Field.RED_HUB;
 
   public static void updateGoal(Translation2d target, boolean passing) {
     goal =
