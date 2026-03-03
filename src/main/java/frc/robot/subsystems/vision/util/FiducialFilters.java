@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservationType;
@@ -36,13 +37,19 @@ public class FiducialFilters {
 
     /** Is the MT2 or single tag yaw far off from where the robot thinks it is? */
     public static boolean badYaw(PoseObservation toFilter) {
+      Rotation2d rotationAtTimestamp;
+      if (Drive.getInstance().getPose(toFilter.timestamp()).isPresent()) {
+        rotationAtTimestamp = Drive.getInstance().getPose(toFilter.timestamp()).get().getRotation();
+      } else {
+        rotationAtTimestamp = Drive.getInstance().getRotation();
+      }
       if (toFilter.type() == PoseObservationType.MT1 && toFilter.tagCount() == 1) {
         // MT1 1 Tag Cases
         return toFilter
                 .pose()
                 .getRotation()
                 .getMeasureZ()
-                .minus(Drive.getInstance().getRotation().getMeasure())
+                .minus(rotationAtTimestamp.getMeasure())
                 .abs(Degrees)
             >= Constants.VisionC.MAX_YAW_ERROR_MT1.in(Degrees);
       } else if (toFilter.type() == PoseObservationType.MT2) {
@@ -51,7 +58,7 @@ public class FiducialFilters {
                 .pose()
                 .getRotation()
                 .getMeasureZ()
-                .minus(Drive.getInstance().getRotation().getMeasure())
+                .minus(rotationAtTimestamp.getMeasure())
                 .abs(Degrees)
             >= Constants.VisionC.MAX_YAW_ERROR_MT2.in(Degrees);
       }
