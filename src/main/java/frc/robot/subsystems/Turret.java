@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -182,12 +181,18 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("TurretState/Target", closestAfter.in(Rotations));
 
     targetAngle = closestAfter;
-    turd.setMagicalPositionSetpoint(
-        closestAfter,
-        RotationsPerSecond.of(90),
-        RotationsPerSecondPerSecond.of(9999),
-        0,
-        calculateFF());
+
+    closestAfter =
+        closestAfter.plus(Rotations.of(0.02 * talonInputs.motorVelocity.in(RotationsPerSecond)));
+
+    // turd.setMagicalPositionSetpoint(
+    //     closestAfter,
+    //     RotationsPerSecond.of(90),
+    //     RotationsPerSecondPerSecond.of(9999),
+    //     0,
+    //     calculateFF());
+
+    turd.setOpenLoopDutyCycle(0);
 
     lastTargetAngle = closestAfter;
   }

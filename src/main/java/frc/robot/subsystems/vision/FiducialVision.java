@@ -78,8 +78,13 @@ public class FiducialVision extends SubsystemBase {
       LimelightHelpers.SetIMUMode(visionInputs.cameraName, 1);
     } else {
       io.setThrottle(0);
-      LimelightHelpers.SetIMUMode(visionInputs.cameraName, 4);
-      LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.005);
+      if (visionInputs.cameraName == "limelight-turd") {
+        LimelightHelpers.SetIMUMode(visionInputs.cameraName, 3);
+        LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.05);
+      } else {
+        LimelightHelpers.SetIMUMode(visionInputs.cameraName, 4);
+        LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.01);
+      }
     }
 
     if (!hasOriginalPoseBeenSet) {

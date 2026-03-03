@@ -12,7 +12,6 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
@@ -57,10 +56,8 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 /**
- * This class defines the runtime mode used by AdvantageKit. The mode is always
- * "real" when running
- * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics
- * sim) and "replay"
+ * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
+ * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and "replay"
  * (log replay from a file).
  */
 public final class Constants {
@@ -87,12 +84,13 @@ public final class Constants {
   }
 
   public static class DriveC {
-    public static final PathConstraints defaultConstraints = new PathConstraints(0.67, 3.3, 4 * Math.PI, 7 * Math.PI);
+    public static final PathConstraints defaultConstraints =
+        new PathConstraints(0.67, 3.3, 4 * Math.PI, 7 * Math.PI);
   }
 
   public static class Field {
-    public static final AprilTagFieldLayout WELDED_FIELD = AprilTagFieldLayout
-        .loadField(AprilTagFields.k2026RebuiltWelded);
+    public static final AprilTagFieldLayout WELDED_FIELD =
+        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     public static final Distance MAX_FIELD_X = Meters.of(WELDED_FIELD.getFieldLength());
     public static final Distance MAX_FIELD_Y = Meters.of(WELDED_FIELD.getFieldWidth());
@@ -107,34 +105,39 @@ public final class Constants {
 
     public static final double DECAPITATION_SPEED_FACTOR = 1.5;
 
-    public static final Translation2d BLUE_HUB = new Translation2d(BLUE_TRENCH_SCORING.in(Meters),
-        Units.feetToMeters(26.4 / 2));
-    public static final Translation2d RED_HUB = new Translation2d(RED_TRENCH_SCORING.in(Meters),
-        Units.feetToMeters(26.4 / 2));
+    public static final Translation2d BLUE_HUB =
+        new Translation2d(BLUE_TRENCH_SCORING.in(Meters), Units.feetToMeters(26.4 / 2));
+    public static final Translation2d RED_HUB =
+        new Translation2d(RED_TRENCH_SCORING.in(Meters), Units.feetToMeters(26.4 / 2));
   }
 
   public static class VisionC {
     public static final double MAX_SINGLE_TAG_AMBIGUITY = 0.55;
     public static final double MIN_SINGLE_TAG_AREA = 0.33;
     public static final Angle MAX_YAW_ERROR_MT1 = Degrees.of(2.41);
-    public static final Angle MAX_YAW_ERROR_MT2 = Degrees.of(1.67);
+    public static final Angle MAX_YAW_ERROR_MT2 = Degrees.of(0.8);
     public static final Distance MAX_FLOATING_NOCLIP = Meters.of(0.2);
 
     public static final AngularVelocity BAD_TURRET_ANGULAR_VELOCITY = DegreesPerSecond.of(120);
 
-    public static final AngularVelocity REASONABLE_TURRET_ANGULAR_VELOCITY_MT1 = DegreesPerSecond.of(10);
-    public static final double REASONABLE_TURRET_ANGULAR_VELOCITY_MT1_MULT = 3;
-    public static final AngularVelocity REASONABLE_TURRET_ANGULAR_VELOCITY_MT2 = DegreesPerSecond.of(45);
-    public static final double REASONABLE_TURRET_ANGULAR_VELOCITY_MT2_MULT = 5;
+    public static final AngularVelocity REASONABLE_TURRET_ANGULAR_VELOCITY_MT1 =
+        DegreesPerSecond.of(5);
+    public static final double REASONABLE_TURRET_ANGULAR_VELOCITY_MT1_MULT = 12;
+    public static final AngularVelocity REASONABLE_TURRET_ANGULAR_VELOCITY_MT2 =
+        DegreesPerSecond.of(10);
+    public static final double REASONABLE_TURRET_ANGULAR_VELOCITY_MT2_MULT = 15;
 
-    public static final AngularVelocity REASONABLE_DRIVE_ANGULAR_VELOCITY_MT2 = DegreesPerSecond.of(30);
+    public static final AngularVelocity REASONABLE_DRIVE_ANGULAR_VELOCITY_MT2 =
+        DegreesPerSecond.of(30);
     public static final double REASONABLE_DRIVE_ANGULAR_VELOCITY_MT2_MULT = 10;
 
-    public static final ArrayList<Function<PoseObservation, Boolean>> TURRET_REJECTIONS = new ArrayList<Function<PoseObservation, Boolean>>();
-    public static final ArrayList<UnaryOperator<FiducialModifications>> TURRET_MODIFICATIONS = new ArrayList<UnaryOperator<FiducialModifications>>();
+    public static final ArrayList<Function<PoseObservation, Boolean>> TURRET_REJECTIONS =
+        new ArrayList<Function<PoseObservation, Boolean>>();
+    public static final ArrayList<UnaryOperator<FiducialModifications>> TURRET_MODIFICATIONS =
+        new ArrayList<UnaryOperator<FiducialModifications>>();
 
-    public static final ArrayList<UnaryOperator<FiducialModifications>> LL3G_MODIFICATIONS = new ArrayList<UnaryOperator<FiducialModifications>>();
-
+    public static final ArrayList<UnaryOperator<FiducialModifications>> LL3G_MODIFICATIONS =
+        new ArrayList<UnaryOperator<FiducialModifications>>();
 
     static {
       TURRET_REJECTIONS.add(FiducialFilters.FiducialRejections::badTurretAngularVelocity);
@@ -142,42 +145,47 @@ public final class Constants {
       TURRET_MODIFICATIONS.add(
           FiducialFilters.FiducialModifications.o_withDistrustMt2WhileTurretSpinToFast());
       TURRET_MODIFICATIONS.add(FiducialFilters.FiducialModifications.o_withDistrustYaw());
+      TURRET_MODIFICATIONS.add(FiducialFilters.FiducialModifications.o_withMultiplyAllResults());
 
-      LL3G_MODIFICATIONS.add(FiducialFilters.FiducialModifications.o_withDistrustMt2WhileDriveSpinToFast());
+      LL3G_MODIFICATIONS.add(
+          FiducialFilters.FiducialModifications.o_withDistrustMt2WhileDriveSpinToFast());
     }
 
-    public static final Pose3d TURD_CENTER = new Pose3d(0.031613, 0.183773, 0.215900,
-        new Rotation3d(0, 0, Units.degreesToRadians(0)));
+    public static final Pose3d TURD_CENTER =
+        new Pose3d(0.031613, 0.183773, 0.215900, new Rotation3d(0, 0, Units.degreesToRadians(0)));
 
-    public static final VisionIOLimelight LIMELIGHT_RIGHT = VisionIOLimelight.getInstance(
-        "limelight-right",
-        new Pose3d(
-            -0.139700,
-            -0.352969,
-            0.313057 - Units.inchesToMeters(0.0125),
-            new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(-90))));
+    public static final VisionIOLimelight LIMELIGHT_RIGHT =
+        VisionIOLimelight.getInstance(
+            "limelight-right",
+            new Pose3d(
+                -0.139700,
+                -0.352969,
+                0.313057 - Units.inchesToMeters(0.0125),
+                new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(-90))));
 
-    public static final VisionIOLimelight LIMELIGHT_LEFT = VisionIOLimelight.getInstance(
-        "limelight-left",
-        new Pose3d(
-            -0.228600,
-            0.362987,
-            0.426011 - Units.inchesToMeters(0.0125),
-            new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(90))));
+    public static final VisionIOLimelight LIMELIGHT_LEFT =
+        VisionIOLimelight.getInstance(
+            "limelight-left",
+            new Pose3d(
+                -0.228600,
+                0.362987,
+                0.426011 - Units.inchesToMeters(0.0125),
+                new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(90))));
 
-    public static final VisionIOLimelight TURD_LIMELIGHT = VisionIOLimelight.getInstance(
-        "limelight-turd",
-        new Pose3d(
-            0.081752,
-            -0.201245,
-            0.501594 - Units.inchesToMeters(0.125),
-            new Rotation3d(0, Units.degreesToRadians(13.396331), Units.rotationsToRadians(0))));
+    public static final VisionIOLimelight TURD_LIMELIGHT =
+        VisionIOLimelight.getInstance(
+            "limelight-turd",
+            new Pose3d(
+                0.081752,
+                -0.201245,
+                0.501594 - Units.inchesToMeters(0.125),
+                new Rotation3d(0, Units.degreesToRadians(13.396331), Units.rotationsToRadians(0))));
   }
 
   public static class LauncherC {
     public static final double RAMP_DC = 1;
     public static final double UNJAM_DC = -0.5;
-    public static final double IDLE_DC = 0.1;
+    public static final double IDLE_DC = 0.0;
 
     public static final AngularVelocity HUB_SPEED_TOLERANCE = RotationsPerSecond.of(2);
     public static final AngularVelocity PASS_SPEED_TOLERANCE = RotationsPerSecond.of(2);
@@ -185,17 +193,23 @@ public final class Constants {
 
     public static double phaseDelay;
 
-    public static final InterpolatingDoubleTreeMap FLYWHEEL_SHOT_SPEEDMAP_SHOOTING = new InterpolatingDoubleTreeMap();
+    public static final InterpolatingDoubleTreeMap FLYWHEEL_SHOT_SPEEDMAP_SHOOTING =
+        new InterpolatingDoubleTreeMap();
 
-    public static final InterpolatingDoubleTreeMap TIME_OF_FLIGHT_MAP_SHOOTING = new InterpolatingDoubleTreeMap();
+    public static final InterpolatingDoubleTreeMap TIME_OF_FLIGHT_MAP_SHOOTING =
+        new InterpolatingDoubleTreeMap();
 
-    public static final InterpolatingDoubleTreeMap SHOOTER_HOOD_MAP_SHOOTING = new InterpolatingDoubleTreeMap();
+    public static final InterpolatingDoubleTreeMap SHOOTER_HOOD_MAP_SHOOTING =
+        new InterpolatingDoubleTreeMap();
 
-    public static final InterpolatingDoubleTreeMap FLYWHEEL_SHOT_SPEEDMAP_PASSING = new InterpolatingDoubleTreeMap();
+    public static final InterpolatingDoubleTreeMap FLYWHEEL_SHOT_SPEEDMAP_PASSING =
+        new InterpolatingDoubleTreeMap();
 
-    public static final InterpolatingDoubleTreeMap TIME_OF_FLIGHT_MAP_PASSING = new InterpolatingDoubleTreeMap();
+    public static final InterpolatingDoubleTreeMap TIME_OF_FLIGHT_MAP_PASSING =
+        new InterpolatingDoubleTreeMap();
 
-    public static final InterpolatingDoubleTreeMap SHOOTER_HOOD_MAP_PASSING = new InterpolatingDoubleTreeMap();
+    public static final InterpolatingDoubleTreeMap SHOOTER_HOOD_MAP_PASSING =
+        new InterpolatingDoubleTreeMap();
 
     static {
       phaseDelay = 67;
@@ -228,13 +242,17 @@ public final class Constants {
       SHOOTER_HOOD_MAP_PASSING.put(10.0, 20.0);
     }
 
-    public static final ServoMotorSubsystemWithFollowersConfig LAUNCHER_CONFIG = new ServoMotorSubsystemWithFollowersConfig();
+    public static final ServoMotorSubsystemWithFollowersConfig LAUNCHER_CONFIG =
+        new ServoMotorSubsystemWithFollowersConfig();
 
-    public static final ServoMotorSubsystemWithFollowersConfig.FollowerConfig FOLLOWER_1_CONFIG = new ServoMotorSubsystemWithFollowersConfig.FollowerConfig();
+    public static final ServoMotorSubsystemWithFollowersConfig.FollowerConfig FOLLOWER_1_CONFIG =
+        new ServoMotorSubsystemWithFollowersConfig.FollowerConfig();
 
-    public static final ServoMotorSubsystemWithFollowersConfig.FollowerConfig FOLLOWER_2_CONFIG = new ServoMotorSubsystemWithFollowersConfig.FollowerConfig();
+    public static final ServoMotorSubsystemWithFollowersConfig.FollowerConfig FOLLOWER_2_CONFIG =
+        new ServoMotorSubsystemWithFollowersConfig.FollowerConfig();
 
-    public static final ServoMotorSubsystemWithFollowersConfig.FollowerConfig FOLLOWER_3_CONFIG = new ServoMotorSubsystemWithFollowersConfig.FollowerConfig();
+    public static final ServoMotorSubsystemWithFollowersConfig.FollowerConfig FOLLOWER_3_CONFIG =
+        new ServoMotorSubsystemWithFollowersConfig.FollowerConfig();
 
     public static final TalonFXConfiguration LAUNCHER_TALON_CONFIG = new TalonFXConfiguration();
     public static final TalonFXConfiguration TALON_FOLLOWER1_CONFIG = new TalonFXConfiguration();
@@ -250,7 +268,7 @@ public final class Constants {
       LAUNCHER_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.ControlTimesyncFreqHz = 0;
-      LAUNCHER_TALON_CONFIG.Slot0.kP = 7;
+      LAUNCHER_TALON_CONFIG.Slot0.kP = 2.4;
       LAUNCHER_TALON_CONFIG.Slot0.kI = 0;
       LAUNCHER_TALON_CONFIG.Slot0.kD = 0;
       LAUNCHER_TALON_CONFIG.Slot0.kV = 0.29;
@@ -276,8 +294,10 @@ public final class Constants {
       LAUNCHER_CONFIG.fxConfig = LAUNCHER_TALON_CONFIG;
 
       FOLLOWER_1_CONFIG.config.fxConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-      FOLLOWER_2_CONFIG.config.fxConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-      FOLLOWER_3_CONFIG.config.fxConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      FOLLOWER_2_CONFIG.config.fxConfig.MotorOutput.Inverted =
+          InvertedValue.CounterClockwise_Positive;
+      FOLLOWER_3_CONFIG.config.fxConfig.MotorOutput.Inverted =
+          InvertedValue.CounterClockwise_Positive;
 
       FOLLOWER_1_CONFIG.inverted = false;
       FOLLOWER_2_CONFIG.inverted = true;
@@ -287,9 +307,10 @@ public final class Constants {
       FOLLOWER_2_CONFIG.config.talonCANID = new CANDeviceId(15);
       FOLLOWER_3_CONFIG.config.talonCANID = new CANDeviceId(16);
 
-      LAUNCHER_CONFIG.followers = new ServoMotorSubsystemWithFollowersConfig.FollowerConfig[] {
-          FOLLOWER_1_CONFIG, FOLLOWER_2_CONFIG, FOLLOWER_3_CONFIG
-      };
+      LAUNCHER_CONFIG.followers =
+          new ServoMotorSubsystemWithFollowersConfig.FollowerConfig[] {
+            FOLLOWER_1_CONFIG, FOLLOWER_2_CONFIG, FOLLOWER_3_CONFIG
+          };
     }
 
     public static final MotorIO LAUNCHER_MOTOR = new MotorIOTalonFX(LAUNCHER_CONFIG);
@@ -298,8 +319,8 @@ public final class Constants {
     private static final MotorIO FOLLOWER_2_MOTOR = new MotorIOTalonFX(FOLLOWER_2_CONFIG.config);
     private static final MotorIO FOLLOWER_3_MOTOR = new MotorIOTalonFX(FOLLOWER_3_CONFIG.config);
 
-    public static final MotorIO[] FOLLOWER_MOTORS = new MotorIO[] { FOLLOWER_1_MOTOR, FOLLOWER_2_MOTOR,
-        FOLLOWER_3_MOTOR };
+    public static final MotorIO[] FOLLOWER_MOTORS =
+        new MotorIO[] {FOLLOWER_1_MOTOR, FOLLOWER_2_MOTOR, FOLLOWER_3_MOTOR};
   }
 
   public static class TurretC {
@@ -311,41 +332,44 @@ public final class Constants {
 
     public static final double WRAPAROUND_PREDICTION_FACOTR = 0.5;
 
-    public static final Pose3d TURD_CENTER = new Pose3d(
-        -0.107950,
-        -0.158750,
-        0.414338,
-        new Rotation3d(0, 0, Units.rotationsToRadians(0.25 - 0.025542)));
+    public static final Pose3d TURD_CENTER =
+        new Pose3d(
+            -0.107950,
+            -0.158750,
+            0.414338,
+            new Rotation3d(0, 0, Units.rotationsToRadians(0.25 - 0.025542)));
 
-    public static final Pose3d TURD_CENTER_WITHOUT_ROTATION = new Pose3d(-0.107950, -0.158750, 0.414338,
-        new Rotation3d());
+    public static final Pose3d TURD_CENTER_WITHOUT_ROTATION =
+        new Pose3d(-0.107950, -0.158750, 0.414338, new Rotation3d());
 
     private static final ServoMotorSubsystemConfig SERVO_CONFIG = new ServoMotorSubsystemConfig();
     private static final TalonFXConfiguration TURRET_TALON_CONFIG = new TalonFXConfiguration();
     private static final CanCoderConfig TURRETA_CANCODER_CONFIG = new CanCoderConfig();
     private static final CanCoderConfig TURRETB_CANCODER_CONFIG = new CanCoderConfig();
 
-    public static final double ROTATION_SPEED_FF = 100;
-    public static final double LEAD_SHOT_OFFSET = 0.2; // Rotations per RPS of turret base
+    public static final double ROTATION_SPEED_FF = 0;
+    public static final double LEAD_SHOT_OFFSET = 0; // Rotations per RPS of turret base
 
     static {
       TURRETA_CANCODER_CONFIG.CANID = new CANDeviceId(6);
       TURRETA_CANCODER_CONFIG.config = new CANcoderConfiguration();
       TURRETA_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = 0;
-      TURRETA_CANCODER_CONFIG.config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+      TURRETA_CANCODER_CONFIG.config.MagnetSensor.SensorDirection =
+          SensorDirectionValue.Clockwise_Positive;
       TURRETA_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
 
       TURRETB_CANCODER_CONFIG.CANID = new CANDeviceId(7);
       TURRETB_CANCODER_CONFIG.config = new CANcoderConfiguration();
       TURRETB_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = 0;
-      TURRETB_CANCODER_CONFIG.config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+      TURRETB_CANCODER_CONFIG.config.MagnetSensor.SensorDirection =
+          SensorDirectionValue.Clockwise_Positive;
       TURRETB_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
 
       TURRET_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
       // 168t main gear, 26t cancoder A,
       TURRET_TALON_CONFIG.Feedback.SensorToMechanismRatio = ((52.0 / 10.0) * (168.0 / 18.0));
-      TURRET_TALON_CONFIG.Feedback.RotorToSensorRatio = ((52.0 / 10.0) * (168.0 / 18.0));
+      TURRET_TALON_CONFIG.Feedback.RotorToSensorRatio = 1; // ((52.0 / 10.0) * (168.0 / 18.0));
 
       SERVO_CONFIG.kMaxPositionUnits = TURRERT_MAX.in(Rotations);
       SERVO_CONFIG.kMinPositionUnits = TURRERT_MIN.in(Rotations);
@@ -355,11 +379,12 @@ public final class Constants {
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TURRERT_MIN.in(Rotations);
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-      TURRET_TALON_CONFIG.Slot0.kP = 4414 * 1.3;
+      TURRET_TALON_CONFIG.Slot0.kP = 600;
       TURRET_TALON_CONFIG.Slot0.kI = 0;
-      TURRET_TALON_CONFIG.Slot0.kD = 696;
-      TURRET_TALON_CONFIG.Slot0.kS = 4;
-      TURRET_TALON_CONFIG.Slot0.kV = 0;
+      TURRET_TALON_CONFIG.Slot0.kD = 80;
+      TURRET_TALON_CONFIG.Slot0.kS = 0.9;
+      TURRET_TALON_CONFIG.Slot0.kV = 0.1;
+      TURRET_TALON_CONFIG.Slot0.kA = 1;
       SERVO_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
       TURRET_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 100;
@@ -389,22 +414,30 @@ public final class Constants {
     public static final Angle PIVOT_RAISED = Radians.of(0.33);
     public static final Angle PIVOT_LOWERED = Radians.of(2.187);
 
-    private static final ServoMotorSubsystemWithCancoderConfig DROP_CONFIG = new ServoMotorSubsystemWithCancoderConfig();
-    private static final TalonFXConfiguration INTAKE_PIVOT_TALON_CONFIG = new TalonFXConfiguration();
+    private static final ServoMotorSubsystemWithCancoderConfig DROP_CONFIG =
+        new ServoMotorSubsystemWithCancoderConfig();
+    private static final TalonFXConfiguration INTAKE_PIVOT_TALON_CONFIG =
+        new TalonFXConfiguration();
     private static final CanCoderConfig INTAKE_PIVOT_CANCODER_CONFIG = new CanCoderConfig();
 
-    private static final ServoMotorSubsystemWithCancoderConfig ROLLER_CONFIG = new ServoMotorSubsystemWithCancoderConfig();
-    private static final TalonFXConfiguration INTAKE_ROLLER_TALON_CONFIG = new TalonFXConfiguration();
+    private static final ServoMotorSubsystemWithCancoderConfig ROLLER_CONFIG =
+        new ServoMotorSubsystemWithCancoderConfig();
+    private static final TalonFXConfiguration INTAKE_ROLLER_TALON_CONFIG =
+        new TalonFXConfiguration();
 
     static {
       INTAKE_PIVOT_CANCODER_CONFIG.CANID = new CANDeviceId(5);
       INTAKE_PIVOT_CANCODER_CONFIG.config = new CANcoderConfiguration();
-      INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = Units.radiansToRotations(-1.33) + 1;
-      INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+      INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset =
+          Units.radiansToRotations(-1.33) + 1;
+      INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.SensorDirection =
+          SensorDirectionValue.CounterClockwise_Positive;
       INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
 
-      INTAKE_PIVOT_TALON_CONFIG.Feedback.FeedbackRemoteSensorID = INTAKE_PIVOT_CANCODER_CONFIG.CANID.getDeviceNumber();
-      INTAKE_PIVOT_TALON_CONFIG.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+      INTAKE_PIVOT_TALON_CONFIG.Feedback.FeedbackRemoteSensorID =
+          INTAKE_PIVOT_CANCODER_CONFIG.CANID.getDeviceNumber();
+      INTAKE_PIVOT_TALON_CONFIG.Feedback.FeedbackSensorSource =
+          FeedbackSensorSourceValue.FusedCANcoder;
       INTAKE_PIVOT_TALON_CONFIG.Feedback.SensorToMechanismRatio = 1;
       INTAKE_PIVOT_TALON_CONFIG.Feedback.RotorToSensorRatio = 32;
       INTAKE_PIVOT_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -434,7 +467,8 @@ public final class Constants {
       ROLLER_CONFIG.fxConfig = INTAKE_ROLLER_TALON_CONFIG;
     }
 
-    public static final CanCoderIOCanCoder coder = new CanCoderIOCanCoder(INTAKE_PIVOT_CANCODER_CONFIG);
+    public static final CanCoderIOCanCoder coder =
+        new CanCoderIOCanCoder(INTAKE_PIVOT_CANCODER_CONFIG);
     public static final MotorIO PIVOT_MOTOR = new MotorIOTalonFX(DROP_CONFIG);
 
     public static final MotorIO ROLLER_MOTOR = new MotorIOTalonFX(ROLLER_CONFIG);
@@ -446,7 +480,8 @@ public final class Constants {
     public static final double IDLE_DC = 0.02;
     public static final double IDLE_REVERSE_DC = -0.05;
 
-    private static final ServoMotorSubsystemWithCancoderConfig SERVO_CONFIG = new ServoMotorSubsystemWithCancoderConfig();
+    private static final ServoMotorSubsystemWithCancoderConfig SERVO_CONFIG =
+        new ServoMotorSubsystemWithCancoderConfig();
     private static final TalonFXConfiguration SPINDEXER_MOTOR_CONFIG = new TalonFXConfiguration();
 
     static {
@@ -467,7 +502,8 @@ public final class Constants {
     public static final double REVERSE_DC = -1;
     public static final double IDLE_DC = 0;
 
-    private static final ServoMotorSubsystemWithCancoderConfig SERVO_CONFIG = new ServoMotorSubsystemWithCancoderConfig();
+    private static final ServoMotorSubsystemWithCancoderConfig SERVO_CONFIG =
+        new ServoMotorSubsystemWithCancoderConfig();
     private static final TalonFXConfiguration FEEDER_MOTOR_CONFIG = new TalonFXConfiguration();
 
     static {
