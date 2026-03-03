@@ -43,4 +43,26 @@ public class AutonPaths {
         null,
         new GoalEndState(0.0, Rotation2d.fromDegrees(90)));
   }
+
+  public static PathPlannerPath climbRed() {
+    List<Waypoint> waypoints =
+        PathPlannerPath.waypointsFromPoses(
+            new Pose2d(
+                Constants.Field.MAX_FIELD_X.in(Meters) - 3,
+                Constants.Field.MAX_FIELD_Y.in(Meters) - 3,
+                Rotation2d.fromRotations(0.5)
+                ),
+            new Pose2d(
+                Constants.Field.MAX_FIELD_X.in(Meters) - 2,
+                Constants.Field.MAX_FIELD_Y.in(Meters) - 3,
+                Rotation2d.fromRotations(0.5)
+                ));
+            
+
+    return new PathPlannerPath(
+        waypoints,
+        Constants.DriveC.defaultConstraints,
+        null,
+        new GoalEndState(0.0, Rotation2d.fromDegrees(180)));
+  }
 }

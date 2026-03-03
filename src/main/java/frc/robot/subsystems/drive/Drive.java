@@ -256,6 +256,10 @@ public class Drive extends SubsystemBase {
     return AutoBuilder.followPath(path);
   }
 
+  public Command pathfindToPath(PathPlannerPath path) {
+    return AutoBuilder.pathfindThenFollowPath(path, Constants.DriveC.defaultConstraints);
+  }
+
   /**
    * Runs the drive at the desired velocity.
    *

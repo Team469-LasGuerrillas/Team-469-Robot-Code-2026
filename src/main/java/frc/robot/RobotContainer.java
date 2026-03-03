@@ -241,7 +241,7 @@ public class RobotContainer {
             Commands.defer(
                 () ->
                     Drive.getInstance()
-                        .followPath(AutonPaths.sixSevenExamplePath(Drive.getInstance().getPose())),
+                        .pathfindToPath(AutonPaths.climbRed()),
                 driveList));
 
     // Switch to X pattern when X button is pressed
