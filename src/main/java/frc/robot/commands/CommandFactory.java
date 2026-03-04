@@ -83,15 +83,15 @@ public class CommandFactory {
   }
 
   private static Command feed() {
-    return Commands.parallel(
-        FeederCommands.runPositive(),
-        SpindexerCommands.runPositive(),
-        Commands.run(() -> System.out.println("ROBO")));
+    return Commands.sequence(
+        Commands.waitSeconds(0.1),
+        Commands.parallel(
+            FeederCommands.runPositive(),
+            SpindexerCommands.runPositive(),
+            Commands.run(() -> System.out.println("ROBO"))));
   }
 
   private static Command readyToFeed() {
-    return Commands.parallel(
-        SpindexerCommands.idleCommand(),
-        Commands.sequence(FeederCommands.retract(), FeederCommands.idleCommand()));
+    return Commands.parallel(SpindexerCommands.idleCommand(), FeederCommands.idleCommand());
   }
 }

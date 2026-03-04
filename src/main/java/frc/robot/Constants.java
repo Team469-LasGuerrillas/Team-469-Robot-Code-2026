@@ -94,11 +94,11 @@ public final class Constants {
 
     public static final Distance MAX_FIELD_X = Meters.of(WELDED_FIELD.getFieldLength());
     public static final Distance MAX_FIELD_Y = Meters.of(WELDED_FIELD.getFieldWidth());
-    public static final Distance FIELD_MIDDLE = MAX_FIELD_X.div(2); //also red max
-
+    public static final Distance FIELD_MIDDLE = MAX_FIELD_X.div(2); // also red max
 
     public static final Matrix<N3, N1> FIELD_SPEEDS_STDS = VecBuilder.fill(0.067, 0.067, 0.08);
     public static final Matrix<N3, N1> TURRET_SPEEDS_STDS = VecBuilder.fill(0.1, 0.1, 0.1);
+    public static final Matrix<N3, N1> TURRET_MOTOR_SPEEDS_STDS = VecBuilder.fill(0.1, 0.1, 0.1);
 
     public static final Distance BLUE_TRENCH_SCORING = Inches.of(182.11);
     public static final Distance RED_TRENCH_SCORING = MAX_FIELD_X.minus(Inches.of(182.11));
@@ -123,14 +123,14 @@ public final class Constants {
     public static final AngularVelocity BAD_TURRET_ANGULAR_VELOCITY = DegreesPerSecond.of(120);
 
     public static final AngularVelocity REASONABLE_TURRET_ANGULAR_VELOCITY_MT1 =
-        DegreesPerSecond.of(5);
+        DegreesPerSecond.of(180);
     public static final double REASONABLE_TURRET_ANGULAR_VELOCITY_MT1_MULT = 12;
     public static final AngularVelocity REASONABLE_TURRET_ANGULAR_VELOCITY_MT2 =
-        DegreesPerSecond.of(10);
-    public static final double REASONABLE_TURRET_ANGULAR_VELOCITY_MT2_MULT = 15;
+        DegreesPerSecond.of(120);
+    public static final double REASONABLE_TURRET_ANGULAR_VELOCITY_MT2_MULT = 10;
 
     public static final AngularVelocity REASONABLE_DRIVE_ANGULAR_VELOCITY_MT2 =
-        DegreesPerSecond.of(30);
+        DegreesPerSecond.of(120);
     public static final double REASONABLE_DRIVE_ANGULAR_VELOCITY_MT2_MULT = 10;
 
     public static final ArrayList<Function<PoseObservation, Boolean>> TURRET_REJECTIONS =
@@ -218,7 +218,7 @@ public final class Constants {
 
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(0.1, 34.0);
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(3.5, 46.0);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(5.0, 52.0);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(5.0, 54.0);
 
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(2.0, 50.0);
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(5.0, 60.0);
@@ -270,11 +270,11 @@ public final class Constants {
       LAUNCHER_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.ControlTimesyncFreqHz = 0;
-      LAUNCHER_TALON_CONFIG.Slot0.kP = 2.4;
+      LAUNCHER_TALON_CONFIG.Slot0.kP = 12;
       LAUNCHER_TALON_CONFIG.Slot0.kI = 0;
       LAUNCHER_TALON_CONFIG.Slot0.kD = 0;
       LAUNCHER_TALON_CONFIG.Slot0.kV = 0.29;
-      // LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakForwardTorqueCurrent = 80;
+      // LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakForwardTorqueCurrent = 120;
       // LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakReverseTorqueCurrent = 0;
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakForwardDutyCycle = 1;
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakReverseDutyCycle = 0;
@@ -329,8 +329,8 @@ public final class Constants {
 
     public static final Angle TURRET_TOLERANCE = Degrees.of(5);
 
-    public static final Angle TURRERT_MAX = Rotations.of(0.39);
-    public static final Angle TURRERT_MIN = Rotations.of(-0.94);
+    public static final Angle TURRERT_MAX = Rotations.of(0.375);
+    public static final Angle TURRERT_MIN = Rotations.of(-0.975);
 
     public static final double WRAPAROUND_PREDICTION_FACOTR = 0.5;
 
@@ -339,7 +339,7 @@ public final class Constants {
             -0.107950,
             -0.158750,
             0.414338,
-            new Rotation3d(0, 0, Units.rotationsToRadians(0.25 - 0.025542)));
+            new Rotation3d(0, 0, Units.rotationsToRadians(0.25 - 0.0262)));
 
     public static final Pose3d TURD_CENTER_WITHOUT_ROTATION =
         new Pose3d(-0.107950, -0.158750, 0.414338, new Rotation3d());
@@ -381,12 +381,12 @@ public final class Constants {
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TURRERT_MIN.in(Rotations);
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-      TURRET_TALON_CONFIG.Slot0.kP = 600;
+      TURRET_TALON_CONFIG.Slot0.kP = 800;
       TURRET_TALON_CONFIG.Slot0.kI = 0;
-      TURRET_TALON_CONFIG.Slot0.kD = 80;
-      TURRET_TALON_CONFIG.Slot0.kS = 0.9;
-      TURRET_TALON_CONFIG.Slot0.kV = 0.1;
-      TURRET_TALON_CONFIG.Slot0.kA = 1;
+      TURRET_TALON_CONFIG.Slot0.kD = 60;
+      TURRET_TALON_CONFIG.Slot0.kS = 0.5;
+      TURRET_TALON_CONFIG.Slot0.kV = 0.05;
+      TURRET_TALON_CONFIG.Slot0.kA = 0;
       SERVO_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
       TURRET_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 100;
@@ -413,8 +413,9 @@ public final class Constants {
     public static final double INTAKE_DC = 1;
     public static final double UNJAM_DC = -0.3;
     public static final double IDLE_DC = 0;
-    public static final Angle PIVOT_RAISED = Radians.of(0.33);
+    // public static final Angle PIVOT_RAISED = Radians.of(0.33);
     public static final Angle PIVOT_LOWERED = Radians.of(2.187);
+    public static final Angle PIVOT_RAISED = PIVOT_LOWERED;
 
     private static final ServoMotorSubsystemWithCancoderConfig DROP_CONFIG =
         new ServoMotorSubsystemWithCancoderConfig();
@@ -450,7 +451,7 @@ public final class Constants {
       INTAKE_PIVOT_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -100;
 
       INTAKE_PIVOT_TALON_CONFIG.ClosedLoopGeneral.ContinuousWrap = false;
-      INTAKE_PIVOT_TALON_CONFIG.Slot0.kP = 300;
+      INTAKE_PIVOT_TALON_CONFIG.Slot0.kP = 440;
       INTAKE_PIVOT_TALON_CONFIG.Slot0.kI = 0;
       INTAKE_PIVOT_TALON_CONFIG.Slot0.kD = 50;
       INTAKE_PIVOT_TALON_CONFIG.Slot0.kS = 0;
@@ -477,10 +478,10 @@ public final class Constants {
   }
 
   public static class SpindexerC {
-    public static final double FEEDING_DC = 0.67;
+    public static final double FEEDING_DC = 0.5;
     public static final double REVERSE_DC = -0.67;
-    public static final double IDLE_DC = 0.02;
-    public static final double IDLE_REVERSE_DC = -0.05;
+    public static final double IDLE_DC = 0.0;
+    public static final double IDLE_REVERSE_DC = -0.0;
 
     private static final ServoMotorSubsystemWithCancoderConfig SERVO_CONFIG =
         new ServoMotorSubsystemWithCancoderConfig();
@@ -516,6 +517,9 @@ public final class Constants {
 
       FEEDER_MOTOR_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
       FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 70;
+
+      FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 0;
+      FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerTime = 0;
     }
 
     public static final MotorIO FEEDER_MOTOR = new MotorIOTalonFX(SERVO_CONFIG);

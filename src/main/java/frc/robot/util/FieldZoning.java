@@ -29,8 +29,6 @@ public class FieldZoning {
             && turretCurrentPose.getX() < Constants.Field.FIELD_MIDDLE.in(Meters)
             && turretCurrentPose.getX() > 0;
 
-
-
     // Red
 
     boolean redFromRight =
@@ -43,7 +41,6 @@ public class FieldZoning {
             && turretCurrentPose.getX() < Constants.Field.RED_TRENCH_SCORING.in(Meters)
             && turretCurrentPose.getX() > Constants.Field.FIELD_MIDDLE.in(Meters)
             && turretCurrentPose.getX() < Constants.Field.MAX_FIELD_X.in(Meters);
-
 
     double updatedZoneBlue = Constants.Field.REGULAR_DECAPITATION_ZONE.in(Meters);
     double updatedZoneRed = Constants.Field.REGULAR_DECAPITATION_ZONE.in(Meters);

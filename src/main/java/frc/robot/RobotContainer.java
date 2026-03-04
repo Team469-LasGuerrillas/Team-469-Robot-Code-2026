@@ -239,10 +239,7 @@ public class RobotContainer {
         .a()
         .whileTrue(
             Commands.defer(
-                () ->
-                    Drive.getInstance()
-                        .pathfindToPath(AutonPaths.climbRed()),
-                driveList));
+                () -> Drive.getInstance().pathfindToPath(AutonPaths.climbRed()), driveList));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -259,6 +256,9 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     controller.leftBumper().toggleOnTrue(IntakeCommands.deployAndRun());
+    controller
+        .leftBumper()
+        .toggleOnFalse(Commands.sequence(FeederCommands.retract(), FeederCommands.idleCommand()));
 
     controller.rightBumper().toggleOnTrue(CommandFactory.scoring());
   }

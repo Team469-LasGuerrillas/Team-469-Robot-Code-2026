@@ -2,8 +2,10 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -60,6 +62,13 @@ public class Turret extends SubsystemBase {
           Drive.getInstance().lastModulePositions,
           Pose2d.kZero);
 
+  private SwerveDrivePoseEstimator turretMotorSpeedEstimator =
+      new SwerveDrivePoseEstimator(
+          Drive.getInstance().kinematics,
+          new Rotation2d(),
+          Drive.getInstance().lastModulePositions,
+          Pose2d.kZero);
+
   public static Turret createInstance(MotorIO turd, CanCoderIO canCoderA, CanCoderIO canCoderB) {
     instance = new Turret(turd, canCoderA, canCoderB);
     return instance;
@@ -108,6 +117,14 @@ public class Turret extends SubsystemBase {
                 Drive.getInstance().getFieldSpeedsFiltered().omegaRadiansPerSecond)),
         Clock.time(),
         Constants.Field.TURRET_SPEEDS_STDS);
+
+    turretMotorSpeedEstimator.updateWithTime(
+        Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
+    turretMotorSpeedEstimator.addVisionMeasurement(
+        GeomUtil.withRotation(
+            new Pose2d(), new Rotation2d(talonInputs.motorVelocity.in(RadiansPerSecond))),
+        Clock.time(),
+        Constants.Field.TURRET_MOTOR_SPEEDS_STDS);
 
     lastTurretPoseFieldSpace = getTurretPoseFieldSpace();
 
@@ -183,16 +200,20 @@ public class Turret extends SubsystemBase {
     targetAngle = closestAfter;
 
     closestAfter =
-        closestAfter.plus(Rotations.of(0.02 * talonInputs.motorVelocity.in(RotationsPerSecond)));
+        closestAfter.plus(
+            Rotations.of(
+                0.04
+                    * turretMotorSpeedEstimator
+                        .getEstimatedPosition()
+                        .getRotation()
+                        .getRotations()));
 
-    // turd.setMagicalPositionSetpoint(
-    //     closestAfter,
-    //     RotationsPerSecond.of(90),
-    //     RotationsPerSecondPerSecond.of(9999),
-    //     0,
-    //     calculateFF());
-
-    turd.setOpenLoopDutyCycle(0);
+    turd.setMagicalPositionSetpoint(
+        closestAfter,
+        RotationsPerSecond.of(90),
+        RotationsPerSecondPerSecond.of(9999),
+        0,
+        calculateFF());
 
     lastTargetAngle = closestAfter;
   }

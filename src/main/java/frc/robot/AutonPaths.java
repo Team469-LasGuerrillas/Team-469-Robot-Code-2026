@@ -50,14 +50,11 @@ public class AutonPaths {
             new Pose2d(
                 Constants.Field.MAX_FIELD_X.in(Meters) - 3,
                 Constants.Field.MAX_FIELD_Y.in(Meters) - 3,
-                Rotation2d.fromRotations(0.5)
-                ),
+                Rotation2d.fromRotations(0.5)),
             new Pose2d(
                 Constants.Field.MAX_FIELD_X.in(Meters) - 2,
                 Constants.Field.MAX_FIELD_Y.in(Meters) - 3,
-                Rotation2d.fromRotations(0.5)
-                ));
-            
+                Rotation2d.fromRotations(0.5)));
 
     return new PathPlannerPath(
         waypoints,

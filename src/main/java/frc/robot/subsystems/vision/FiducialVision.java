@@ -34,6 +34,9 @@ public class FiducialVision extends SubsystemBase {
   private Pose3d originalCameraPose;
   private boolean hasOriginalPoseBeenSet = false;
 
+  private boolean wasLastEnabled = false;
+  private boolean wasLastDisabled = false;
+
   ArrayList<Function<PoseObservation, Boolean>> extraRejections;
   ArrayList<UnaryOperator<FiducialModifications>> extraModifications;
 
@@ -53,6 +56,8 @@ public class FiducialVision extends SubsystemBase {
 
       Drive.getInstance().getCameraField().setRobotPose(o.pose().toPose2d());
     }
+
+    allObservations.clear();
   }
 
   public FiducialVision(
@@ -73,18 +78,24 @@ public class FiducialVision extends SubsystemBase {
         RadiansPerSecond.of(Drive.getInstance().getFieldSpeeds().omegaRadiansPerSecond));
     Logger.processInputs(getCameraName(), visionInputs);
 
-    if (DriverStation.isDisabled()) {
+    if (DriverStation.isDisabled() && !wasLastDisabled) {
       io.setThrottle(100);
       LimelightHelpers.SetIMUMode(visionInputs.cameraName, 1);
-    } else {
+
+      wasLastDisabled = true;
+      wasLastEnabled = false;
+    } else if (DriverStation.isEnabled() && !wasLastEnabled) {
       io.setThrottle(0);
-      if (visionInputs.cameraName == "limelight-turd") {
+      if (visionInputs.cameraName.equals("limelight-turd")) {
         LimelightHelpers.SetIMUMode(visionInputs.cameraName, 3);
         LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.05);
       } else {
         LimelightHelpers.SetIMUMode(visionInputs.cameraName, 4);
         LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.01);
       }
+
+      wasLastEnabled = true;
+      wasLastDisabled = false;
     }
 
     if (!hasOriginalPoseBeenSet) {
