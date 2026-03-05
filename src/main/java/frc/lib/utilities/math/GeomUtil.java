@@ -1,5 +1,7 @@
 package frc.lib.utilities.math;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -8,6 +10,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import frc.robot.Constants;
 
 public class GeomUtil {
   /**
@@ -65,6 +68,13 @@ public class GeomUtil {
     Rotation2d rotationInverse = pose.getRotation().unaryMinus();
     return new Pose2d(
         pose.getTranslation().unaryMinus().rotateBy(rotationInverse), rotationInverse);
+  }
+
+  public static Pose2d mirror(Pose2d pose) {
+    return new Pose2d(
+        Constants.Field.MAX_FIELD_X.in(Meters) - pose.getX(),
+        pose.getY(),
+        pose.getRotation().unaryMinus().plus(Rotation2d.fromRotations(0.5)));
   }
 
   /**

@@ -8,6 +8,7 @@ import frc.lib.utilities.math.GeomUtil;
 import frc.lib.utilities.math.ShootAndMove;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
+import org.littletonrobotics.junction.Logger;
 
 public class ShootTarget {
 
@@ -21,6 +22,8 @@ public class ShootTarget {
             target,
             Constants.TurretC.TURD_CENTER,
             passing);
+
+    Logger.recordOutput("TargetPoint", goal);
   }
 
   public static Translation2d getTranslationToTarget() {

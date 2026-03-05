@@ -8,6 +8,16 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Turret;
 
 public class FieldZoning {
+  public static boolean inNeutralZone() {
+    double turretCurrentPoseX = Turret.getInstance().getTurretPoseFieldSpace().getX();
+
+    if (turretCurrentPoseX > Constants.Field.BLUE_TRENCH_SCORING.in(Meters)
+        && turretCurrentPoseX < Constants.Field.RED_TRENCH_SCORING.in(Meters)) {
+      return true;
+    }
+    return false;
+  }
+
   public static boolean retractHood() {
     Pose2d turretCurrentPose = Turret.getInstance().getTurretPoseFieldSpace();
     ChassisSpeeds turretSpeedsFieldSpace = Turret.getInstance().getTurretSpeedsFieldSpace();

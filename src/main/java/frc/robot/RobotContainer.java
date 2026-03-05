@@ -8,8 +8,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -20,6 +18,7 @@ import frc.lib.subsystems.interfaces.CanCoderIO;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.VisionIO;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
+import frc.robot.commands.AutonCommands;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeederCommands;
@@ -217,7 +216,7 @@ public class RobotContainer {
 
     exampe.setDefaultCommand(
         Commands.defer(
-            () -> TurretCommands.targetPoint(ShootTarget.getTranslationToTarget()), turretList));
+            () -> TurretCommands.targetPoint(ShootTarget::getTranslationToTarget), turretList));
 
     intake.setDefaultCommand(IntakeCommands.stow());
 
@@ -245,22 +244,14 @@ public class RobotContainer {
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
-                    drive)
-                .ignoringDisable(true));
+    controller.b().whileTrue(AutonCommands.redPass());
 
     controller.leftBumper().toggleOnTrue(IntakeCommands.deployAndRun());
     controller
         .leftBumper()
         .toggleOnFalse(Commands.sequence(FeederCommands.retract(), FeederCommands.idleCommand()));
 
-    controller.rightBumper().toggleOnTrue(CommandFactory.scoring());
+    controller.rightBumper().toggleOnTrue(CommandFactory.feedOrScore());
   }
 
   /**

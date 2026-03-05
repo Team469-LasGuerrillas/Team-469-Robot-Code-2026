@@ -195,8 +195,6 @@ public class Turret extends SubsystemBase {
       closestAfter = closestAfter.plus(Rotations.of(1));
     }
 
-    Logger.recordOutput("TurretState/Target", closestAfter.in(Rotations));
-
     targetAngle = closestAfter;
 
     closestAfter =
@@ -233,7 +231,7 @@ public class Turret extends SubsystemBase {
     setTargetAngle(Radians.of(deltaRotation.getRadians()));
 
     Logger.recordOutput(
-        "Turret's target",
+        "Turret/Crosshair",
         GeomUtil.withRotation(
                 Drive.getInstance().getPose(),
                 turretFieldPose.getRotation().plus(new Rotation2d(getAngle())))
@@ -275,7 +273,7 @@ public class Turret extends SubsystemBase {
     return GeomUtil.toChassisSpeeds(turretSpeedEstimator.getEstimatedPosition());
   }
 
-  @AutoLogOutput(key = "Turret/Angle")
+  @AutoLogOutput(key = "Turret/CurrentAngle")
   public Angle getAngle() {
     if (easyCRT.getAngleOptional().isPresent()) {
       return easyCRT.getAngleOptional().get();
@@ -320,7 +318,7 @@ public class Turret extends SubsystemBase {
     return talonInputs.motorVelocity;
   }
 
-  @AutoLogOutput(key = "Turret/TurretTarget")
+  @AutoLogOutput(key = "Turret/TargetAngle")
   public Angle getTurretTarget() {
     return targetAngle;
   }

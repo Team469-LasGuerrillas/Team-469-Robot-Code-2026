@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -14,6 +16,7 @@ import frc.lib.utilities.math.ToleranceUtil;
 import frc.robot.Constants;
 import frc.robot.RobotState;
 import frc.robot.RobotState.HoodState;
+import frc.robot.util.FieldZoning;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -26,6 +29,8 @@ public class Hood extends SubsystemBase {
   private double requestedDutycycle = 0;
 
   private Angle requestedAngle = Radians.of(0);
+
+  private boolean zeroed = false;
 
   public static Hood createinstance(MotorIO pivotMotor) {
     instance = new Hood(pivotMotor);
@@ -50,16 +55,32 @@ public class Hood extends SubsystemBase {
 
     Angle updatedRequestedAngle = requestedAngle;
 
-    // if (FieldZoning.retractHood()) {
-    //   updatedRequestedAngle = Constants.HoodC.HOOD_STOW;
-    // }
+    if (FieldZoning.retractHood()) {
+      updatedRequestedAngle = Constants.HoodC.HOOD_STOW;
+    }
 
-    hoodMotor.setMagicalPositionSetpoint(
-        updatedRequestedAngle,
-        RotationsPerSecond.of(9999),
-        RotationsPerSecondPerSecond.of(9999),
-        0,
-        calcFF(requestedAngle));
+    if (!zeroed) {
+      hoodMotor.setMagicalPositionSetpoint(
+          Rotations.of(-1),
+          RotationsPerSecond.of(0.1),
+          RotationsPerSecondPerSecond.of(0.1),
+          0,
+          calcFF(requestedAngle));
+    } else {
+      hoodMotor.setMagicalPositionSetpoint(
+          updatedRequestedAngle,
+          RotationsPerSecond.of(9999),
+          RotationsPerSecondPerSecond.of(9999),
+          0,
+          calcFF(requestedAngle));
+    }
+
+    if (!zeroed
+        && Math.abs(pivotInputs.motorVelocity.in(DegreesPerSecond)) < 2
+        && pivotInputs.statorCurrent.in(Amps) > 8) {
+      hoodMotor.setZero();
+      zeroed = true;
+    }
 
     boolean lowHood =
         ToleranceUtil.epsilonEquals(

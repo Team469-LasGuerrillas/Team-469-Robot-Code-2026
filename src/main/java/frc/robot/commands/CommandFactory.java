@@ -9,21 +9,24 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utilities.field.Station;
 import frc.robot.Constants;
 import frc.robot.RobotState;
+import frc.robot.util.FieldZoning;
 import frc.robot.util.ShootTarget;
 
 public class CommandFactory {
   public static Command passing() {
     return Commands.parallel(
-        Commands.either(
-            Commands.startRun(
-                () -> ShootTarget.updateGoal(Constants.Field.RED_HUB, true),
-                () -> ShootTarget.updateGoal(Constants.Field.RED_HUB, true)),
-            Commands.startRun(
-                () -> ShootTarget.updateGoal(Constants.Field.BLUE_HUB, true),
-                () -> ShootTarget.updateGoal(Constants.Field.BLUE_HUB, true)),
-            () -> Station.isRed()),
         Commands.deferredProxy(
-            () -> TurretCommands.targetPoint(ShootTarget.getTranslationToTarget())),
+            () ->
+                Commands.either(
+                    Commands.startRun(
+                        () -> ShootTarget.updateGoal(Constants.Field.RED_PASS, true),
+                        () -> ShootTarget.updateGoal(Constants.Field.RED_PASS, true)),
+                    Commands.startRun(
+                        () -> ShootTarget.updateGoal(Constants.Field.BLUE_PASS, true),
+                        () -> ShootTarget.updateGoal(Constants.Field.BLUE_PASS, true)),
+                    () -> Station.isRed())),
+        Commands.deferredProxy(
+            () -> TurretCommands.targetPoint(ShootTarget::getTranslationToTarget)),
         Commands.deferredProxy(
             () ->
                 HoodCommands.setHoodSetpoint(
@@ -43,16 +46,18 @@ public class CommandFactory {
 
   public static Command scoring() {
     return Commands.parallel(
-        Commands.either(
-            Commands.startRun(
-                () -> ShootTarget.updateGoal(Constants.Field.RED_HUB, false),
-                () -> ShootTarget.updateGoal(Constants.Field.RED_HUB, false)),
-            Commands.startRun(
-                () -> ShootTarget.updateGoal(Constants.Field.BLUE_HUB, false),
-                () -> ShootTarget.updateGoal(Constants.Field.BLUE_HUB, false)),
-            () -> Station.isRed()),
         Commands.deferredProxy(
-            () -> TurretCommands.targetPoint(ShootTarget.getTranslationToTarget())),
+            () ->
+                Commands.either(
+                    Commands.startRun(
+                        () -> ShootTarget.updateGoal(Constants.Field.RED_HUB, false),
+                        () -> ShootTarget.updateGoal(Constants.Field.RED_HUB, false)),
+                    Commands.startRun(
+                        () -> ShootTarget.updateGoal(Constants.Field.BLUE_HUB, false),
+                        () -> ShootTarget.updateGoal(Constants.Field.BLUE_HUB, false)),
+                    () -> Station.isRed())),
+        Commands.deferredProxy(
+            () -> TurretCommands.targetPoint(ShootTarget::getTranslationToTarget)),
         Commands.deferredProxy(
             () ->
                 HoodCommands.setHoodSetpoint(
@@ -68,6 +73,12 @@ public class CommandFactory {
                             Constants.LauncherC.FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.get(
                                 ShootTarget.getDistanceToTarget().in(Meters))))),
         feedWhenReadyHub());
+  }
+
+  public static Command feedOrScore() {
+    return Commands.repeatingSequence(
+        Commands.deadline(Commands.waitUntil(FieldZoning::inNeutralZone), scoring()),
+        Commands.deadline(Commands.waitUntil(() -> !FieldZoning.inNeutralZone()), passing()));
   }
 
   private static Command feedWhenReadyPass() {
