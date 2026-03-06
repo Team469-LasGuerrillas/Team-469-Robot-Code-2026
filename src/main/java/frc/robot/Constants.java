@@ -113,9 +113,7 @@ public final class Constants {
     public static final Translation2d RED_HUB =
         new Translation2d(RED_TRENCH_SCORING.in(Meters), MID_FIELD.in(Meters));
 
-    public static final Translation2d BLUE_PASS = new Translation2d(1, MID_FIELD.in(Meters));
-    public static final Translation2d RED_PASS =
-        new Translation2d(MAX_FIELD_X.abs(Meters) - 1, MID_FIELD.in(Meters));
+    public static final Distance PASS_WALL_DISTANCE = Meters.of(2);
   }
 
   public static class VisionC {

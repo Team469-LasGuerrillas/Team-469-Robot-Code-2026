@@ -2,6 +2,8 @@ package frc.robot.util;
 
 import static edu.wpi.first.units.Units.Meters;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
 import frc.lib.utilities.math.GeomUtil;
@@ -14,12 +16,12 @@ public class ShootTarget {
 
   public static Translation2d goal = Constants.Field.RED_HUB;
 
-  public static void updateGoal(Translation2d target, boolean passing) {
+  public static void updateGoal(Supplier<Translation2d> target, boolean passing) {
     goal =
         ShootAndMove.getTransformed(
             Drive.getInstance().getFieldSpeedsFiltered(),
             Drive.getInstance().getPose(),
-            target,
+            target.get(),
             Constants.TurretC.TURD_CENTER,
             passing);
 
