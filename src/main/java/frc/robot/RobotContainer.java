@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.subsystems.configs.ServoMotorSubsystemWithFollowersConfig;
 import frc.lib.subsystems.interfaces.CanCoderIO;
@@ -41,6 +42,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.FiducialVision;
 import frc.robot.subsystems.vision.util.FiducialFilters.FiducialModifications;
+import frc.robot.util.HubShiftUtil;
 import frc.robot.util.ShootTarget;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -49,9 +51,12 @@ import java.util.function.UnaryOperator;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
@@ -73,56 +78,51 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
         // ModuleIOTalonFX is intended for modules with TalonFX drive, TalonFX turn, and
         // a CANcoder
-        drive =
-            Drive.getInstance(
-                new GyroIOPigeon2(),
-                new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                new ModuleIOTalonFX(TunerConstants.FrontRight),
-                new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight));
+        drive = Drive.getInstance(
+            new GyroIOPigeon2(),
+            new ModuleIOTalonFX(TunerConstants.FrontLeft),
+            new ModuleIOTalonFX(TunerConstants.FrontRight),
+            new ModuleIOTalonFX(TunerConstants.BackLeft),
+            new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        limelightRight =
-            new FiducialVision(
-                Constants.VisionC.LIMELIGHT_RIGHT,
-                new ArrayList<Function<PoseObservation, Boolean>>(),
-                Constants.VisionC.LL3G_MODIFICATIONS);
+        limelightRight = new FiducialVision(
+            Constants.VisionC.LIMELIGHT_RIGHT,
+            new ArrayList<Function<PoseObservation, Boolean>>(),
+            Constants.VisionC.LL3G_MODIFICATIONS);
 
-        limelightLeft =
-            new FiducialVision(
-                Constants.VisionC.LIMELIGHT_LEFT,
-                new ArrayList<Function<PoseObservation, Boolean>>(),
-                new ArrayList<UnaryOperator<FiducialModifications>>());
+        limelightLeft = new FiducialVision(
+            Constants.VisionC.LIMELIGHT_LEFT,
+            new ArrayList<Function<PoseObservation, Boolean>>(),
+            new ArrayList<UnaryOperator<FiducialModifications>>());
 
-        limelightTurd =
-            new FiducialVision(
-                Constants.VisionC.TURD_LIMELIGHT,
-                new ArrayList<Function<PoseObservation, Boolean>>(),
-                Constants.VisionC.TURRET_MODIFICATIONS);
+        limelightTurd = new FiducialVision(
+            Constants.VisionC.TURD_LIMELIGHT,
+            new ArrayList<Function<PoseObservation, Boolean>>(),
+            Constants.VisionC.TURRET_MODIFICATIONS);
 
-        exampe =
-            Turret.createInstance(
-                Constants.TurretC.motah, Constants.TurretC.coderA, Constants.TurretC.coderB);
+        exampe = Turret.createInstance(
+            Constants.TurretC.motah, Constants.TurretC.coderA, Constants.TurretC.coderB);
 
-        intake =
-            Intake.createinstance(
-                Constants.IntakeC.ROLLER_MOTOR,
-                Constants.IntakeC.PIVOT_MOTOR,
-                Constants.IntakeC.coder);
+        intake = Intake.createinstance(
+            Constants.IntakeC.ROLLER_MOTOR,
+            Constants.IntakeC.PIVOT_MOTOR,
+            Constants.IntakeC.coder);
 
         spindexer = Spindexer.createinstance(Constants.SpindexerC.SPINDEXER_MOTOR);
 
-        shooter =
-            Shooter.createinstance(
-                Constants.LauncherC.LAUNCHER_CONFIG,
-                Constants.LauncherC.LAUNCHER_MOTOR,
-                Constants.LauncherC.FOLLOWER_MOTORS);
+        shooter = Shooter.createinstance(
+            Constants.LauncherC.LAUNCHER_CONFIG,
+            Constants.LauncherC.LAUNCHER_MOTOR,
+            Constants.LauncherC.FOLLOWER_MOTORS);
 
         feeder = Feeder.createinstance(Constants.FeederC.FEEDER_MOTOR);
 
@@ -130,51 +130,73 @@ public class RobotContainer {
 
         break;
 
-        /*
-         * case SIM:
-         * // Sim robot, instantiate physics sim IO implementations
-         * drive = Drive.getInstance(
-         * new GyroIO() {
-         * },
-         * new ModuleIOSim(TunerConstants.FrontLeft),
-         * new ModuleIOSim(TunerConstants.FrontRight),
-         * new ModuleIOSim(TunerConstants.BackLeft),
-         * new ModuleIOSim(TunerConstants.BackRight));
-         * break;
-         */
+      /*
+       * case SIM:
+       * // Sim robot, instantiate physics sim IO implementations
+       * drive = Drive.getInstance(
+       * new GyroIO() {
+       * },
+       * new ModuleIOSim(TunerConstants.FrontLeft),
+       * new ModuleIOSim(TunerConstants.FrontRight),
+       * new ModuleIOSim(TunerConstants.BackLeft),
+       * new ModuleIOSim(TunerConstants.BackRight));
+       * break;
+       */
 
       default:
         // Replayed robot, disable IO implementations
-        drive =
-            Drive.getInstance(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
+        drive = Drive.getInstance(
+            new GyroIO() {
+            },
+            new ModuleIO() {
+            },
+            new ModuleIO() {
+            },
+            new ModuleIO() {
+            },
+            new ModuleIO() {
+            });
 
-        limelightRight = new FiducialVision(new VisionIO() {}, null, null);
+        limelightRight = new FiducialVision(new VisionIO() {
+        }, null, null);
 
-        limelightLeft = new FiducialVision(new VisionIO() {}, null, null);
+        limelightLeft = new FiducialVision(new VisionIO() {
+        }, null, null);
 
-        limelightTurd = new FiducialVision(new VisionIO() {}, null, null);
+        limelightTurd = new FiducialVision(new VisionIO() {
+        }, null, null);
 
-        exampe = Turret.createInstance(new MotorIO() {}, new CanCoderIO() {}, new CanCoderIO() {});
+        exampe = Turret.createInstance(new MotorIO() {
+        }, new CanCoderIO() {
+        }, new CanCoderIO() {
+        });
 
-        intake = Intake.createinstance(new MotorIO() {}, new MotorIO() {}, new CanCoderIO() {});
+        intake = Intake.createinstance(new MotorIO() {
+        }, new MotorIO() {
+        }, new CanCoderIO() {
+        });
 
-        spindexer = Spindexer.createinstance(new MotorIO() {});
+        spindexer = Spindexer.createinstance(new MotorIO() {
+        });
 
-        shooter =
-            Shooter.createinstance(
-                new ServoMotorSubsystemWithFollowersConfig() {}, new MotorIO() {}, null);
+        shooter = Shooter.createinstance(
+            new ServoMotorSubsystemWithFollowersConfig() {
+            }, new MotorIO() {
+            }, null);
 
-        feeder = Feeder.createinstance(new MotorIO() {});
+        feeder = Feeder.createinstance(new MotorIO() {
+        });
 
-        hood = Hood.createinstance(new MotorIO() {});
+        hood = Hood.createinstance(new MotorIO() {
+        });
 
         break;
     }
+
+    RobotModeTriggers.teleop().onTrue(Commands.runOnce(HubShiftUtil::initialize));
+    RobotModeTriggers.autonomous().onTrue(Commands.runOnce(HubShiftUtil::initialize));
+    RobotModeTriggers.disabled()
+        .onTrue(Commands.runOnce(HubShiftUtil::initialize).ignoringDisable(true));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

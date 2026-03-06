@@ -223,6 +223,7 @@ public final class Constants {
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(3.5, 46.0);
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(5.0, 54.0);
 
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(0.5, 28.0);
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(2.0, 45.0);
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(5.0, 55.0);
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(10.0, 65.0);
@@ -243,6 +244,7 @@ public final class Constants {
       SHOOTER_HOOD_MAP_SHOOTING.put(3.75, 8.0);
       SHOOTER_HOOD_MAP_SHOOTING.put(5.0, 13.0);
 
+      SHOOTER_HOOD_MAP_PASSING.put(0.5, 0.0);
       SHOOTER_HOOD_MAP_PASSING.put(2.0, 3.0);
       SHOOTER_HOOD_MAP_PASSING.put(4.0, 10.0);
       SHOOTER_HOOD_MAP_PASSING.put(7.0, 18.0);
@@ -337,7 +339,7 @@ public final class Constants {
     public static final Angle TURRERT_MAX = Rotations.of(0.375);
     public static final Angle TURRERT_MIN = Rotations.of(-0.975);
 
-    public static final double WRAPAROUND_PREDICTION_FACOTR = 0.5;
+    public static final double WRAPAROUND_PREDICTION_FACOTR = 0.2;
 
     public static final Pose3d TURD_CENTER =
         new Pose3d(
