@@ -9,19 +9,25 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
-import frc.lib.utilities.field.ShooterRegression;
+import frc.robot.Constants;
 
 public class ShootAndMove {
   public static Translation2d getTransformed(
       ChassisSpeeds fieldRelativeRobotSpeeds,
       Pose2d currentPose,
       Translation2d target,
-      Pose3d turretPose) {
+      Pose3d turretPose,
+      boolean isPassing) {
     Distance dist = Meters.of(target.getDistance(currentPose.getTranslation()));
 
     double lastLoopTimeOfFlight = 0;
-    double thisLoopTimeOfFlight =
-        dist.in(Meters) / ShooterRegression.calculateSpeedAndAngle(dist)[0]; // In meters per second
+    double thisLoopTimeOfFlight;
+
+    if (isPassing) {
+      thisLoopTimeOfFlight = Constants.LauncherC.TIME_OF_FLIGHT_MAP_PASSING.get(dist.in(Meters));
+    } else {
+      thisLoopTimeOfFlight = Constants.LauncherC.TIME_OF_FLIGHT_MAP_SHOOTING.get(dist.in(Meters));
+    }
     int loopCount = 0;
     Translation2d returnTarget = new Translation2d();
 
@@ -38,7 +44,7 @@ public class ShootAndMove {
     double turretTangentY = turretTangentVelocity * Math.sin(turretTangentAngle.in(Radians));
 
     while (Math.abs((lastLoopTimeOfFlight - thisLoopTimeOfFlight) / thisLoopTimeOfFlight) > 0.01
-        || loopCount < 1) {
+        || loopCount < 2) {
       lastLoopTimeOfFlight = thisLoopTimeOfFlight;
 
       Translation2d offset =
@@ -49,8 +55,13 @@ public class ShootAndMove {
       returnTarget = target.minus(offset);
       Distance updatedDist = Meters.of(returnTarget.getDistance(currentPose.getTranslation()));
 
-      thisLoopTimeOfFlight =
-          updatedDist.in(Meters) / ShooterRegression.calculateSpeedAndAngle(updatedDist)[0];
+      if (isPassing) {
+        thisLoopTimeOfFlight =
+            Constants.LauncherC.TIME_OF_FLIGHT_MAP_PASSING.get(updatedDist.in(Meters));
+      } else {
+        thisLoopTimeOfFlight =
+            Constants.LauncherC.TIME_OF_FLIGHT_MAP_SHOOTING.get(updatedDist.in(Meters));
+      }
       loopCount++;
 
       if (loopCount > 300) {

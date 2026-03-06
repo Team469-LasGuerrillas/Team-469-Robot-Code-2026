@@ -86,4 +86,6 @@ public interface VisionIO {
   default void setPipelineIndex(int index) {}
 
   default void setTagFiltersOverride(int[] tags) {}
+
+  default void setThrottle(int value) {}
 }

@@ -1,0 +1,108 @@
+package frc.robot.commands;
+
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.lib.utilities.field.Station;
+import frc.robot.Constants;
+import frc.robot.RobotState;
+import frc.robot.util.FieldZoning;
+import frc.robot.util.ShootTarget;
+
+public class CommandFactory {
+  public static Command passing() {
+    return Commands.parallel(
+        Commands.deferredProxy(
+            () ->
+                Commands.either(
+                    Commands.startRun(
+                        () -> ShootTarget.updateGoal(Constants.Field.RED_PASS, true),
+                        () -> ShootTarget.updateGoal(Constants.Field.RED_PASS, true)),
+                    Commands.startRun(
+                        () -> ShootTarget.updateGoal(Constants.Field.BLUE_PASS, true),
+                        () -> ShootTarget.updateGoal(Constants.Field.BLUE_PASS, true)),
+                    () -> Station.isRed())),
+        Commands.deferredProxy(
+            () -> TurretCommands.targetPoint(ShootTarget::getTranslationToTarget)),
+        Commands.deferredProxy(
+            () ->
+                HoodCommands.setHoodSetpoint(
+                    () ->
+                        Degrees.of(
+                            Constants.LauncherC.SHOOTER_HOOD_MAP_PASSING.get(
+                                ShootTarget.getDistanceToTarget().in(Meters))))),
+        Commands.deferredProxy(
+            () ->
+                ShooterCommands.targetLaunchSpeed(
+                    () ->
+                        RotationsPerSecond.of(
+                            Constants.LauncherC.FLYWHEEL_SHOT_SPEEDMAP_PASSING.get(
+                                ShootTarget.getDistanceToTarget().in(Meters))))),
+        feedWhenReadyPass());
+  }
+
+  public static Command scoring() {
+    return Commands.parallel(
+        Commands.deferredProxy(
+            () ->
+                Commands.either(
+                    Commands.startRun(
+                        () -> ShootTarget.updateGoal(Constants.Field.RED_HUB, false),
+                        () -> ShootTarget.updateGoal(Constants.Field.RED_HUB, false)),
+                    Commands.startRun(
+                        () -> ShootTarget.updateGoal(Constants.Field.BLUE_HUB, false),
+                        () -> ShootTarget.updateGoal(Constants.Field.BLUE_HUB, false)),
+                    () -> Station.isRed())),
+        Commands.deferredProxy(
+            () -> TurretCommands.targetPoint(ShootTarget::getTranslationToTarget)),
+        Commands.deferredProxy(
+            () ->
+                HoodCommands.setHoodSetpoint(
+                    () ->
+                        Degrees.of(
+                            Constants.LauncherC.SHOOTER_HOOD_MAP_SHOOTING.get(
+                                ShootTarget.getDistanceToTarget().in(Meters))))),
+        Commands.deferredProxy(
+            () ->
+                ShooterCommands.targetLaunchSpeed(
+                    () ->
+                        RotationsPerSecond.of(
+                            Constants.LauncherC.FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.get(
+                                ShootTarget.getDistanceToTarget().in(Meters))))),
+        feedWhenReadyHub());
+  }
+
+  public static Command feedOrScore() {
+    return Commands.repeatingSequence(
+        Commands.deadline(Commands.waitUntil(FieldZoning::inNeutralZone), scoring()),
+        Commands.deadline(Commands.waitUntil(() -> !FieldZoning.inNeutralZone()), passing()));
+  }
+
+  private static Command feedWhenReadyPass() {
+    return Commands.repeatingSequence(
+        Commands.deadline(Commands.waitUntil(() -> RobotState.weLockedPass()), readyToFeed()),
+        Commands.deadline(Commands.waitUntil(() -> !RobotState.weLockedPass()), feed()));
+  }
+
+  private static Command feedWhenReadyHub() {
+    return Commands.repeatingSequence(
+        Commands.deadline(Commands.waitUntil(() -> RobotState.weLockedHub()), readyToFeed()),
+        Commands.deadline(Commands.waitUntil(() -> !RobotState.weLockedHub()), feed()));
+  }
+
+  private static Command feed() {
+    return Commands.sequence(
+        Commands.waitSeconds(0.1),
+        Commands.parallel(
+            FeederCommands.runPositive(),
+            SpindexerCommands.runPositive(),
+            Commands.run(() -> System.out.println("ROBO"))));
+  }
+
+  private static Command readyToFeed() {
+    return Commands.parallel(SpindexerCommands.idleCommand(), FeederCommands.idleCommand());
+  }
+}

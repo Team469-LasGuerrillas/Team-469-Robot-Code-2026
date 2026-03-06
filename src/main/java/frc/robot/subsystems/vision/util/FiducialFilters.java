@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservationType;
 import frc.robot.Constants;
@@ -35,13 +37,19 @@ public class FiducialFilters {
 
     /** Is the MT2 or single tag yaw far off from where the robot thinks it is? */
     public static boolean badYaw(PoseObservation toFilter) {
+      Rotation2d rotationAtTimestamp;
+      if (Drive.getInstance().getPose(toFilter.timestamp()).isPresent()) {
+        rotationAtTimestamp = Drive.getInstance().getPose(toFilter.timestamp()).get().getRotation();
+      } else {
+        rotationAtTimestamp = Drive.getInstance().getRotation();
+      }
       if (toFilter.type() == PoseObservationType.MT1 && toFilter.tagCount() == 1) {
         // MT1 1 Tag Cases
         return toFilter
                 .pose()
                 .getRotation()
                 .getMeasureZ()
-                .minus(Drive.getInstance().getRotation().getMeasure())
+                .minus(rotationAtTimestamp.getMeasure())
                 .abs(Degrees)
             >= Constants.VisionC.MAX_YAW_ERROR_MT1.in(Degrees);
       } else if (toFilter.type() == PoseObservationType.MT2) {
@@ -50,7 +58,7 @@ public class FiducialFilters {
                 .pose()
                 .getRotation()
                 .getMeasureZ()
-                .minus(Drive.getInstance().getRotation().getMeasure())
+                .minus(rotationAtTimestamp.getMeasure())
                 .abs(Degrees)
             >= Constants.VisionC.MAX_YAW_ERROR_MT2.in(Degrees);
       }
@@ -92,6 +100,14 @@ public class FiducialFilters {
       return this;
     }
 
+    public FiducialModifications withMultiplyAllResults() {
+      observation.stdDevs()[0] *= 2;
+      observation.stdDevs()[1] *= 2;
+      observation.stdDevs()[2] *= 2;
+
+      return this;
+    }
+
     public FiducialModifications withDistrustMt2WhileTurretSpinToFast() {
       if (observation.type() == PoseObservationType.MT2
           && Turret.getInstance().getAngularVelocity().abs(DegreesPerSecond)
@@ -108,12 +124,39 @@ public class FiducialFilters {
       return this;
     }
 
+    public FiducialModifications withDistrustMt2WhileDriveSpinToFast() {
+      if (observation.type() == PoseObservationType.MT2
+          && Units.radiansToDegrees(Drive.getInstance().getFieldSpeeds().omegaRadiansPerSecond)
+              >= Constants.VisionC.REASONABLE_DRIVE_ANGULAR_VELOCITY_MT2.abs(DegreesPerSecond)) {
+        observation.stdDevs()[0] *= Constants.VisionC.REASONABLE_DRIVE_ANGULAR_VELOCITY_MT2_MULT;
+        observation.stdDevs()[1] *= Constants.VisionC.REASONABLE_DRIVE_ANGULAR_VELOCITY_MT2_MULT;
+      }
+      return this;
+    }
+
+    public FiducialModifications withDistrustYaw() {
+      observation.stdDevs()[2] = Double.MAX_VALUE;
+      return this;
+    }
+
     public PoseObservation get() {
       return observation;
     }
 
+    public static UnaryOperator<FiducialModifications> o_withMultiplyAllResults() {
+      return FiducialModifications::withMultiplyAllResults;
+    }
+
     public static UnaryOperator<FiducialModifications> o_withDistrustMt2WhileTurretSpinToFast() {
       return FiducialModifications::withDistrustMt2WhileTurretSpinToFast;
+    }
+
+    public static UnaryOperator<FiducialModifications> o_withDistrustMt2WhileDriveSpinToFast() {
+      return FiducialModifications::withDistrustMt2WhileDriveSpinToFast;
+    }
+
+    public static UnaryOperator<FiducialModifications> o_withDistrustYaw() {
+      return FiducialModifications::withDistrustYaw;
     }
   }
 }

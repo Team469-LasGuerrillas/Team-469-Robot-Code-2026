@@ -5,7 +5,9 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.drivers.LimelightHelpers;
 import frc.lib.subsystems.interfaces.VisionIO;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservationComparator;
@@ -32,6 +34,9 @@ public class FiducialVision extends SubsystemBase {
   private Pose3d originalCameraPose;
   private boolean hasOriginalPoseBeenSet = false;
 
+  private boolean wasLastEnabled = false;
+  private boolean wasLastDisabled = false;
+
   ArrayList<Function<PoseObservation, Boolean>> extraRejections;
   ArrayList<UnaryOperator<FiducialModifications>> extraModifications;
 
@@ -48,7 +53,11 @@ public class FiducialVision extends SubsystemBase {
               o.pose().toPose2d(),
               o.timestamp(),
               VecBuilder.fill(o.stdDevs()[0], o.stdDevs()[1], o.stdDevs()[2]));
+
+      Drive.getInstance().getCameraField().setRobotPose(o.pose().toPose2d());
     }
+
+    allObservations.clear();
   }
 
   public FiducialVision(
@@ -69,6 +78,26 @@ public class FiducialVision extends SubsystemBase {
         RadiansPerSecond.of(Drive.getInstance().getFieldSpeeds().omegaRadiansPerSecond));
     Logger.processInputs(getCameraName(), visionInputs);
 
+    if (DriverStation.isDisabled() && !wasLastDisabled) {
+      io.setThrottle(100);
+      LimelightHelpers.SetIMUMode(visionInputs.cameraName, 1);
+
+      wasLastDisabled = true;
+      wasLastEnabled = false;
+    } else if (DriverStation.isEnabled() && !wasLastEnabled) {
+      io.setThrottle(0);
+      if (visionInputs.cameraName.equals("limelight-turd")) {
+        LimelightHelpers.SetIMUMode(visionInputs.cameraName, 3);
+        LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.05);
+      } else {
+        LimelightHelpers.SetIMUMode(visionInputs.cameraName, 4);
+        LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.01);
+      }
+
+      wasLastEnabled = true;
+      wasLastDisabled = false;
+    }
+
     if (!hasOriginalPoseBeenSet) {
       originalCameraPose = visionInputs.cameraPose;
       hasOriginalPoseBeenSet = true;
@@ -81,7 +110,6 @@ public class FiducialVision extends SubsystemBase {
         && visionInputs.targettingType == TargettingType.FIDUCIAL
         && visionInputs.fiducialCount >= 1) {
       for (PoseObservation observation : visionInputs.poseObservations) {
-        // TODO: Apply rejection
         boolean reject =
             FiducialFilters.FiducialRejections.badAmbiguity(observation)
                 || FiducialFilters.FiducialRejections.badYaw(observation)

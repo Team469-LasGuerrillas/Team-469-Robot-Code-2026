@@ -25,8 +25,8 @@ public interface MotorIO {
     public AngularVelocity motorVelocity = RotationsPerSecond.of(0);
     public AngularAcceleration motorAngularAcceleration = RotationsPerSecondPerSecond.of(0);
 
-    public Angle targetPosition = Rotations.of(0);
-    public AngularVelocity targetVelocity = RotationsPerSecond.of(0);
+    public Angle targetPosition = Rotations.of(0.67);
+    public AngularVelocity targetVelocity = RotationsPerSecond.of(0.67);
 
     public Voltage appliedVolts = Volts.of(0);
     public Current supplyCurrent = Amps.of(0);

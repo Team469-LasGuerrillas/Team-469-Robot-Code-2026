@@ -7,8 +7,12 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Rotations;
+
+import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.vision.FiducialVision;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -77,7 +81,7 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
     // Optionally switch the thread to high priority to improve loop
     // timing (see the template project documentation for details)
-    // Threads.setCurrentThreadPriority(true, 99);
+    Threads.setCurrentThreadPriority(true, 1);
 
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled commands, running already-scheduled commands, removing
@@ -89,11 +93,14 @@ public class Robot extends LoggedRobot {
     //     new Pose3d(0, 0, 1, new Rotation3d(new
     // Rotation2d(robotContainer.exampe.getPosition()))));
     robotContainer.limelightTurd.setPositionTurret(
-        robotContainer.exampe.getPosition(), Constants.TurretC.TURD_CENTER);
+        Turret.getInstance().getAngleForTurretLL().plus(Rotations.of(0.25 - 0.025542)),
+        Constants.TurretC.TURD_CENTER_WITHOUT_ROTATION);
     FiducialVision.applyUpdates();
+    Logger.recordOutput("WeLocked/Pass", RobotState.weLockedPass());
+    Logger.recordOutput("WeLocked/Hub", RobotState.weLockedHub());
 
     // Return to non-RT thread priority (do not modify the first argument)
-    // Threads.setCurrentThreadPriority(false, 10);
+    Threads.setCurrentThreadPriority(false, 10);
   }
 
   /** This function is called once when the robot is disabled. */

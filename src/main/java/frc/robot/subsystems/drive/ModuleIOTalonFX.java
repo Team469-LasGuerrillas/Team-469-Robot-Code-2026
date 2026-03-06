@@ -245,11 +245,19 @@ public class ModuleIOTalonFX implements ModuleIO {
   @Override
   public void setDriveVelocity(double velocityRadPerSec) {
     double velocityRotPerSec = Units.radiansToRotations(velocityRadPerSec);
-    driveTalon.setControl(
-        switch (constants.DriveMotorClosedLoopOutput) {
-          case Voltage -> velocityVoltageRequest.withVelocity(velocityRotPerSec);
-          case TorqueCurrentFOC -> velocityTorqueCurrentRequest.withVelocity(velocityRotPerSec);
-        });
+
+    if (Math.abs(velocityRotPerSec) < Units.degreesToRotations(1)) {
+      driveTalon.setControl(torqueCurrentRequest.withOutput(0));
+    } else {
+
+      driveTalon.setControl(
+          switch (constants.DriveMotorClosedLoopOutput) {
+            case Voltage -> velocityVoltageRequest
+                .withVelocity(velocityRotPerSec)
+                .withEnableFOC(true);
+            case TorqueCurrentFOC -> velocityTorqueCurrentRequest.withVelocity(velocityRotPerSec);
+          });
+    }
   }
 
   @Override

@@ -13,12 +13,12 @@ public class Spindexer extends SubsystemBase {
 
   private double requestedDutycycle = 0;
 
-  public Spindexer createinstance(MotorIO spindexer) {
+  public static Spindexer createinstance(MotorIO spindexer) {
     instance = new Spindexer(spindexer);
     return instance;
   }
 
-  public static Spindexer Getinstance() {
+  public static Spindexer getInstance() {
     return instance;
   }
 
@@ -26,7 +26,7 @@ public class Spindexer extends SubsystemBase {
     this.spindexer = spindexer;
   }
 
-  public void setDutyCycle(double dutyCycle) {
+  public void setOpenLoopDutyCycle(double dutyCycle) {
     requestedDutycycle = dutyCycle;
     spindexer.setOpenLoopDutyCycle(requestedDutycycle);
   }

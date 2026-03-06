@@ -8,24 +8,31 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.subsystems.configs.ServoMotorSubsystemWithFollowersConfig;
 import frc.lib.subsystems.interfaces.CanCoderIO;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.VisionIO;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
-import frc.lib.utilities.math.ShootAndMove;
+import frc.robot.commands.AutonCommands;
+import frc.robot.commands.CommandFactory;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.FeederCommands;
+import frc.robot.commands.HoodCommands;
+import frc.robot.commands.IntakeCommands;
+import frc.robot.commands.ShooterCommands;
+import frc.robot.commands.SpindexerCommands;
+import frc.robot.commands.TurretCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Spindexer;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -33,9 +40,12 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.FiducialVision;
+import frc.robot.subsystems.vision.util.FiducialFilters.FiducialModifications;
+import frc.robot.util.ShootTarget;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -47,9 +57,15 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final FiducialVision limelightDev;
+  private final FiducialVision limelightRight;
+  private final FiducialVision limelightLeft;
   public final FiducialVision limelightTurd;
   public final Turret exampe;
+  public final Intake intake;
+  public final Spindexer spindexer;
+  public final Shooter shooter;
+  public final Feeder feeder;
+  public final Hood hood;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -72,7 +88,17 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        limelightDev = new FiducialVision(Constants.VisionC.DEV_LIMELIGHT, null, null);
+        limelightRight =
+            new FiducialVision(
+                Constants.VisionC.LIMELIGHT_RIGHT,
+                new ArrayList<Function<PoseObservation, Boolean>>(),
+                Constants.VisionC.LL3G_MODIFICATIONS);
+
+        limelightLeft =
+            new FiducialVision(
+                Constants.VisionC.LIMELIGHT_LEFT,
+                new ArrayList<Function<PoseObservation, Boolean>>(),
+                new ArrayList<UnaryOperator<FiducialModifications>>());
 
         limelightTurd =
             new FiducialVision(
@@ -80,7 +106,27 @@ public class RobotContainer {
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 Constants.VisionC.TURRET_MODIFICATIONS);
 
-        exampe = Turret.createInstance(Constants.TurretC.motah, Constants.TurretC.coder);
+        exampe =
+            Turret.createInstance(
+                Constants.TurretC.motah, Constants.TurretC.coderA, Constants.TurretC.coderB);
+
+        intake =
+            Intake.createinstance(
+                Constants.IntakeC.ROLLER_MOTOR,
+                Constants.IntakeC.PIVOT_MOTOR,
+                Constants.IntakeC.coder);
+
+        spindexer = Spindexer.createinstance(Constants.SpindexerC.SPINDEXER_MOTOR);
+
+        shooter =
+            Shooter.createinstance(
+                Constants.LauncherC.LAUNCHER_CONFIG,
+                Constants.LauncherC.LAUNCHER_MOTOR,
+                Constants.LauncherC.FOLLOWER_MOTORS);
+
+        feeder = Feeder.createinstance(Constants.FeederC.FEEDER_MOTOR);
+
+        hood = Hood.createinstance(Constants.HoodC.PIVOT_MOTOR);
 
         break;
 
@@ -107,11 +153,25 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
 
-        limelightDev = new FiducialVision(new VisionIO() {}, null, null);
+        limelightRight = new FiducialVision(new VisionIO() {}, null, null);
+
+        limelightLeft = new FiducialVision(new VisionIO() {}, null, null);
 
         limelightTurd = new FiducialVision(new VisionIO() {}, null, null);
 
-        exampe = Turret.createInstance(new MotorIO() {}, new CanCoderIO() {});
+        exampe = Turret.createInstance(new MotorIO() {}, new CanCoderIO() {}, new CanCoderIO() {});
+
+        intake = Intake.createinstance(new MotorIO() {}, new MotorIO() {}, new CanCoderIO() {});
+
+        spindexer = Spindexer.createinstance(new MotorIO() {});
+
+        shooter =
+            Shooter.createinstance(
+                new ServoMotorSubsystemWithFollowersConfig() {}, new MotorIO() {}, null);
+
+        feeder = Feeder.createinstance(new MotorIO() {});
+
+        hood = Hood.createinstance(new MotorIO() {});
 
         break;
     }
@@ -135,17 +195,12 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    // Configure the button bindings
+    // Configure the button
+    configureDefaultCommands();
     configureButtonBindings();
   }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void configureButtonBindings() {
+  private void configureDefaultCommands() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -154,47 +209,49 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    HashSet<Subsystem> driveList = new HashSet<Subsystem>();
-    driveList.add(Drive.getInstance());
-
     HashSet<Subsystem> turretList = new HashSet<Subsystem>();
     turretList.add(exampe);
 
+    // exampe.setDefaultCommand(TurretCommands.targetAngle(Rotations.of(0)));
+
     exampe.setDefaultCommand(
         Commands.defer(
-            () ->
-                Commands.run(
-                    () ->
-                        exampe.setTargetPoint(
-                            ShootAndMove.getTransformed(
-                                Drive.getInstance().getFieldSpeedsFiltered(),
-                                Drive.getInstance().getPose(),
-                                new Translation2d(3, Units.feetToMeters(26.4 / 2)),
-                                Constants.TurretC.TURD_CENTER))),
-            turretList));
+            () -> TurretCommands.targetPoint(ShootTarget::getTranslationToTarget), turretList));
+
+    intake.setDefaultCommand(IntakeCommands.stow());
+
+    spindexer.setDefaultCommand(SpindexerCommands.agitate());
+
+    shooter.setDefaultCommand(ShooterCommands.idleCommand());
+
+    feeder.setDefaultCommand(FeederCommands.idleCommand());
+
+    hood.setDefaultCommand(HoodCommands.stowHood());
+  }
+
+  private void configureButtonBindings() {
+    HashSet<Subsystem> driveList = new HashSet<Subsystem>();
+    driveList.add(Drive.getInstance());
+
     // Lock to 0° when A button is held
     controller
         .a()
         .whileTrue(
             Commands.defer(
-                () ->
-                    Drive.getInstance()
-                        .followPath(AutonPaths.sixSevenExamplePath(Drive.getInstance().getPose())),
-                driveList));
+                () -> Drive.getInstance().pathfindToPath(AutonPaths.climbRed()), driveList));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
+    controller.b().whileTrue(AutonCommands.redPass());
+
+    controller.leftBumper().toggleOnTrue(IntakeCommands.deployAndRun());
     controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
-                    drive)
-                .ignoringDisable(true));
+        .leftBumper()
+        .toggleOnFalse(Commands.sequence(FeederCommands.retract(), FeederCommands.idleCommand()));
+
+    controller.rightBumper().toggleOnTrue(CommandFactory.feedOrScore());
   }
 
   /**

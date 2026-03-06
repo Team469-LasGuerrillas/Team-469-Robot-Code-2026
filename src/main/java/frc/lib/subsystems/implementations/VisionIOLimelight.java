@@ -214,4 +214,12 @@ public class VisionIOLimelight implements VisionIO {
 
     return poses;
   }
+
+  @Override
+  public void setThrottle(int value) {
+    NetworkTableInstance.getDefault()
+        .getTable(limelightName)
+        .getEntry("throttle_set")
+        .setNumber(value);
+  }
 }
