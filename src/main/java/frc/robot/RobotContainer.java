@@ -20,6 +20,7 @@ import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.VisionIO;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.robot.commands.AutonCommands;
+import frc.robot.commands.ClimbCommands;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeederCommands;
@@ -29,6 +30,7 @@ import frc.robot.commands.ShooterCommands;
 import frc.robot.commands.SpindexerCommands;
 import frc.robot.commands.TurretCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
@@ -51,12 +53,9 @@ import java.util.function.UnaryOperator;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of
- * the robot (including
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
@@ -64,6 +63,7 @@ public class RobotContainer {
   private final Drive drive;
   private final FiducialVision limelightRight;
   private final FiducialVision limelightLeft;
+  private final FiducialVision limelightClimb;
   public final FiducialVision limelightTurd;
   public final Turret exampe;
   public final Intake intake;
@@ -71,6 +71,7 @@ public class RobotContainer {
   public final Shooter shooter;
   public final Feeder feeder;
   public final Hood hood;
+  public final Climb climb;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -78,117 +79,117 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
         // ModuleIOTalonFX is intended for modules with TalonFX drive, TalonFX turn, and
         // a CANcoder
-        drive = Drive.getInstance(
-            new GyroIOPigeon2(),
-            new ModuleIOTalonFX(TunerConstants.FrontLeft),
-            new ModuleIOTalonFX(TunerConstants.FrontRight),
-            new ModuleIOTalonFX(TunerConstants.BackLeft),
-            new ModuleIOTalonFX(TunerConstants.BackRight));
+        drive =
+            Drive.getInstance(
+                new GyroIOPigeon2(),
+                new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                new ModuleIOTalonFX(TunerConstants.FrontRight),
+                new ModuleIOTalonFX(TunerConstants.BackLeft),
+                new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        limelightRight = new FiducialVision(
-            Constants.VisionC.LIMELIGHT_RIGHT,
-            new ArrayList<Function<PoseObservation, Boolean>>(),
-            Constants.VisionC.LL3G_MODIFICATIONS);
+        limelightRight =
+            new FiducialVision(
+                Constants.VisionC.LIMELIGHT_RIGHT,
+                new ArrayList<Function<PoseObservation, Boolean>>(),
+                Constants.VisionC.LL3G_MODIFICATIONS);
 
-        limelightLeft = new FiducialVision(
-            Constants.VisionC.LIMELIGHT_LEFT,
-            new ArrayList<Function<PoseObservation, Boolean>>(),
-            new ArrayList<UnaryOperator<FiducialModifications>>());
+        limelightLeft =
+            new FiducialVision(
+                Constants.VisionC.LIMELIGHT_LEFT,
+                new ArrayList<Function<PoseObservation, Boolean>>(),
+                new ArrayList<UnaryOperator<FiducialModifications>>());
 
-        limelightTurd = new FiducialVision(
-            Constants.VisionC.TURD_LIMELIGHT,
-            new ArrayList<Function<PoseObservation, Boolean>>(),
-            Constants.VisionC.TURRET_MODIFICATIONS);
+        limelightClimb =
+            new FiducialVision(
+                Constants.VisionC.LIMELIGHT_CLIMB,
+                new ArrayList<Function<PoseObservation, Boolean>>(),
+                new ArrayList<UnaryOperator<FiducialModifications>>());
 
-        exampe = Turret.createInstance(
-            Constants.TurretC.motah, Constants.TurretC.coderA, Constants.TurretC.coderB);
+        limelightTurd =
+            new FiducialVision(
+                Constants.VisionC.TURD_LIMELIGHT,
+                new ArrayList<Function<PoseObservation, Boolean>>(),
+                Constants.VisionC.TURRET_MODIFICATIONS);
 
-        intake = Intake.createinstance(
-            Constants.IntakeC.ROLLER_MOTOR,
-            Constants.IntakeC.PIVOT_MOTOR,
-            Constants.IntakeC.coder);
+        exampe =
+            Turret.createInstance(
+                Constants.TurretC.motah, Constants.TurretC.coderA, Constants.TurretC.coderB);
+
+        intake =
+            Intake.createinstance(
+                Constants.IntakeC.ROLLER_MOTOR,
+                Constants.IntakeC.PIVOT_MOTOR,
+                Constants.IntakeC.coder);
 
         spindexer = Spindexer.createinstance(Constants.SpindexerC.SPINDEXER_MOTOR);
 
-        shooter = Shooter.createinstance(
-            Constants.LauncherC.LAUNCHER_CONFIG,
-            Constants.LauncherC.LAUNCHER_MOTOR,
-            Constants.LauncherC.FOLLOWER_MOTORS);
+        shooter =
+            Shooter.createinstance(
+                Constants.LauncherC.LAUNCHER_CONFIG,
+                Constants.LauncherC.LAUNCHER_MOTOR,
+                Constants.LauncherC.FOLLOWER_MOTORS);
 
         feeder = Feeder.createinstance(Constants.FeederC.FEEDER_MOTOR);
 
         hood = Hood.createinstance(Constants.HoodC.PIVOT_MOTOR);
 
+        climb = Climb.createInstance(Constants.ClimbC.CLIMB_MOTOR);
+
         break;
 
-      /*
-       * case SIM:
-       * // Sim robot, instantiate physics sim IO implementations
-       * drive = Drive.getInstance(
-       * new GyroIO() {
-       * },
-       * new ModuleIOSim(TunerConstants.FrontLeft),
-       * new ModuleIOSim(TunerConstants.FrontRight),
-       * new ModuleIOSim(TunerConstants.BackLeft),
-       * new ModuleIOSim(TunerConstants.BackRight));
-       * break;
-       */
+        /*
+         * case SIM:
+         * // Sim robot, instantiate physics sim IO implementations
+         * drive = Drive.getInstance(
+         * new GyroIO() {
+         * },
+         * new ModuleIOSim(TunerConstants.FrontLeft),
+         * new ModuleIOSim(TunerConstants.FrontRight),
+         * new ModuleIOSim(TunerConstants.BackLeft),
+         * new ModuleIOSim(TunerConstants.BackRight));
+         * break;
+         */
 
       default:
         // Replayed robot, disable IO implementations
-        drive = Drive.getInstance(
-            new GyroIO() {
-            },
-            new ModuleIO() {
-            },
-            new ModuleIO() {
-            },
-            new ModuleIO() {
-            },
-            new ModuleIO() {
-            });
+        drive =
+            Drive.getInstance(
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {});
 
-        limelightRight = new FiducialVision(new VisionIO() {
-        }, null, null);
+        limelightRight = new FiducialVision(new VisionIO() {}, null, null);
 
-        limelightLeft = new FiducialVision(new VisionIO() {
-        }, null, null);
+        limelightLeft = new FiducialVision(new VisionIO() {}, null, null);
 
-        limelightTurd = new FiducialVision(new VisionIO() {
-        }, null, null);
+        limelightClimb = new FiducialVision(new VisionIO() {}, null, null);
 
-        exampe = Turret.createInstance(new MotorIO() {
-        }, new CanCoderIO() {
-        }, new CanCoderIO() {
-        });
+        limelightTurd = new FiducialVision(new VisionIO() {}, null, null);
 
-        intake = Intake.createinstance(new MotorIO() {
-        }, new MotorIO() {
-        }, new CanCoderIO() {
-        });
+        exampe = Turret.createInstance(new MotorIO() {}, new CanCoderIO() {}, new CanCoderIO() {});
 
-        spindexer = Spindexer.createinstance(new MotorIO() {
-        });
+        intake = Intake.createinstance(new MotorIO() {}, new MotorIO() {}, new CanCoderIO() {});
 
-        shooter = Shooter.createinstance(
-            new ServoMotorSubsystemWithFollowersConfig() {
-            }, new MotorIO() {
-            }, null);
+        spindexer = Spindexer.createinstance(new MotorIO() {});
 
-        feeder = Feeder.createinstance(new MotorIO() {
-        });
+        shooter =
+            Shooter.createinstance(
+                new ServoMotorSubsystemWithFollowersConfig() {}, new MotorIO() {}, null);
 
-        hood = Hood.createinstance(new MotorIO() {
-        });
+        feeder = Feeder.createinstance(new MotorIO() {});
+
+        hood = Hood.createinstance(new MotorIO() {});
+
+        climb = Climb.createInstance(new MotorIO() {});
 
         break;
     }
@@ -249,6 +250,8 @@ public class RobotContainer {
     feeder.setDefaultCommand(FeederCommands.idleCommand());
 
     hood.setDefaultCommand(HoodCommands.stowHood());
+
+    climb.setDefaultCommand(ClimbCommands.setClimbSetpointStow());
   }
 
   private void configureButtonBindings() {
@@ -256,11 +259,7 @@ public class RobotContainer {
     driveList.add(Drive.getInstance());
 
     // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            Commands.defer(
-                () -> Drive.getInstance().pathfindToPath(AutonPaths.climbRed()), driveList));
+    controller.a().whileTrue(ClimbCommands.setClimbSetpointClear());
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));

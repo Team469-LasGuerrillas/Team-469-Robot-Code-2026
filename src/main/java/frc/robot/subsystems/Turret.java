@@ -55,17 +55,19 @@ public class Turret extends SubsystemBase {
   private boolean offsetHasBeenSet = false;
 
   private Pose2d lastTurretPoseFieldSpace = new Pose2d();
-  private SwerveDrivePoseEstimator turretSpeedEstimator = new SwerveDrivePoseEstimator(
-      Drive.getInstance().kinematics,
-      new Rotation2d(),
-      Drive.getInstance().lastModulePositions,
-      Pose2d.kZero);
+  private SwerveDrivePoseEstimator turretSpeedEstimator =
+      new SwerveDrivePoseEstimator(
+          Drive.getInstance().kinematics,
+          new Rotation2d(),
+          Drive.getInstance().lastModulePositions,
+          Pose2d.kZero);
 
-  private SwerveDrivePoseEstimator turretMotorSpeedEstimator = new SwerveDrivePoseEstimator(
-      Drive.getInstance().kinematics,
-      new Rotation2d(),
-      Drive.getInstance().lastModulePositions,
-      Pose2d.kZero);
+  private SwerveDrivePoseEstimator turretMotorSpeedEstimator =
+      new SwerveDrivePoseEstimator(
+          Drive.getInstance().kinematics,
+          new Rotation2d(),
+          Drive.getInstance().lastModulePositions,
+          Pose2d.kZero);
 
   public static Turret createInstance(MotorIO turd, CanCoderIO canCoderA, CanCoderIO canCoderB) {
     instance = new Turret(turd, canCoderA, canCoderB);
@@ -83,13 +85,14 @@ public class Turret extends SubsystemBase {
 
     turd.setEnableSoftLimits(true, true);
 
-    easyCRTConfig = new EasyCRTConfig(this::getCCAPosition, this::getCCBPosition)
-        .withEncoderRatios(168.0 / 26.0, 168.0 / 28.0)
-        .withAbsoluteEncoder1Inverted(false)
-        .withAbsoluteEncoder2Inverted(false)
-        .withMatchTolerance(Degrees.of(6.7))
-        .withMechanismRange(Rotations.of(-0.99), Rotations.of(0.99))
-        .withAbsoluteEncoderOffsets(Radians.of(-1.059981), Radians.of(1.986505));
+    easyCRTConfig =
+        new EasyCRTConfig(this::getCCAPosition, this::getCCBPosition)
+            .withEncoderRatios(168.0 / 26.0, 168.0 / 28.0)
+            .withAbsoluteEncoder1Inverted(false)
+            .withAbsoluteEncoder2Inverted(false)
+            .withMatchTolerance(Degrees.of(6.7))
+            .withMechanismRange(Rotations.of(-0.99), Rotations.of(0.99))
+            .withAbsoluteEncoderOffsets(Radians.of(-1.059981), Radians.of(1.986505));
     easyCRT = new EasyCRT(easyCRTConfig);
   }
 
@@ -130,18 +133,24 @@ public class Turret extends SubsystemBase {
       offsetHasBeenSet = true;
     }
 
-    double wrapOffset = Constants.TurretC.WRAPAROUND_PREDICTION_FACOTR
-        * talonInputs.motorVelocity.in(RotationsPerSecond);
+    double wrapOffset =
+        Constants.TurretC.WRAPAROUND_PREDICTION_FACOTR
+            * talonInputs.motorVelocity.in(RotationsPerSecond);
 
-    boolean nearWrapMax = Math.abs(Constants.TurretC.TURRERT_MAX.in(Rotations) - getAngle().in(Rotations)) < wrapOffset;
-    boolean nearWrapMin = Math.abs(Constants.TurretC.TURRERT_MIN.in(Rotations) - getAngle().in(Rotations)) < wrapOffset;
+    boolean nearWrapMax =
+        Math.abs(Constants.TurretC.TURRERT_MAX.in(Rotations) - getAngle().in(Rotations))
+            < wrapOffset;
+    boolean nearWrapMin =
+        Math.abs(Constants.TurretC.TURRERT_MIN.in(Rotations) - getAngle().in(Rotations))
+            < wrapOffset;
 
-    boolean onTarget = !nearWrapMax
-        && !nearWrapMin
-        && ToleranceUtil.epsilonEquals(
-            getAngle().in(Rotations),
-            targetAngle.in(Rotations),
-            Constants.TurretC.TURRET_TOLERANCE.in(Rotations));
+    boolean onTarget =
+        !nearWrapMax
+            && !nearWrapMin
+            && ToleranceUtil.epsilonEquals(
+                getAngle().in(Rotations),
+                targetAngle.in(Rotations),
+                Constants.TurretC.TURRET_TOLERANCE.in(Rotations));
 
     if (onTarget) {
       RobotState.setTurretState(TurretState.LOCKED);
@@ -152,10 +161,11 @@ public class Turret extends SubsystemBase {
 
   public void setTargetAngle(Angle angle) {
 
-    Angle after = angle.minus(
-        Rotations.of(
-            Constants.TurretC.LEAD_SHOT_OFFSET
-                * Units.radiansToRotations(getTurretSpeedsFieldSpace().omegaRadiansPerSecond)));
+    Angle after =
+        angle.minus(
+            Rotations.of(
+                Constants.TurretC.LEAD_SHOT_OFFSET
+                    * Units.radiansToRotations(getTurretSpeedsFieldSpace().omegaRadiansPerSecond)));
 
     after = after.plus(Rotations.of(Math.round(trueTurretRotation.in(Rotations))));
 
@@ -186,13 +196,14 @@ public class Turret extends SubsystemBase {
 
     targetAngle = closestAfter;
 
-    closestAfter = closestAfter.plus(
-        Rotations.of(
-            0.04
-                * turretMotorSpeedEstimator
-                    .getEstimatedPosition()
-                    .getRotation()
-                    .getRotations()));
+    closestAfter =
+        closestAfter.plus(
+            Rotations.of(
+                0.04
+                    * turretMotorSpeedEstimator
+                        .getEstimatedPosition()
+                        .getRotation()
+                        .getRotations()));
 
     turd.setMagicalPositionSetpoint(
         closestAfter,
@@ -221,14 +232,13 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput(
         "Turret/Crosshair",
         GeomUtil.withRotation(
-            Drive.getInstance().getPose(),
-            turretFieldPose.getRotation().plus(new Rotation2d(getAngle())))
+                Drive.getInstance().getPose(),
+                turretFieldPose.getRotation().plus(new Rotation2d(getAngle())))
             .transformBy(new Transform2d(1, 0, new Rotation2d())));
   }
 
   /**
-   * Returns the turret's pose in field space by applying the turret's
-   * robot-relative pose as a
+   * Returns the turret's pose in field space by applying the turret's robot-relative pose as a
    * transform to the robot's pose.
    *
    * @return The pose of the turret.
@@ -244,16 +254,16 @@ public class Turret extends SubsystemBase {
 
   public Translation2d getTurretTranslationFieldSpace() {
     Pose2d currentRobotPose = Drive.getInstance().getPose();
-    Transform2d turretTransform = GeomUtil.toTransform2d(
-        GeomUtil.withRotation(Constants.TurretC.TURD_CENTER.toPose2d(), new Rotation2d()));
+    Transform2d turretTransform =
+        GeomUtil.toTransform2d(
+            GeomUtil.withRotation(Constants.TurretC.TURD_CENTER.toPose2d(), new Rotation2d()));
     Pose2d turretFieldPose = currentRobotPose.plus(turretTransform);
 
     return turretFieldPose.getTranslation();
   }
 
   /**
-   * Returns the turret's speeds in field space by putting deltas through a kalman
-   * filter
+   * Returns the turret's speeds in field space by putting deltas through a kalman filter
    *
    * @return The pose of the turret.
    */
@@ -298,8 +308,7 @@ public class Turret extends SubsystemBase {
   }
 
   /**
-   * Returns the angular velocity of the turret. This can be added onto the
-   * robot's angular velocity
+   * Returns the angular velocity of the turret. This can be added onto the robot's angular velocity
    * to figure out the turret's angular velocity in field Space.
    *
    * @return

@@ -41,4 +41,8 @@ public class SpindexerCommands {
         () -> spindexer.setOpenLoopDutyCycle(Constants.SpindexerC.IDLE_REVERSE_DC),
         spindexer);
   }
+
+  public static Command retract() {
+    return Commands.deadline(Commands.waitSeconds(0.2), runReverse());
+  }
 }

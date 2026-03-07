@@ -165,7 +165,7 @@ public final class Constants {
             new Pose3d(
                 -0.139700,
                 -0.352969,
-                0.313057 - Units.inchesToMeters(0.0125),
+                0.313057 - Units.inchesToMeters(0.125),
                 new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(-90))));
 
     public static final VisionIOLimelight LIMELIGHT_LEFT =
@@ -174,8 +174,17 @@ public final class Constants {
             new Pose3d(
                 -0.228600,
                 0.362987,
-                0.426011 - Units.inchesToMeters(0.0125),
+                0.426011 - Units.inchesToMeters(0.125),
                 new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(90))));
+
+    public static final VisionIOLimelight LIMELIGHT_CLIMB =
+        VisionIOLimelight.getInstance(
+            "limelight-climb",
+            new Pose3d(
+                -0.093280,
+                0.120650,
+                0.503137 - Units.inchesToMeters(0.125),
+                new Rotation3d(0, Units.degreesToRadians(18), Units.degreesToRadians(0))));
 
     public static final VisionIOLimelight TURD_LIMELIGHT =
         VisionIOLimelight.getInstance(
@@ -412,8 +421,40 @@ public final class Constants {
 
   public static class ClimbC {
     public static final double L1_POS = 67;
-    // public static final double L2_POS = probably not gonna be used
     public static final double L3_POS = 6767;
+
+    public static final Angle CLIMB_STOW = Rotations.of(0);
+    public static final Angle CLIMB_CLEAR = Rotations.of(0);
+    public static final Angle CLIMB_MAX = Rotations.of(8);
+
+    private static final ServoMotorSubsystemConfig CLIMB_CONFIG = new ServoMotorSubsystemConfig();
+    private static final TalonFXConfiguration CLIMB_TALON_CONFIG = new TalonFXConfiguration();
+
+    static {
+      CLIMB_TALON_CONFIG.Feedback.SensorToMechanismRatio = 22.5;
+      CLIMB_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+      CLIMB_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+      CLIMB_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+      CLIMB_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = CLIMB_MAX.in(Rotations);
+      CLIMB_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = CLIMB_STOW.in(Rotations);
+
+      CLIMB_TALON_CONFIG.ClosedLoopGeneral.ContinuousWrap = false;
+      CLIMB_TALON_CONFIG.Slot0.kP = 2000;
+      CLIMB_TALON_CONFIG.Slot0.kI = 0;
+      CLIMB_TALON_CONFIG.Slot0.kD = 0;
+      CLIMB_TALON_CONFIG.Slot0.kS = 0;
+      CLIMB_TALON_CONFIG.Slot0.kV = 0;
+      CLIMB_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
+
+      CLIMB_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 60;
+      CLIMB_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
+
+      CLIMB_CONFIG.talonCANID = new CANDeviceId(18);
+      CLIMB_CONFIG.fxConfig = CLIMB_TALON_CONFIG;
+    }
+
+    public static final MotorIO CLIMB_MOTOR = new MotorIOTalonFX(CLIMB_CONFIG);
   }
 
   public static class IntakeC {
@@ -422,7 +463,7 @@ public final class Constants {
     public static final double IDLE_DC = 0;
     // public static final Angle PIVOT_RAISED = Radians.of(0.33);
     public static final Angle PIVOT_LOWERED = Radians.of(2.187);
-    public static final Angle PIVOT_RAISED = PIVOT_LOWERED;
+    public static final Angle PIVOT_RAISED = Degrees.of(15);
 
     private static final ServoMotorSubsystemWithCancoderConfig DROP_CONFIG =
         new ServoMotorSubsystemWithCancoderConfig();
@@ -438,8 +479,7 @@ public final class Constants {
     static {
       INTAKE_PIVOT_CANCODER_CONFIG.CANID = new CANDeviceId(5);
       INTAKE_PIVOT_CANCODER_CONFIG.config = new CANcoderConfiguration();
-      INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset =
-          Units.radiansToRotations(-1.33) + 1;
+      INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = 0.671875;
       INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.SensorDirection =
           SensorDirectionValue.CounterClockwise_Positive;
       INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;

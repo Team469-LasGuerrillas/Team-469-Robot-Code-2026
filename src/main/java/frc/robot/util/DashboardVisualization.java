@@ -13,8 +13,6 @@
 // public class DashboardVisualization {
 //   private static String robotOnField = "Field";
 
-
-
 //   public static void setRobotPose(Pose2d robotPose2d) {
 //   Logger.recordOutput("Dashboard/Field", setRobotPose(robotPose2d));
 //   }
@@ -22,6 +20,5 @@
 //   public static void getRobotPose(Pose2d robotPose2d) {
 //   Logger.recordOutput("Dashboard/Field", getRobotPose(robotPose2d));
 //   }
-  
-//   }
 
+//   }

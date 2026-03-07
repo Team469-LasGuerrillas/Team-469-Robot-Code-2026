@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
@@ -10,6 +9,7 @@ import frc.lib.subsystems.interfaces.CanCoderIO;
 import frc.lib.subsystems.interfaces.CancoderInputsAutoLogged;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.MotorInputsAutoLogged;
+import frc.robot.Constants;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
@@ -29,7 +29,7 @@ public class Intake extends SubsystemBase {
 
   private double requestedDutycycle = 0;
 
-  private Angle requestedAngle = Radians.of(0);
+  private Angle requestedAngle = Constants.IntakeC.PIVOT_RAISED;
 
   public static Intake createinstance(MotorIO rollerMotor, MotorIO pivotMotor, CanCoderIO coder) {
     instance = new Intake(rollerMotor, pivotMotor, coder);

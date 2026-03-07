@@ -2,14 +2,13 @@ package frc.robot.util;
 
 import static edu.wpi.first.units.Units.Meters;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
 import frc.lib.utilities.math.GeomUtil;
 import frc.lib.utilities.math.ShootAndMove;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class ShootTarget {
