@@ -11,7 +11,7 @@ import frc.lib.drivers.LimelightHelpers;
 import frc.lib.subsystems.interfaces.VisionIO;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservationComparator;
-import frc.lib.subsystems.interfaces.VisionIO.TargettingType;
+import frc.lib.subsystems.interfaces.VisionIO.PoseObservationType;
 import frc.lib.subsystems.interfaces.VisionInputsAutoLogged;
 import frc.lib.utilities.field.Clock;
 import frc.robot.subsystems.drive.Drive;
@@ -79,7 +79,11 @@ public class FiducialVision extends SubsystemBase {
     Logger.processInputs(getCameraName(), visionInputs);
 
     if (DriverStation.isDisabled() && !wasLastDisabled) {
-      io.setThrottle(100);
+      if (visionInputs.cameraName.equals("limelight-turd")) {
+        io.setThrottle(200);
+      } else {
+        io.setThrottle(0);
+      }
       LimelightHelpers.SetIMUMode(visionInputs.cameraName, 1);
 
       wasLastDisabled = true;
@@ -88,7 +92,7 @@ public class FiducialVision extends SubsystemBase {
       io.setThrottle(0);
       if (visionInputs.cameraName.equals("limelight-turd")) {
         LimelightHelpers.SetIMUMode(visionInputs.cameraName, 3);
-        LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.05);
+        LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.005);
       } else {
         LimelightHelpers.SetIMUMode(visionInputs.cameraName, 4);
         LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.01);
@@ -107,8 +111,8 @@ public class FiducialVision extends SubsystemBase {
     List<PoseObservation> robotPosesRejected = new LinkedList<>();
 
     if (visionInputs.hasLatestFrame
-        && visionInputs.targettingType == TargettingType.FIDUCIAL
-        && visionInputs.fiducialCount >= 1) {
+    // && visionInputs.targettingType == TargettingType.FIDUCIAL
+    ) {
       for (PoseObservation observation : visionInputs.poseObservations) {
         boolean reject =
             FiducialFilters.FiducialRejections.badAmbiguity(observation)
@@ -116,7 +120,47 @@ public class FiducialVision extends SubsystemBase {
                 || FiducialFilters.FiducialRejections.hasNoTags(observation)
                 || FiducialFilters.FiducialRejections.isOffField(observation)
                 || FiducialFilters.FiducialRejections.isFlying(observation)
-                || FiducialFilters.FiducialRejections.tooSmall(observation);
+                || FiducialFilters.FiducialRejections.tooSmall(observation)
+                || !observation.isUpdated();
+
+        if (observation.type() == PoseObservationType.MT1) {
+          Logger.recordOutput(
+              getCameraName() + "/RejectionTriggers/MT1/BadYaw",
+              FiducialFilters.FiducialRejections.badYaw(observation));
+          Logger.recordOutput(
+              getCameraName() + "/RejectionTriggers/MT1/HasNoTags",
+              FiducialFilters.FiducialRejections.hasNoTags(observation));
+          Logger.recordOutput(
+              getCameraName() + "/RejectionTriggers/MT1/IsOffField",
+              FiducialFilters.FiducialRejections.isOffField(observation));
+          Logger.recordOutput(
+              getCameraName() + "/RejectionTriggers/MT1/IsFlying",
+              FiducialFilters.FiducialRejections.isFlying(observation));
+          Logger.recordOutput(
+              getCameraName() + "/RejectionTriggers/MT1/TooSmall",
+              FiducialFilters.FiducialRejections.tooSmall(observation));
+          Logger.recordOutput(
+              getCameraName() + "/RejectionTriggers/MT1/IsOutOfDate", !observation.isUpdated());
+        } else {
+
+          Logger.recordOutput(
+              getCameraName() + "/RejectionTriggers/MT2/BadYaw",
+              FiducialFilters.FiducialRejections.badYaw(observation));
+          Logger.recordOutput(
+              getCameraName() + "/RejectionTriggers/MT2/HasNoTags",
+              FiducialFilters.FiducialRejections.hasNoTags(observation));
+          Logger.recordOutput(
+              getCameraName() + "/RejectionTriggers/MT2/IsOffField",
+              FiducialFilters.FiducialRejections.isOffField(observation));
+          Logger.recordOutput(
+              getCameraName() + "/RejectionTriggers/MT2/IsFlying",
+              FiducialFilters.FiducialRejections.isFlying(observation));
+          Logger.recordOutput(
+              getCameraName() + "/RejectionTriggers/MT2/TooSmall",
+              FiducialFilters.FiducialRejections.tooSmall(observation));
+          Logger.recordOutput(
+              getCameraName() + "/RejectionTriggers/MT2/IsOutOfDate", !observation.isUpdated());
+        }
 
         boolean supplementalReject = false;
         for (Function<PoseObservation, Boolean> rejection : extraRejections) {

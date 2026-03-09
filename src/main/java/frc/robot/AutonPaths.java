@@ -2,15 +2,25 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
 
+import com.pathplanner.lib.path.ConstraintsZone;
+import com.pathplanner.lib.path.EventMarker;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PointTowardsZone;
+import com.pathplanner.lib.path.RotationTarget;
 import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.lib.utilities.math.GeomUtil;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AutonPaths {
+  private static final List<PointTowardsZone> POINT_TOWARDS_EMPTY = Collections.emptyList();
+  private static final List<ConstraintsZone> CONSTRAINTS_ZONES_EMPTY = Collections.emptyList();
+  private static final List<EventMarker> EVENT_MARKER_EMPTY = Collections.emptyList();
+
   public static PathPlannerPath sixSevenExamplePath(Pose2d startingPose) {
     List<Waypoint> waypoints =
         PathPlannerPath.waypointsFromPoses(
@@ -30,17 +40,39 @@ public class AutonPaths {
         PathPlannerPath.waypointsFromPoses(
             startingPose,
             new Pose2d(
-                (Constants.Field.MAX_FIELD_X.in(Meters) / 2) - 2, 1, Rotation2d.fromDegrees(90)),
+                (Constants.Field.MAX_FIELD_X.in(Meters) / 2) - 2, 0.7, Rotation2d.fromDegrees(60)),
             new Pose2d(
                 (Constants.Field.MAX_FIELD_X.in(Meters) / 2) - 0.2, 2, Rotation2d.fromDegrees(90)),
             new Pose2d(
-                (Constants.Field.MAX_FIELD_X.in(Meters) / 2) - 0.2, 6, Rotation2d.fromDegrees(90)));
+                (Constants.Field.MAX_FIELD_X.in(Meters) / 2) - 0.2, 5, Rotation2d.fromDegrees(90)),
+            new Pose2d(
+                (Constants.Field.MAX_FIELD_X.in(Meters) / 2) - 1.2,
+                6.5,
+                Rotation2d.fromDegrees(180)),
+            new Pose2d(
+                (Constants.Field.MAX_FIELD_X.in(Meters) / 2) - 2.4, 5, Rotation2d.fromDegrees(270)),
+            new Pose2d(
+                (Constants.Field.MAX_FIELD_X.in(Meters) / 2) - 2.4,
+                2,
+                Rotation2d.fromDegrees(270)));
+
+    List<RotationTarget> rotationTargets = new ArrayList<>();
+    rotationTargets.add(new RotationTarget(0, Rotation2d.fromDegrees(90)));
+    rotationTargets.add(new RotationTarget(3, Rotation2d.fromDegrees(90)));
+    rotationTargets.add(new RotationTarget(4, Rotation2d.fromDegrees(180)));
+    rotationTargets.add(new RotationTarget(5, Rotation2d.fromDegrees(270)));
+    rotationTargets.add(new RotationTarget(6, Rotation2d.fromDegrees(270)));
 
     return new PathPlannerPath(
         waypoints,
+        rotationTargets,
+        POINT_TOWARDS_EMPTY,
+        CONSTRAINTS_ZONES_EMPTY,
+        EVENT_MARKER_EMPTY,
         Constants.DriveC.defaultConstraints,
         null,
-        new GoalEndState(0.0, Rotation2d.fromDegrees(90)));
+        new GoalEndState(0.0, Rotation2d.fromDegrees(270)),
+        false);
   }
 
   public static PathPlannerPath leftAutoRed(Pose2d startingPose) {

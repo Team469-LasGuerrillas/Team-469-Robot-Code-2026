@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservationType;
 import frc.robot.Constants;
@@ -21,6 +22,7 @@ public class FiducialFilters {
 
     public static boolean badAmbiguity(PoseObservation toFilter) {
       return (toFilter.tagCount() == 1
+          && toFilter.type() == PoseObservationType.MT1
           && toFilter.ambiguity() > Constants.VisionC.MAX_SINGLE_TAG_AMBIGUITY);
     }
 
@@ -95,7 +97,9 @@ public class FiducialFilters {
       if (observation.type() == PoseObservationType.MT2) {
         observation.stdDevs()[2] = Double.MAX_VALUE;
       } else {
-        observation.stdDevs()[2] *= 6.7;
+        if (DriverStation.isEnabled()) {
+          observation.stdDevs()[2] *= 6.7;
+        }
       }
       return this;
     }
@@ -103,7 +107,6 @@ public class FiducialFilters {
     public FiducialModifications withMultiplyAllResults() {
       observation.stdDevs()[0] *= 2;
       observation.stdDevs()[1] *= 2;
-      observation.stdDevs()[2] *= 2;
 
       return this;
     }

@@ -24,7 +24,7 @@ public class ShootTarget {
             Constants.TurretC.TURD_CENTER,
             passing);
 
-    Logger.recordOutput("TargetPoint", goal);
+    Logger.recordOutput("TargetPoint", GeomUtil.toPose2d(goal));
   }
 
   public static Translation2d getTranslationToTarget() {

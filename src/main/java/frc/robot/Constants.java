@@ -22,6 +22,8 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -85,7 +87,11 @@ public final class Constants {
 
   public static class DriveC {
     public static final PathConstraints defaultConstraints =
-        new PathConstraints(2, 3, 6 * Math.PI, 10 * Math.PI);
+        new PathConstraints(1, 2, 3 * Math.PI, 10 * Math.PI);
+
+    public static final PPHolonomicDriveController PP_CONTROLLER =
+        new PPHolonomicDriveController(
+            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0));
   }
 
   public static class Field {
@@ -106,7 +112,7 @@ public final class Constants {
 
     public static final Distance REGULAR_DECAPITATION_ZONE = Meters.of(0.5);
 
-    public static final double DECAPITATION_SPEED_FACTOR = 1.1;
+    public static final double DECAPITATION_SPEED_FACTOR = 0.16;
 
     public static final Translation2d BLUE_HUB =
         new Translation2d(BLUE_TRENCH_SCORING.in(Meters), MID_FIELD.in(Meters));
@@ -120,7 +126,7 @@ public final class Constants {
     public static final double MAX_SINGLE_TAG_AMBIGUITY = 0.55;
     public static final double MIN_SINGLE_TAG_AREA = 0.33;
     public static final Angle MAX_YAW_ERROR_MT1 = Degrees.of(2.41);
-    public static final Angle MAX_YAW_ERROR_MT2 = Degrees.of(0.8);
+    public static final Angle MAX_YAW_ERROR_MT2 = Degrees.of(2);
     public static final Distance MAX_FLOATING_NOCLIP = Meters.of(0.2);
 
     public static final AngularVelocity BAD_TURRET_ANGULAR_VELOCITY = DegreesPerSecond.of(120);
@@ -173,8 +179,8 @@ public final class Constants {
             "limelight-left",
             new Pose3d(
                 -0.228600,
-                0.362987,
-                0.426011 - Units.inchesToMeters(0.125),
+                0.359812,
+                0.432361 - Units.inchesToMeters(0.125),
                 new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(90))));
 
     public static final VisionIOLimelight LIMELIGHT_CLIMB =
@@ -184,7 +190,7 @@ public final class Constants {
                 -0.093280,
                 0.120650,
                 0.503137 - Units.inchesToMeters(0.125),
-                new Rotation3d(0, Units.degreesToRadians(18), Units.degreesToRadians(0))));
+                new Rotation3d(0, Units.degreesToRadians(17.67), Units.degreesToRadians(0))));
 
     public static final VisionIOLimelight TURD_LIMELIGHT =
         VisionIOLimelight.getInstance(
@@ -229,18 +235,22 @@ public final class Constants {
       phaseDelay = 67;
 
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(0.1, 34.0);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(3.5, 46.0);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(5.0, 54.0);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(3.5, 48.3);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(4.5, 53.0);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.3, 57.0);
 
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(0.5, 28.0);
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(2.0, 45.0);
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(5.0, 55.0);
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(10.0, 65.0);
 
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.0, 1.0);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(2.5, 1.2);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(3.5, 1.4);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(5.0, 1.6);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(0.2, 0.3);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.0, 0.8);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.8, 1.3);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(2.5, 1.45);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(3.5, 1.57);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(5.0, 1.63);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(6.0, 1.68);
 
       TIME_OF_FLIGHT_MAP_PASSING.put(1.0, 1.0);
       TIME_OF_FLIGHT_MAP_PASSING.put(7.0, 1.5);
@@ -343,7 +353,7 @@ public final class Constants {
 
   public static class TurretC {
 
-    public static final Angle TURRET_TOLERANCE = Degrees.of(5);
+    public static final Angle TURRET_TOLERANCE = Degrees.of(3);
 
     public static final Angle TURRERT_MAX = Rotations.of(0.375);
     public static final Angle TURRERT_MIN = Rotations.of(-0.975);
@@ -397,9 +407,9 @@ public final class Constants {
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TURRERT_MIN.in(Rotations);
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-      TURRET_TALON_CONFIG.Slot0.kP = 930;
+      TURRET_TALON_CONFIG.Slot0.kP = 3310;
       TURRET_TALON_CONFIG.Slot0.kI = 0;
-      TURRET_TALON_CONFIG.Slot0.kD = 80;
+      TURRET_TALON_CONFIG.Slot0.kD = 98.7;
       TURRET_TALON_CONFIG.Slot0.kS = 0.5;
       TURRET_TALON_CONFIG.Slot0.kV = 0.05;
       TURRET_TALON_CONFIG.Slot0.kA = 0;
@@ -420,34 +430,33 @@ public final class Constants {
   }
 
   public static class ClimbC {
-    public static final double L1_POS = 67;
-    public static final double L3_POS = 6767;
-
-    public static final Angle CLIMB_STOW = Rotations.of(0);
-    public static final Angle CLIMB_CLEAR = Rotations.of(0);
-    public static final Angle CLIMB_MAX = Rotations.of(8);
+    public static final Angle CLIMB_STOW = Rotations.of(-0.01);
+    public static final Angle CLIMB_CLEAR = Rotations.of(5);
+    public static final Angle CLIMB_MAX = Rotations.of(9);
 
     private static final ServoMotorSubsystemConfig CLIMB_CONFIG = new ServoMotorSubsystemConfig();
     private static final TalonFXConfiguration CLIMB_TALON_CONFIG = new TalonFXConfiguration();
 
     static {
       CLIMB_TALON_CONFIG.Feedback.SensorToMechanismRatio = 22.5;
+      CLIMB_TALON_CONFIG.Feedback.RotorToSensorRatio = 1;
       CLIMB_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-      CLIMB_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-      CLIMB_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-      CLIMB_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = CLIMB_MAX.in(Rotations);
-      CLIMB_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = CLIMB_STOW.in(Rotations);
+      // CLIMB_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+      // CLIMB_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+      // CLIMB_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = CLIMB_MAX.in(Rotations);
+      // CLIMB_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+      // CLIMB_STOW.in(Rotations);
 
       CLIMB_TALON_CONFIG.ClosedLoopGeneral.ContinuousWrap = false;
-      CLIMB_TALON_CONFIG.Slot0.kP = 2000;
+      CLIMB_TALON_CONFIG.Slot0.kP = 0; // 10000 Jackhammer
       CLIMB_TALON_CONFIG.Slot0.kI = 0;
       CLIMB_TALON_CONFIG.Slot0.kD = 0;
       CLIMB_TALON_CONFIG.Slot0.kS = 0;
       CLIMB_TALON_CONFIG.Slot0.kV = 0;
       CLIMB_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
-      CLIMB_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 60;
+      CLIMB_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
       CLIMB_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
 
       CLIMB_CONFIG.talonCANID = new CANDeviceId(18);
@@ -528,8 +537,8 @@ public final class Constants {
   }
 
   public static class SpindexerC {
-    public static final double FEEDING_DC = 0.5;
-    public static final double REVERSE_DC = -0.67;
+    public static final double FEEDING_DC = 0.359;
+    public static final double REVERSE_DC = -0.2;
     public static final double IDLE_DC = 0.0;
     public static final double IDLE_REVERSE_DC = -0.0;
 
@@ -576,7 +585,7 @@ public final class Constants {
   }
 
   public static class HoodC {
-    public static final Angle HOOD_TOLERANCE = Degrees.of(4);
+    public static final Angle HOOD_TOLERANCE = Degrees.of(1.67);
 
     public static final Angle HOOD_STOW = Radians.of(0);
     public static final Angle HOOD_MAX = Radians.of(0.436);
@@ -594,9 +603,9 @@ public final class Constants {
       HOOD_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.05;
 
       HOOD_TALON_CONFIG.ClosedLoopGeneral.ContinuousWrap = false;
-      HOOD_TALON_CONFIG.Slot0.kP = 3000;
+      HOOD_TALON_CONFIG.Slot0.kP = 3700;
       HOOD_TALON_CONFIG.Slot0.kI = 0;
-      HOOD_TALON_CONFIG.Slot0.kD = 70;
+      HOOD_TALON_CONFIG.Slot0.kD = 80;
       HOOD_TALON_CONFIG.Slot0.kS = 11;
       HOOD_TALON_CONFIG.Slot0.kV = 0;
       HOOD_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;

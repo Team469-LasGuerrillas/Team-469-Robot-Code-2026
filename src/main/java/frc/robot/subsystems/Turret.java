@@ -199,7 +199,7 @@ public class Turret extends SubsystemBase {
     closestAfter =
         closestAfter.plus(
             Rotations.of(
-                0.04
+                0.0
                     * turretMotorSpeedEstimator
                         .getEstimatedPosition()
                         .getRotation()

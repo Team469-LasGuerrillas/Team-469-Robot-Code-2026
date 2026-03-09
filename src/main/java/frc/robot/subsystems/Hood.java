@@ -31,6 +31,7 @@ public class Hood extends SubsystemBase {
   private Angle requestedAngle = Radians.of(0);
 
   private boolean zeroed = false;
+  private boolean disabledLimits = false;
 
   public static Hood createinstance(MotorIO pivotMotor) {
     instance = new Hood(pivotMotor);
@@ -43,9 +44,6 @@ public class Hood extends SubsystemBase {
 
   private Hood(MotorIO pivotMotor) {
     this.hoodMotor = pivotMotor;
-
-    pivotMotor.setZero();
-    pivotMotor.setEnableSoftLimits(true, true);
   }
 
   @Override
@@ -57,6 +55,15 @@ public class Hood extends SubsystemBase {
 
     if (FieldZoning.retractHood()) {
       updatedRequestedAngle = Constants.HoodC.HOOD_STOW;
+      Logger.recordOutput("Hood/RetractHood", true);
+    } else {
+      Logger.recordOutput("Hood/RetractHood", false);
+    }
+
+    if (!disabledLimits) {
+      hoodMotor.setEnableSoftLimits(false, false);
+      hoodMotor.setZero();
+      disabledLimits = true;
     }
 
     if (!zeroed) {
@@ -80,18 +87,19 @@ public class Hood extends SubsystemBase {
         && pivotInputs.statorCurrent.in(Amps) > 8) {
       hoodMotor.setZero();
       zeroed = true;
+      hoodMotor.setEnableSoftLimits(true, true);
     }
 
     boolean lowHood =
         ToleranceUtil.epsilonEquals(
             getCurrentAngle().in(Rotations),
             Constants.HoodC.HOOD_STOW.in(Rotations),
-            Units.degreesToRotations(0.02));
+            Units.degreesToRotations(0.2));
     boolean highHood =
         ToleranceUtil.epsilonEquals(
             getCurrentAngle().in(Rotations),
             Constants.HoodC.HOOD_MAX.in(Rotations),
-            Units.degreesToRotations(0.02));
+            Units.degreesToRotations(0.2));
 
     boolean onTarget =
         !lowHood

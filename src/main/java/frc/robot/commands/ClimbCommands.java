@@ -32,4 +32,16 @@ public class ClimbCommands {
         () -> climb.setPosition(Constants.ClimbC.CLIMB_STOW),
         climb);
   }
+
+  public static Command setClimbOff() {
+    return Commands.startRun(() -> climb.setDutyCycle(0), () -> climb.setDutyCycle(0), climb);
+  }
+
+  public static Command setClimbUp() {
+    return Commands.startRun(() -> climb.setDutyCycle(0.7), () -> climb.setDutyCycle(0.7), climb);
+  }
+
+  public static Command setClimbDown() {
+    return Commands.startRun(() -> climb.setDutyCycle(-1), () -> climb.setDutyCycle(-1), climb);
+  }
 }

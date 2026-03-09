@@ -7,12 +7,13 @@ import frc.robot.subsystems.drive.Drive;
 
 public class AutonCommands {
   public static Command redPass() {
-    return Commands.parallel(
-        Commands.deferredProxy(
-            () ->
-                Drive.getInstance()
-                    .followPath(AutonPaths.leftAutoRed(Drive.getInstance().getPose()))),
-        CommandFactory.feedOrScore(),
-        IntakeCommands.deployAndRun());
+    return Commands.sequence(
+        Commands.deadline(Commands.waitSeconds(3), CommandFactory.scoring()),
+        Commands.parallel(
+            Commands.deferredProxy(
+                () ->
+                    Drive.getInstance()
+                        .followPath(AutonPaths.leftAutoRed(Drive.getInstance().getPose()))),
+            IntakeCommands.deployAndRun()));
   }
 }

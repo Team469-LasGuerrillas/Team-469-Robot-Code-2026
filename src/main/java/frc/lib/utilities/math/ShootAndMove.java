@@ -64,7 +64,7 @@ public class ShootAndMove {
       }
       loopCount++;
 
-      if (loopCount > 300) {
+      if (loopCount > 30) {
         break;
       }
     }

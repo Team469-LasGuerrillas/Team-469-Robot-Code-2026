@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -251,7 +253,7 @@ public class RobotContainer {
 
     hood.setDefaultCommand(HoodCommands.stowHood());
 
-    climb.setDefaultCommand(ClimbCommands.setClimbSetpointStow());
+    climb.setDefaultCommand(ClimbCommands.setClimbOff());
   }
 
   private void configureButtonBindings() {
@@ -259,7 +261,9 @@ public class RobotContainer {
     driveList.add(Drive.getInstance());
 
     // Lock to 0° when A button is held
-    controller.a().whileTrue(ClimbCommands.setClimbSetpointClear());
+    controller.povUp().whileTrue(ClimbCommands.setClimbUp());
+    controller.povDown().whileTrue(ClimbCommands.setClimbDown());
+    controller.povUp().onTrue(TurretCommands.targetAngle(Rotations.of(-0.23)));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -268,9 +272,6 @@ public class RobotContainer {
     controller.b().whileTrue(AutonCommands.redPass());
 
     controller.leftBumper().toggleOnTrue(IntakeCommands.deployAndRun());
-    controller
-        .leftBumper()
-        .toggleOnFalse(Commands.sequence(FeederCommands.retract(), FeederCommands.idleCommand()));
 
     controller.rightBumper().toggleOnTrue(CommandFactory.feedOrScore());
   }

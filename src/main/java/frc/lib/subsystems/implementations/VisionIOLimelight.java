@@ -49,6 +49,9 @@ public class VisionIOLimelight implements VisionIO {
   private double totalLatencyMs;
   private Pose3d cameraPose;
 
+  private double lastTimestampMt1 = 0;
+  private double lastTimestampMt2 = 0;
+
   private VisionIOLimelight(String limelightName, Pose3d cameraPose) {
     this.limelightName = limelightName;
 
@@ -74,7 +77,7 @@ public class VisionIOLimelight implements VisionIO {
     inputs.ta = LimelightHelpers.getTA(limelightName);
     inputs.targettingType = getPipeType();
     double heartbeat = LimelightHelpers.getLimelightNTDouble(limelightName, "hb");
-    inputs.hasLatestFrame = lastHeartbeat < heartbeat;
+    inputs.hasLatestFrame = lastHeartbeat != heartbeat;
     lastHeartbeat = heartbeat;
 
     inputs.totalLatencyMs =
@@ -178,7 +181,7 @@ public class VisionIOLimelight implements VisionIO {
     RawFiducial[] rawFiducials = LimelightHelpers.getRawFiducials(limelightName);
 
     if (stddevs.length == 0) {
-      return new PoseObservation[0];
+      return new PoseObservation[] {};
     }
 
     double[] stddevsMt1 = new double[] {stddevs[0], stddevs[1], stddevs[5]};
@@ -193,6 +196,9 @@ public class VisionIOLimelight implements VisionIO {
     LimelightHelpers.PoseEstimate mt2Estimate =
         LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
 
+    boolean isUpdatedMt1 = mt1Estimate.timestampSeconds != lastTimestampMt1;
+    boolean isUpdatedMt2 = mt2Estimate.timestampSeconds != lastTimestampMt2;
+
     PoseObservation[] poses = {
       new PoseObservation(
           Clock.time() - Units.millisecondsToSeconds(mt1Estimate.latency),
@@ -201,16 +207,21 @@ public class VisionIOLimelight implements VisionIO {
           mt1Estimate.tagCount,
           LimelightHelpers.getBotPose3d_wpiBlue(limelightName),
           stddevsMt1,
-          PoseObservationType.MT1),
+          PoseObservationType.MT1,
+          isUpdatedMt1),
       new PoseObservation(
-          Clock.time() - Units.millisecondsToSeconds(mt1Estimate.latency),
+          Clock.time() - Units.millisecondsToSeconds(mt2Estimate.latency),
           rawFiducials[0].ambiguity,
           mt2Estimate.avgTagArea,
           mt2Estimate.tagCount,
           LimelightHelpers.getBotPose3d_wpiBlue_MegaTag2(limelightName),
           stddevsMt2,
-          PoseObservationType.MT2)
+          PoseObservationType.MT2,
+          isUpdatedMt2)
     };
+
+    lastTimestampMt1 = mt1Estimate.timestampSeconds;
+    lastTimestampMt2 = mt2Estimate.timestampSeconds;
 
     return poses;
   }

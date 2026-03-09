@@ -98,8 +98,6 @@ public class CommandFactory {
   }
 
   private static Command readyToFeed() {
-    return Commands.parallel(
-        Commands.sequence(SpindexerCommands.retract(), SpindexerCommands.idleCommand()),
-        FeederCommands.idleCommand());
+    return Commands.parallel(SpindexerCommands.idleCommand(), FeederCommands.idleCommand());
   }
 }

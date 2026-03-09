@@ -27,7 +27,8 @@ public interface VisionIO {
       double tagCount,
       Pose3d pose,
       double[] stdDevs,
-      PoseObservationType type) {}
+      PoseObservationType type,
+      boolean isUpdated) {}
 
   public enum TargettingType {
     FIDUCIAL,
