@@ -1,19 +1,26 @@
 package frc.robot.commands;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.AutonPaths;
-import frc.robot.subsystems.drive.Drive;
 
 public class AutonCommands {
-  public static Command redPass() {
-    return Commands.sequence(
-        Commands.deadline(Commands.waitSeconds(3), CommandFactory.scoring()),
-        Commands.parallel(
-            Commands.deferredProxy(
-                () ->
-                    Drive.getInstance()
-                        .followPath(AutonPaths.leftAutoRed(Drive.getInstance().getPose()))),
-            IntakeCommands.deployAndRun()));
+  public static Command leftPass() {
+    try {
+      return Commands.sequence(
+          Commands.deadline(
+              AutoBuilder.followPath(PathPlannerPath.fromPathFile("L_A").flipPath()),
+              IntakeCommands.deployAndRun()),
+          Commands.deadline(
+              Commands.waitSeconds(5), CommandFactory.scoring(), IntakeCommands.agitate()),
+          Commands.deadline(
+              AutoBuilder.followPath(PathPlannerPath.fromPathFile("L_B").flipPath()),
+              IntakeCommands.deployAndRun()),
+          Commands.deadline(
+              Commands.waitSeconds(5), CommandFactory.scoring(), IntakeCommands.agitate()));
+    } catch (Exception e) {
+      return Commands.none();
+    }
   }
 }

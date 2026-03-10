@@ -91,7 +91,7 @@ public final class Constants {
 
     public static final PPHolonomicDriveController PP_CONTROLLER =
         new PPHolonomicDriveController(
-            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0));
+            new PIDConstants(3.5, 0.0, 0.0), new PIDConstants(6.0, 0.0, 0.0));
   }
 
   public static class Field {
@@ -100,8 +100,10 @@ public final class Constants {
 
     public static final Distance MAX_FIELD_X = Meters.of(WELDED_FIELD.getFieldLength());
     public static final Distance MAX_FIELD_Y = Meters.of(WELDED_FIELD.getFieldWidth());
-    public static final Distance FIELD_MIDDLE = MAX_FIELD_X.div(2); // also red max
-    public static final Distance MID_FIELD = MAX_FIELD_Y.div(2);
+    public static final Distance MID_FIELD_X = MAX_FIELD_X.div(2); // also red max
+    public static final Distance MID_FIELD_Y = MAX_FIELD_Y.div(2);
+    public static final double MID_FIELD_X_METERS = MID_FIELD_X.in(Meters);
+    public static final double MID_FIELD_Y_METERS = MID_FIELD_Y.in(Meters);
 
     public static final Matrix<N3, N1> FIELD_SPEEDS_STDS = VecBuilder.fill(0.067, 0.067, 0.08);
     public static final Matrix<N3, N1> TURRET_SPEEDS_STDS = VecBuilder.fill(0.1, 0.1, 0.1);
@@ -110,14 +112,14 @@ public final class Constants {
     public static final Distance BLUE_TRENCH_SCORING = Inches.of(182.11);
     public static final Distance RED_TRENCH_SCORING = MAX_FIELD_X.minus(Inches.of(182.11));
 
-    public static final Distance REGULAR_DECAPITATION_ZONE = Meters.of(0.5);
+    public static final Distance REGULAR_DECAPITATION_ZONE = Meters.of(0.3);
 
     public static final double DECAPITATION_SPEED_FACTOR = 0.16;
 
     public static final Translation2d BLUE_HUB =
-        new Translation2d(BLUE_TRENCH_SCORING.in(Meters), MID_FIELD.in(Meters));
+        new Translation2d(BLUE_TRENCH_SCORING.in(Meters), MID_FIELD_Y.in(Meters));
     public static final Translation2d RED_HUB =
-        new Translation2d(RED_TRENCH_SCORING.in(Meters), MID_FIELD.in(Meters));
+        new Translation2d(RED_TRENCH_SCORING.in(Meters), MID_FIELD_Y.in(Meters));
 
     public static final Distance PASS_WALL_DISTANCE = Meters.of(2);
   }
@@ -132,10 +134,10 @@ public final class Constants {
     public static final AngularVelocity BAD_TURRET_ANGULAR_VELOCITY = DegreesPerSecond.of(120);
 
     public static final AngularVelocity REASONABLE_TURRET_ANGULAR_VELOCITY_MT1 =
-        DegreesPerSecond.of(180);
+        DegreesPerSecond.of(30);
     public static final double REASONABLE_TURRET_ANGULAR_VELOCITY_MT1_MULT = 12;
     public static final AngularVelocity REASONABLE_TURRET_ANGULAR_VELOCITY_MT2 =
-        DegreesPerSecond.of(120);
+        DegreesPerSecond.of(35);
     public static final double REASONABLE_TURRET_ANGULAR_VELOCITY_MT2_MULT = 10;
 
     public static final AngularVelocity REASONABLE_DRIVE_ANGULAR_VELOCITY_MT2 =
@@ -157,6 +159,7 @@ public final class Constants {
           FiducialFilters.FiducialModifications.o_withDistrustMt2WhileTurretSpinToFast());
       TURRET_MODIFICATIONS.add(FiducialFilters.FiducialModifications.o_withDistrustYaw());
       TURRET_MODIFICATIONS.add(FiducialFilters.FiducialModifications.o_withMultiplyAllResults());
+      // TURRET_MODIFICATIONS.add(FiducialFilters.FiducialModifications.o_withDistrustMt1());
 
       LL3G_MODIFICATIONS.add(
           FiducialFilters.FiducialModifications.o_withDistrustMt2WhileDriveSpinToFast());
@@ -189,8 +192,8 @@ public final class Constants {
             new Pose3d(
                 -0.093280,
                 0.120650,
-                0.503137 - Units.inchesToMeters(0.125),
-                new Rotation3d(0, Units.degreesToRadians(17.67), Units.degreesToRadians(0))));
+                0.503137 + Units.inchesToMeters(1) - Units.inchesToMeters(0.125),
+                new Rotation3d(0, Units.degreesToRadians(17), Units.degreesToRadians(0.8))));
 
     public static final VisionIOLimelight TURD_LIMELIGHT =
         VisionIOLimelight.getInstance(
@@ -207,9 +210,9 @@ public final class Constants {
     public static final double UNJAM_DC = -0.5;
     public static final double IDLE_DC = 0.0;
 
-    public static final AngularVelocity HUB_SPEED_TOLERANCE = RotationsPerSecond.of(5);
-    public static final AngularVelocity PASS_SPEED_TOLERANCE = RotationsPerSecond.of(6);
-    public static final AngularVelocity RAMP_SPEED_TOLERANCE = RotationsPerSecond.of(7);
+    public static final AngularVelocity HUB_SPEED_TOLERANCE = RotationsPerSecond.of(10);
+    public static final AngularVelocity PASS_SPEED_TOLERANCE = RotationsPerSecond.of(12);
+    public static final AngularVelocity RAMP_SPEED_TOLERANCE = RotationsPerSecond.of(15);
 
     public static double phaseDelay;
 
@@ -353,7 +356,7 @@ public final class Constants {
 
   public static class TurretC {
 
-    public static final Angle TURRET_TOLERANCE = Degrees.of(3);
+    public static final Angle TURRET_TOLERANCE = Degrees.of(5);
 
     public static final Angle TURRERT_MAX = Rotations.of(0.375);
     public static final Angle TURRERT_MIN = Rotations.of(-0.975);
@@ -472,7 +475,8 @@ public final class Constants {
     public static final double IDLE_DC = 0;
     // public static final Angle PIVOT_RAISED = Radians.of(0.33);
     public static final Angle PIVOT_LOWERED = Radians.of(2.187);
-    public static final Angle PIVOT_RAISED = Degrees.of(15);
+    public static final Angle PIVOT_RAISED = Degrees.of(20);
+    public static final Angle PIVOT_AGITATE = Degrees.of(30);
 
     private static final ServoMotorSubsystemWithCancoderConfig DROP_CONFIG =
         new ServoMotorSubsystemWithCancoderConfig();
@@ -575,10 +579,10 @@ public final class Constants {
       FEEDER_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
       FEEDER_MOTOR_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
-      FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 50;
+      FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
 
-      FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 30;
-      FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerTime = 1;
+      // FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 60;
+      // FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerTime = 1;
     }
 
     public static final MotorIO FEEDER_MOTOR = new MotorIOTalonFX(SERVO_CONFIG);

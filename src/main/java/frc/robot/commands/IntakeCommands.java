@@ -26,10 +26,19 @@ public class IntakeCommands {
         Commands.startRun(() -> intake.setDutyCycle(0), () -> intake.setDutyCycle(0)));
   }
 
+  public static Command pivotToAgitate() {
+    return Commands.parallel(
+        Commands.startRun(
+            () -> intake.setTargetAngle(Constants.IntakeC.PIVOT_AGITATE),
+            () -> intake.setTargetAngle(Constants.IntakeC.PIVOT_AGITATE),
+            intake),
+        Commands.startRun(() -> intake.setDutyCycle(0), () -> intake.setDutyCycle(0.2)));
+  }
+
   public static Command agitate() {
     return Commands.repeatingSequence(
-        Commands.deadline(Commands.waitSeconds(0.5), stow()),
-        Commands.deadline(Commands.waitSeconds(1.2), deployAndRun()));
+        Commands.deadline(Commands.waitSeconds(0.5), pivotToAgitate()),
+        Commands.deadline(Commands.waitSeconds(0.8), deployAndRun()));
   }
 
   public static Command homeAxis() {

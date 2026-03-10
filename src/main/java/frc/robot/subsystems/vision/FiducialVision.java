@@ -1,6 +1,7 @@
 package frc.robot.subsystems.vision;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -36,6 +37,9 @@ public class FiducialVision extends SubsystemBase {
 
   private boolean wasLastEnabled = false;
   private boolean wasLastDisabled = false;
+
+  private boolean distrustTurret = false;
+  private Pose3d lastGoodPose = new Pose3d();
 
   ArrayList<Function<PoseObservation, Boolean>> extraRejections;
   ArrayList<UnaryOperator<FiducialModifications>> extraModifications;
@@ -92,7 +96,7 @@ public class FiducialVision extends SubsystemBase {
       io.setThrottle(0);
       if (visionInputs.cameraName.equals("limelight-turd")) {
         LimelightHelpers.SetIMUMode(visionInputs.cameraName, 3);
-        LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.005);
+        LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.02);
       } else {
         LimelightHelpers.SetIMUMode(visionInputs.cameraName, 4);
         LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.01);
@@ -112,7 +116,20 @@ public class FiducialVision extends SubsystemBase {
 
     if (visionInputs.hasLatestFrame
     // && visionInputs.targettingType == TargettingType.FIDUCIAL
+
     ) {
+
+      double mt2Difference = 0;
+
+      if (visionInputs.poseObservations.length == 2) {
+        mt2Difference =
+            visionInputs
+                .poseObservations[0]
+                .pose()
+                .getTranslation()
+                .getDistance(visionInputs.poseObservations[1].pose().getTranslation());
+      }
+
       for (PoseObservation observation : visionInputs.poseObservations) {
         boolean reject =
             FiducialFilters.FiducialRejections.badAmbiguity(observation)
@@ -121,7 +138,10 @@ public class FiducialVision extends SubsystemBase {
                 || FiducialFilters.FiducialRejections.isOffField(observation)
                 || FiducialFilters.FiducialRejections.isFlying(observation)
                 || FiducialFilters.FiducialRejections.tooSmall(observation)
-                || !observation.isUpdated();
+                || LimelightHelpers.getCameraPose3d_RobotSpace(visionInputs.cameraName).getX() == 0
+                || !observation.isUpdated()
+                || (mt2Difference > 0.8 && observation.type() == PoseObservationType.MT2)
+                || (distrustTurret && visionInputs.cameraName.equals("limelight-turd"));
 
         if (observation.type() == PoseObservationType.MT1) {
           Logger.recordOutput(
@@ -201,7 +221,15 @@ public class FiducialVision extends SubsystemBase {
 
   public void setPositionTurret(Angle turretAngle, Pose3d turretCenter) {
     Pose3d updatedPose = TurretedCamera.recalcPose(turretAngle, originalCameraPose, turretCenter);
-    io.setPoseRobotSpace(updatedPose);
+
+    if (turretAngle.in(Rotations) == 0) {
+      distrustTurret = true;
+      io.setPoseRobotSpace(lastGoodPose);
+    } else {
+      io.setPoseRobotSpace(updatedPose);
+      distrustTurret = false;
+      lastGoodPose = updatedPose;
+    }
   }
 
   public String getCameraName() {

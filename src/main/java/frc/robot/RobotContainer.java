@@ -10,6 +10,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -221,8 +222,13 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button
+    configurePPNamedCommands();
     configureDefaultCommands();
     configureButtonBindings();
+  }
+
+  private void configurePPNamedCommands() {
+    NamedCommands.registerCommand("IntakeStart", IntakeCommands.deployAndRun());
   }
 
   private void configureDefaultCommands() {
@@ -269,7 +275,7 @@ public class RobotContainer {
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller.b().whileTrue(AutonCommands.redPass());
+    controller.b().whileTrue(AutonCommands.leftPass());
 
     controller.leftBumper().toggleOnTrue(IntakeCommands.deployAndRun());
 

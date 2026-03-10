@@ -71,13 +71,13 @@ public class VisionIOLimelight implements VisionIO {
   @Override
   public void readInputs(VisionInputsAutoLogged inputs) {
     inputs.cameraName = limelightName;
-    inputs.cameraPose = cameraPose; // LimelightHelpers.getCameraPose3d_RobotSpace(limelightName);
+    inputs.cameraPose = cameraPose;
 
     inputs.fiducialCount = LimelightHelpers.getTargetCount(limelightName);
     inputs.ta = LimelightHelpers.getTA(limelightName);
     inputs.targettingType = getPipeType();
     double heartbeat = LimelightHelpers.getLimelightNTDouble(limelightName, "hb");
-    inputs.hasLatestFrame = lastHeartbeat != heartbeat;
+    inputs.hasLatestFrame = lastHeartbeat < heartbeat;
     lastHeartbeat = heartbeat;
 
     inputs.totalLatencyMs =
@@ -196,8 +196,8 @@ public class VisionIOLimelight implements VisionIO {
     LimelightHelpers.PoseEstimate mt2Estimate =
         LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
 
-    boolean isUpdatedMt1 = mt1Estimate.timestampSeconds != lastTimestampMt1;
-    boolean isUpdatedMt2 = mt2Estimate.timestampSeconds != lastTimestampMt2;
+    boolean isUpdatedMt1 = mt1Estimate.latency != lastTimestampMt1;
+    boolean isUpdatedMt2 = mt2Estimate.latency != lastTimestampMt2;
 
     PoseObservation[] poses = {
       new PoseObservation(
@@ -214,14 +214,14 @@ public class VisionIOLimelight implements VisionIO {
           rawFiducials[0].ambiguity,
           mt2Estimate.avgTagArea,
           mt2Estimate.tagCount,
-          LimelightHelpers.getBotPose3d_wpiBlue_MegaTag2(limelightName),
+          new Pose3d(mt2Estimate.pose),
           stddevsMt2,
           PoseObservationType.MT2,
           isUpdatedMt2)
     };
 
-    lastTimestampMt1 = mt1Estimate.timestampSeconds;
-    lastTimestampMt2 = mt2Estimate.timestampSeconds;
+    lastTimestampMt1 = mt1Estimate.latency;
+    lastTimestampMt2 = mt2Estimate.latency;
 
     return poses;
   }

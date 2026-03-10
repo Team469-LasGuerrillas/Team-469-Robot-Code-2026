@@ -26,7 +26,7 @@ public class FieldZoning {
     // This has 0 being Y mid line
     double turretCurrentPoseY =
         Turret.getInstance().getTurretPoseFieldSpace().getY()
-            - Constants.Field.MID_FIELD.in(Meters);
+            - Constants.Field.MID_FIELD_Y.in(Meters);
     boolean isRed = Station.isRed();
     double targetY;
 
@@ -37,14 +37,14 @@ public class FieldZoning {
           Constants.Field.MAX_FIELD_Y.in(Meters)
               - 1.469
               - 0.8
-                  * Constants.Field.MID_FIELD.in(Meters)
-                  * (turretCurrentPoseY / Constants.Field.MID_FIELD.in(Meters));
+                  * Constants.Field.MID_FIELD_Y.in(Meters)
+                  * (turretCurrentPoseY / Constants.Field.MID_FIELD_Y.in(Meters));
     } else {
       targetY =
           1.469
               - 0.8
-                  * Constants.Field.MID_FIELD.in(Meters)
-                  * (turretCurrentPoseY / Constants.Field.MID_FIELD.in(Meters));
+                  * Constants.Field.MID_FIELD_Y.in(Meters)
+                  * (turretCurrentPoseY / Constants.Field.MID_FIELD_Y.in(Meters));
     }
 
     if (isRed) {
@@ -69,12 +69,12 @@ public class FieldZoning {
     boolean blueFromRight =
         turretSpeedsFieldSpace.vxMetersPerSecond < 0
             && turretCurrentPose.getX() > Constants.Field.BLUE_TRENCH_SCORING.in(Meters)
-            && turretCurrentPose.getX() < Constants.Field.FIELD_MIDDLE.in(Meters)
+            && turretCurrentPose.getX() < Constants.Field.MID_FIELD_X.in(Meters)
             && turretCurrentPose.getX() > 0;
     boolean blueFromLeft =
         turretSpeedsFieldSpace.vxMetersPerSecond > 0
             && turretCurrentPose.getX() < Constants.Field.BLUE_TRENCH_SCORING.in(Meters)
-            && turretCurrentPose.getX() < Constants.Field.FIELD_MIDDLE.in(Meters)
+            && turretCurrentPose.getX() < Constants.Field.MID_FIELD_X.in(Meters)
             && turretCurrentPose.getX() > 0;
 
     // Red
@@ -82,12 +82,12 @@ public class FieldZoning {
     boolean redFromRight =
         turretSpeedsFieldSpace.vxMetersPerSecond < 0
             && turretCurrentPose.getX() > Constants.Field.RED_TRENCH_SCORING.in(Meters)
-            && turretCurrentPose.getX() > Constants.Field.FIELD_MIDDLE.in(Meters)
+            && turretCurrentPose.getX() > Constants.Field.MID_FIELD_X.in(Meters)
             && turretCurrentPose.getX() < Constants.Field.MAX_FIELD_X.in(Meters);
     boolean redFromLeft =
         turretSpeedsFieldSpace.vxMetersPerSecond > 0
             && turretCurrentPose.getX() < Constants.Field.RED_TRENCH_SCORING.in(Meters)
-            && turretCurrentPose.getX() > Constants.Field.FIELD_MIDDLE.in(Meters)
+            && turretCurrentPose.getX() > Constants.Field.MID_FIELD_X.in(Meters)
             && turretCurrentPose.getX() < Constants.Field.MAX_FIELD_X.in(Meters);
 
     double updatedZoneBlue = Constants.Field.REGULAR_DECAPITATION_ZONE.in(Meters);

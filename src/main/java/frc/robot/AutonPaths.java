@@ -11,6 +11,7 @@ import com.pathplanner.lib.path.RotationTarget;
 import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import frc.lib.utilities.math.GeomUtil;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,30 +37,37 @@ public class AutonPaths {
   }
 
   public static PathPlannerPath rightAutoBlue(Pose2d startingPose) {
-    List<Waypoint> waypoints =
-        PathPlannerPath.waypointsFromPoses(
-            startingPose,
-            new Pose2d(
-                (Constants.Field.MAX_FIELD_X.in(Meters) / 2) - 2, 0.7, Rotation2d.fromDegrees(60)),
-            new Pose2d(
-                (Constants.Field.MAX_FIELD_X.in(Meters) / 2) - 0.2, 2, Rotation2d.fromDegrees(90)),
-            new Pose2d(
-                (Constants.Field.MAX_FIELD_X.in(Meters) / 2) - 0.2, 5, Rotation2d.fromDegrees(90)),
-            new Pose2d(
-                (Constants.Field.MAX_FIELD_X.in(Meters) / 2) - 1.2,
-                6.5,
-                Rotation2d.fromDegrees(180)),
-            new Pose2d(
-                (Constants.Field.MAX_FIELD_X.in(Meters) / 2) - 2.4, 5, Rotation2d.fromDegrees(270)),
-            new Pose2d(
-                (Constants.Field.MAX_FIELD_X.in(Meters) / 2) - 2.4,
-                2,
-                Rotation2d.fromDegrees(270)));
+    List<Waypoint> waypoints = new ArrayList<>();
+    waypoints.add(
+        new Waypoint(
+            null,
+            startingPose.getTranslation(),
+            startingPose.getTranslation().plus(new Translation2d(0.2, 0))));
+    waypoints.add(
+        new Waypoint(
+            new Translation2d(Constants.Field.MID_FIELD_X_METERS - 2.25, 1.75),
+            new Translation2d(Constants.Field.MID_FIELD_X_METERS - 2, 2),
+            new Translation2d(Constants.Field.MID_FIELD_X_METERS - 1.75, 2.25)));
+    waypoints.add(
+        new Waypoint(
+            new Translation2d(Constants.Field.MID_FIELD_X_METERS - 0.2, 2.75),
+            new Translation2d(Constants.Field.MID_FIELD_X_METERS + 0.1, 3),
+            new Translation2d(Constants.Field.MID_FIELD_X_METERS + 0.2, 3.5)));
+    waypoints.add(
+        new Waypoint(
+            new Translation2d(Constants.Field.MID_FIELD_X_METERS - 0.2, 4.25),
+            new Translation2d(Constants.Field.MID_FIELD_X_METERS + 0.1, 4.5),
+            new Translation2d(Constants.Field.MID_FIELD_X_METERS - 0.2, 4.75)));
+    waypoints.add(
+        new Waypoint(
+            new Translation2d(Constants.Field.MID_FIELD_X_METERS + 0.2, 4.25),
+            new Translation2d(Constants.Field.MID_FIELD_X_METERS + 0.1, 3),
+            new Translation2d(Constants.Field.MID_FIELD_X_METERS - 0.2, 4.25)));
 
     List<RotationTarget> rotationTargets = new ArrayList<>();
     rotationTargets.add(new RotationTarget(0, Rotation2d.fromDegrees(90)));
-    rotationTargets.add(new RotationTarget(3, Rotation2d.fromDegrees(90)));
-    rotationTargets.add(new RotationTarget(4, Rotation2d.fromDegrees(180)));
+    rotationTargets.add(new RotationTarget(2, Rotation2d.fromDegrees(90)));
+    rotationTargets.add(new RotationTarget(3, Rotation2d.fromDegrees(120)));
     rotationTargets.add(new RotationTarget(5, Rotation2d.fromDegrees(270)));
     rotationTargets.add(new RotationTarget(6, Rotation2d.fromDegrees(270)));
 

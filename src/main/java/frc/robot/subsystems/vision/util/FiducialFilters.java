@@ -105,8 +105,8 @@ public class FiducialFilters {
     }
 
     public FiducialModifications withMultiplyAllResults() {
-      observation.stdDevs()[0] *= 2;
-      observation.stdDevs()[1] *= 2;
+      observation.stdDevs()[0] *= 1.2;
+      observation.stdDevs()[1] *= 1.2;
 
       return this;
     }
@@ -137,6 +137,15 @@ public class FiducialFilters {
       return this;
     }
 
+    public FiducialModifications withDistrustMt1() {
+      if (observation.type() == PoseObservationType.MT1) {
+        observation.stdDevs()[0] = 99999;
+        observation.stdDevs()[1] = 99999;
+        observation.stdDevs()[2] = 99999;
+      }
+      return this;
+    }
+
     public FiducialModifications withDistrustYaw() {
       observation.stdDevs()[2] = Double.MAX_VALUE;
       return this;
@@ -156,6 +165,10 @@ public class FiducialFilters {
 
     public static UnaryOperator<FiducialModifications> o_withDistrustMt2WhileDriveSpinToFast() {
       return FiducialModifications::withDistrustMt2WhileDriveSpinToFast;
+    }
+
+    public static UnaryOperator<FiducialModifications> o_withDistrustMt1() {
+      return FiducialModifications::withDistrustMt1;
     }
 
     public static UnaryOperator<FiducialModifications> o_withDistrustYaw() {
