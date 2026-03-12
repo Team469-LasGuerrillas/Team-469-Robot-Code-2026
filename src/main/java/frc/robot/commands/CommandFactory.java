@@ -100,4 +100,12 @@ public class CommandFactory {
   private static Command readyToFeed() {
     return Commands.parallel(SpindexerCommands.idleCommand(), FeederCommands.idleCommand());
   }
+
+  public static Command unJam() {
+    return Commands.parallel(SpindexerCommands.runReverse(), FeederCommands.runReverse());
+  }
+
+  public static Command outTake() {
+    return IntakeCommands.deployAndRunReverse();
+  }
 }

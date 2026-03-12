@@ -9,14 +9,12 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Rotations;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.subsystems.configs.ServoMotorSubsystemWithFollowersConfig;
 import frc.lib.subsystems.interfaces.CanCoderIO;
 import frc.lib.subsystems.interfaces.MotorIO;
@@ -53,7 +51,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -77,10 +74,8 @@ public class RobotContainer {
   public final Climb climb;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
-
-  // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
+  private final CommandXboxController marcus = new CommandXboxController(0);
+  private final CommandXboxController kyle = new CommandXboxController(1);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -202,29 +197,12 @@ public class RobotContainer {
     RobotModeTriggers.disabled()
         .onTrue(Commands.runOnce(HubShiftUtil::initialize).ignoringDisable(true));
 
-    // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
     // Configure the button
     configurePPNamedCommands();
     configureDefaultCommands();
     configureButtonBindings();
+
+    Dashboard.configureAutonDashboard();
   }
 
   private void configurePPNamedCommands() {
@@ -236,9 +214,9 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -marcus.getLeftY(),
+            () -> -marcus.getLeftX(),
+            () -> -marcus.getRightX()));
 
     HashSet<Subsystem> turretList = new HashSet<Subsystem>();
     turretList.add(exampe);
@@ -267,19 +245,22 @@ public class RobotContainer {
     driveList.add(Drive.getInstance());
 
     // Lock to 0° when A button is held
-    controller.povUp().whileTrue(ClimbCommands.setClimbUp());
-    controller.povDown().whileTrue(ClimbCommands.setClimbDown());
-    controller.povUp().onTrue(TurretCommands.targetAngle(Rotations.of(-0.23)));
+    marcus.povUp().whileTrue(ClimbCommands.setClimbUp());
+    marcus.povDown().whileTrue(ClimbCommands.setClimbDown());
+    marcus.povUp().onTrue(TurretCommands.targetAngle(Rotations.of(-0.23)));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    marcus.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller.b().whileTrue(AutonCommands.leftPass());
+    marcus.b().whileTrue(AutonCommands.leftPassRed());
 
-    controller.leftBumper().toggleOnTrue(IntakeCommands.deployAndRun());
+    marcus.leftBumper().toggleOnTrue(IntakeCommands.deployAndRun());
 
-    controller.rightBumper().toggleOnTrue(CommandFactory.feedOrScore());
+    marcus.rightBumper().toggleOnTrue(CommandFactory.feedOrScore());
+
+    kyle.rightBumper().whileTrue(CommandFactory.unJam());
+    kyle.leftTrigger().whileTrue(CommandFactory.outTake());
   }
 
   /**
@@ -288,6 +269,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.get();
+    return Dashboard.autonChooser.get();
   }
 }

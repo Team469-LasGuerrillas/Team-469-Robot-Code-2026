@@ -17,6 +17,15 @@ public class IntakeCommands {
         Commands.startRun(() -> intake.setDutyCycle(1), () -> intake.setDutyCycle(1)));
   }
 
+  public static Command deployAndRunReverse() {
+    return Commands.parallel(
+        Commands.startRun(
+            () -> intake.setTargetAngle(Constants.IntakeC.PIVOT_LOWERED),
+            () -> intake.setTargetAngle(Constants.IntakeC.PIVOT_LOWERED),
+            intake),
+        Commands.startRun(() -> intake.setDutyCycle(-0.8), () -> intake.setDutyCycle(-0.8)));
+  }
+
   public static Command stow() {
     return Commands.parallel(
         Commands.startRun(

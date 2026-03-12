@@ -1,5 +1,6 @@
 package frc.robot;
 
+import frc.robot.subsystems.drive.Drive;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -9,7 +10,9 @@ public class RobotState {
     return getTurretState() == TurretState.LOCKED
         && getHoodState() == HoodState.LOCKED
         && (getFlywheelState() == FlywheelState.PASSLOCKED
-            || getFlywheelState() == FlywheelState.HUBLOCKED);
+            || getFlywheelState() == FlywheelState.HUBLOCKED)
+        && Math.abs(Drive.getInstance().getPose().getY() - Constants.Field.MID_FIELD_Y_METERS)
+            > 0.5;
   }
 
   public static boolean weLockedHub() {

@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
@@ -138,15 +139,29 @@ public class Turret extends SubsystemBase {
             * talonInputs.motorVelocity.in(RotationsPerSecond);
 
     boolean nearWrapMax =
-        Math.abs(Constants.TurretC.TURRERT_MAX.in(Rotations) - getAngle().in(Rotations))
+        Math.abs(
+                Constants.TurretC.TURRERT_MAX.in(Rotations)
+                    - talonInputs.motorPosition.in(Rotations))
             < wrapOffset;
     boolean nearWrapMin =
-        Math.abs(Constants.TurretC.TURRERT_MIN.in(Rotations) - getAngle().in(Rotations))
+        Math.abs(
+                Constants.TurretC.TURRERT_MIN.in(Rotations)
+                    - talonInputs.motorPosition.in(Rotations))
             < wrapOffset;
+
+    boolean targetFar = Math.abs(targetAngle.minus(talonInputs.motorPosition).in(Degrees)) > 40;
+
+    boolean tooFastTurret = Math.abs(talonInputs.motorVelocity.in(DegreesPerSecond)) > 100;
+    boolean tooFastChassis =
+        Math.abs(Units.radiansToDegrees(Drive.getInstance().getFieldSpeeds().omegaRadiansPerSecond))
+            > 80;
 
     boolean onTarget =
         !nearWrapMax
+            && !targetFar
             && !nearWrapMin
+            && !tooFastTurret
+            && !tooFastChassis
             && ToleranceUtil.epsilonEquals(
                 getAngle().in(Rotations),
                 targetAngle.in(Rotations),
@@ -207,7 +222,7 @@ public class Turret extends SubsystemBase {
 
     turd.setMagicalPositionSetpoint(
         closestAfter,
-        RotationsPerSecond.of(90),
+        RotationsPerSecond.of(10),
         RotationsPerSecondPerSecond.of(9999),
         0,
         calculateFF());

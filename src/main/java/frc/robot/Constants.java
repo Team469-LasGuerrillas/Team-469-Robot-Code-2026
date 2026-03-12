@@ -91,7 +91,7 @@ public final class Constants {
 
     public static final PPHolonomicDriveController PP_CONTROLLER =
         new PPHolonomicDriveController(
-            new PIDConstants(3.5, 0.0, 0.0), new PIDConstants(6.0, 0.0, 0.0));
+            new PIDConstants(3.5, 0.0, 0.4), new PIDConstants(5.0, 0.0, 0.5));
   }
 
   public static class Field {
@@ -131,18 +131,18 @@ public final class Constants {
     public static final Angle MAX_YAW_ERROR_MT2 = Degrees.of(2);
     public static final Distance MAX_FLOATING_NOCLIP = Meters.of(0.2);
 
-    public static final AngularVelocity BAD_TURRET_ANGULAR_VELOCITY = DegreesPerSecond.of(120);
+    public static final AngularVelocity BAD_TURRET_ANGULAR_VELOCITY = DegreesPerSecond.of(90);
 
     public static final AngularVelocity REASONABLE_TURRET_ANGULAR_VELOCITY_MT1 =
-        DegreesPerSecond.of(30);
+        DegreesPerSecond.of(20);
     public static final double REASONABLE_TURRET_ANGULAR_VELOCITY_MT1_MULT = 12;
     public static final AngularVelocity REASONABLE_TURRET_ANGULAR_VELOCITY_MT2 =
-        DegreesPerSecond.of(35);
+        DegreesPerSecond.of(20);
     public static final double REASONABLE_TURRET_ANGULAR_VELOCITY_MT2_MULT = 10;
 
     public static final AngularVelocity REASONABLE_DRIVE_ANGULAR_VELOCITY_MT2 =
-        DegreesPerSecond.of(120);
-    public static final double REASONABLE_DRIVE_ANGULAR_VELOCITY_MT2_MULT = 10;
+        DegreesPerSecond.of(200);
+    public static final double REASONABLE_DRIVE_ANGULAR_VELOCITY_MT2_MULT = 20;
 
     public static final ArrayList<Function<PoseObservation, Boolean>> TURRET_REJECTIONS =
         new ArrayList<Function<PoseObservation, Boolean>>();
@@ -193,7 +193,7 @@ public final class Constants {
                 -0.093280,
                 0.120650,
                 0.503137 + Units.inchesToMeters(1) - Units.inchesToMeters(0.125),
-                new Rotation3d(0, Units.degreesToRadians(17), Units.degreesToRadians(0.8))));
+                new Rotation3d(0, Units.degreesToRadians(17), Units.degreesToRadians(0.2))));
 
     public static final VisionIOLimelight TURD_LIMELIGHT =
         VisionIOLimelight.getInstance(
@@ -238,8 +238,8 @@ public final class Constants {
       phaseDelay = 67;
 
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(0.1, 34.0);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(3.5, 48.3);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(4.5, 53.0);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(3.5, 48.0);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(4.5, 52.7);
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.3, 57.0);
 
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(0.5, 28.0);
@@ -249,11 +249,11 @@ public final class Constants {
 
       TIME_OF_FLIGHT_MAP_SHOOTING.put(0.2, 0.3);
       TIME_OF_FLIGHT_MAP_SHOOTING.put(1.0, 0.8);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.8, 1.3);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(2.5, 1.45);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(3.5, 1.57);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(5.0, 1.63);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(6.0, 1.68);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.8, 1.14);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(2.5, 1.35);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(3.5, 1.52);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(5.0, 1.57);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(6.0, 1.6);
 
       TIME_OF_FLIGHT_MAP_PASSING.put(1.0, 1.0);
       TIME_OF_FLIGHT_MAP_PASSING.put(7.0, 1.5);
@@ -356,10 +356,10 @@ public final class Constants {
 
   public static class TurretC {
 
-    public static final Angle TURRET_TOLERANCE = Degrees.of(5);
+    public static final Angle TURRET_TOLERANCE = Degrees.of(3.8);
 
-    public static final Angle TURRERT_MAX = Rotations.of(0.375);
-    public static final Angle TURRERT_MIN = Rotations.of(-0.975);
+    public static final Angle TURRERT_MAX = Rotations.of(0.35);
+    public static final Angle TURRERT_MIN = Rotations.of(-0.7);
 
     public static final double WRAPAROUND_PREDICTION_FACOTR = 0.2;
 
@@ -474,9 +474,9 @@ public final class Constants {
     public static final double UNJAM_DC = -0.3;
     public static final double IDLE_DC = 0;
     // public static final Angle PIVOT_RAISED = Radians.of(0.33);
-    public static final Angle PIVOT_LOWERED = Radians.of(2.187);
-    public static final Angle PIVOT_RAISED = Degrees.of(20);
-    public static final Angle PIVOT_AGITATE = Degrees.of(30);
+    public static final Angle PIVOT_LOWERED = Radians.of(2.195);
+    public static final Angle PIVOT_RAISED = Degrees.of(35);
+    public static final Angle PIVOT_AGITATE = Degrees.of(45);
 
     private static final ServoMotorSubsystemWithCancoderConfig DROP_CONFIG =
         new ServoMotorSubsystemWithCancoderConfig();
@@ -507,8 +507,9 @@ public final class Constants {
 
       INTAKE_PIVOT_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       INTAKE_PIVOT_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-      INTAKE_PIVOT_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 100;
-      INTAKE_PIVOT_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -100;
+      INTAKE_PIVOT_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+          PIVOT_LOWERED.in(Rotations);
+      INTAKE_PIVOT_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
       INTAKE_PIVOT_TALON_CONFIG.ClosedLoopGeneral.ContinuousWrap = false;
       INTAKE_PIVOT_TALON_CONFIG.Slot0.kP = 440;
@@ -527,7 +528,7 @@ public final class Constants {
       DROP_CONFIG.fxConfig = INTAKE_PIVOT_TALON_CONFIG;
 
       INTAKE_ROLLER_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
-      INTAKE_ROLLER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 30;
+      INTAKE_ROLLER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 45;
 
       ROLLER_CONFIG.talonCANID = new CANDeviceId(10);
       ROLLER_CONFIG.fxConfig = INTAKE_ROLLER_TALON_CONFIG;
@@ -541,7 +542,7 @@ public final class Constants {
   }
 
   public static class SpindexerC {
-    public static final double FEEDING_DC = 0.359;
+    public static final double FEEDING_DC = 1.0;
     public static final double REVERSE_DC = -0.2;
     public static final double IDLE_DC = 0.0;
     public static final double IDLE_REVERSE_DC = -0.0;
@@ -556,8 +557,8 @@ public final class Constants {
 
       SPINDEXER_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-      SPINDEXER_MOTOR_CONFIG.CurrentLimits.StatorCurrentLimit = 80;
-      SPINDEXER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 30;
+      SPINDEXER_MOTOR_CONFIG.CurrentLimits.StatorCurrentLimit = 100;
+      SPINDEXER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
     }
 
     public static final MotorIO SPINDEXER_MOTOR = new MotorIOTalonFX(SERVO_CONFIG);
@@ -577,6 +578,7 @@ public final class Constants {
       SERVO_CONFIG.fxConfig = FEEDER_MOTOR_CONFIG;
 
       FEEDER_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      FEEDER_MOTOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
       FEEDER_MOTOR_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
       FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
