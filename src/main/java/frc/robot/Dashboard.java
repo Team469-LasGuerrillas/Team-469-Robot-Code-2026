@@ -27,8 +27,16 @@ public class Dashboard {
 
     autonChooser.addDefaultOption("Default Option", Commands.none());
     autonChooser.addOption(
-        "Left",
-        Commands.deferredProxy(
-            () -> Commands.either(AutonCommands.leftPassRed(), Commands.none(), Station::isRed)));
+        "BlueLeft",
+        AutonCommands.leftPassRed(false, false));
+    autonChooser.addOption(
+        "BlueRight",
+        AutonCommands.leftPassRed(false, true));
+    autonChooser.addOption(
+        "RedLeft",
+        AutonCommands.leftPassRed(true, false));
+    autonChooser.addOption(
+        "RedRight",
+        AutonCommands.leftPassRed(true, true));
   }
 }

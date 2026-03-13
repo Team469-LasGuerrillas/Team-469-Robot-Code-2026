@@ -10,8 +10,22 @@ import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
 
 public class AutonCommands {
-  public static Command leftPassRed() {
+  public static Command leftPassRed(boolean isRed, boolean rightSide) {
     try {
+
+      PathPlannerPath firstPath = PathPlannerPath.fromPathFile("S_A");
+      PathPlannerPath secondPath = PathPlannerPath.fromPathFile("S_B");
+
+      if (rightSide) {
+        firstPath = firstPath.mirrorPath();
+        secondPath = secondPath.mirrorPath();
+      }
+
+      if (isRed) {
+        firstPath = firstPath.flipPath();
+        secondPath = secondPath.flipPath();
+      }
+
       return Commands.sequence(
           Commands.deadline(
               Commands.sequence(
@@ -28,7 +42,7 @@ public class AutonCommands {
                       IntakeCommands.deployAndRun()),
                   Commands.deadline(
                       Commands.waitSeconds(5), CommandFactory.scoring(), IntakeCommands.agitate())),
-              AutoBuilder.followPath(PathPlannerPath.fromPathFile("S_A").flipPath())),
+              AutoBuilder.followPath(firstPath)),
           Commands.deadline(
               Commands.sequence(
                   Commands.deadline(Commands.waitSeconds(3), IntakeCommands.deployAndRun()),
@@ -41,8 +55,8 @@ public class AutonCommands {
                                       > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.5),
                       IntakeCommands.deployAndRun()),
                   Commands.deadline(
-                      Commands.waitSeconds(5), CommandFactory.scoring(), IntakeCommands.agitate())),
-              AutoBuilder.followPath(PathPlannerPath.fromPathFile("S_B").flipPath())));
+                      Commands.waitSeconds(6), CommandFactory.scoring(), IntakeCommands.agitate())),
+              AutoBuilder.followPath(secondPath)));
     } catch (Exception e) {
       return Commands.none();
     }
