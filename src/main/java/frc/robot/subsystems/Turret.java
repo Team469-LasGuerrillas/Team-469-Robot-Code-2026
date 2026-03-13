@@ -54,6 +54,8 @@ public class Turret extends SubsystemBase {
   private EasyCRT easyCRT;
 
   private boolean offsetHasBeenSet = false;
+  private boolean turretOverrideLock = false;
+  private Angle turretOverrideAngle;
 
   private Pose2d lastTurretPoseFieldSpace = new Pose2d();
   private SwerveDrivePoseEstimator turretSpeedEstimator =
@@ -168,7 +170,7 @@ public class Turret extends SubsystemBase {
             > 80;
 
     boolean onTarget =
-        !nearWrapMax
+        (!nearWrapMax
             && !targetFar
             && !nearWrapMin
             && !tooFastTurret
@@ -176,13 +178,18 @@ public class Turret extends SubsystemBase {
             && ToleranceUtil.epsilonEquals(
                 getAngle().in(Rotations),
                 targetAngle.in(Rotations),
-                Constants.TurretC.TURRET_TOLERANCE.in(Rotations));
+                Constants.TurretC.TURRET_TOLERANCE.in(Rotations))) || turretOverrideLock;
 
     if (onTarget) {
       RobotState.setTurretState(TurretState.LOCKED);
     } else {
       RobotState.setTurretState(TurretState.UNLOCKED);
     }
+  }
+
+  public void lockAngle() {
+    turretOverrideLock = true;
+    turretOverrideAngle = talonInputs.motorPosition;
   }
 
   public void setTargetAngle(Angle angle) {
@@ -231,12 +238,21 @@ public class Turret extends SubsystemBase {
                         .getRotation()
                         .getRotations()));
 
-    turd.setMagicalPositionSetpoint(
-        closestAfter,
-        RotationsPerSecond.of(10),
-        RotationsPerSecondPerSecond.of(9999),
-        0,
-        calculateFF());
+    if (turretOverrideLock) {
+      turd.setMagicalPositionSetpoint(
+          turretOverrideAngle,
+          RotationsPerSecond.of(1),
+          RotationsPerSecondPerSecond.of(3),
+          0,
+          0);
+    } else {
+      turd.setMagicalPositionSetpoint(
+          closestAfter,
+          RotationsPerSecond.of(10),
+          RotationsPerSecondPerSecond.of(9999),
+          0,
+          calculateFF());
+    }
   }
 
   /**
