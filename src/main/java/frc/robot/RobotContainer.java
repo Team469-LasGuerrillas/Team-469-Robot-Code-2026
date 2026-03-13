@@ -10,6 +10,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -213,10 +214,7 @@ public class RobotContainer {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive,
-            () -> -marcus.getLeftY(),
-            () -> -marcus.getLeftX(),
-            () -> -marcus.getRightX()));
+            drive, () -> -marcus.getLeftY(), () -> -marcus.getLeftX(), () -> -marcus.getRightX()));
 
     HashSet<Subsystem> turretList = new HashSet<Subsystem>();
     turretList.add(exampe);
@@ -253,7 +251,13 @@ public class RobotContainer {
     marcus.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    marcus.b().whileTrue(AutonCommands.leftPassRed());
+    PathPlannerPath testA;
+    try {
+
+    } catch (Exception e) {
+      // TODO: handle exception
+    }
+    marcus.b().whileTrue(Commands.deferredProxy(() -> AutonCommands.testAuto()));
 
     marcus.leftBumper().toggleOnTrue(IntakeCommands.deployAndRun());
 

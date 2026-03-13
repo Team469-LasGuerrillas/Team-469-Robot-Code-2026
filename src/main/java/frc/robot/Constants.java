@@ -91,7 +91,7 @@ public final class Constants {
 
     public static final PPHolonomicDriveController PP_CONTROLLER =
         new PPHolonomicDriveController(
-            new PIDConstants(3.5, 0.0, 0.4), new PIDConstants(5.0, 0.0, 0.5));
+            new PIDConstants(6.7, 0.0, 0.167), new PIDConstants(6.0, 0.0, 0.4));
   }
 
   public static class Field {
@@ -107,7 +107,8 @@ public final class Constants {
 
     public static final Matrix<N3, N1> FIELD_SPEEDS_STDS = VecBuilder.fill(0.067, 0.067, 0.08);
     public static final Matrix<N3, N1> TURRET_SPEEDS_STDS = VecBuilder.fill(0.1, 0.1, 0.1);
-    public static final Matrix<N3, N1> TURRET_MOTOR_SPEEDS_STDS = VecBuilder.fill(0.1, 0.1, 0.1);
+    public static final Matrix<N3, N1> TURRET_MOTOR_SPEEDS_STDS =
+        VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(80));
 
     public static final Distance BLUE_TRENCH_SCORING = Inches.of(182.11);
     public static final Distance RED_TRENCH_SCORING = MAX_FIELD_X.minus(Inches.of(182.11));
@@ -237,7 +238,7 @@ public final class Constants {
     static {
       phaseDelay = 67;
 
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(0.1, 34.0);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(0.1, 35.0);
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(3.5, 48.0);
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(4.5, 52.7);
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.3, 57.0);
@@ -249,11 +250,11 @@ public final class Constants {
 
       TIME_OF_FLIGHT_MAP_SHOOTING.put(0.2, 0.3);
       TIME_OF_FLIGHT_MAP_SHOOTING.put(1.0, 0.8);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.8, 1.14);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(2.5, 1.35);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(3.5, 1.52);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(5.0, 1.57);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(6.0, 1.6);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.8, 1.1);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(2.5, 1.3);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(3.5, 1.44);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(5.0, 1.53);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(6.0, 1.59);
 
       TIME_OF_FLIGHT_MAP_PASSING.put(1.0, 1.0);
       TIME_OF_FLIGHT_MAP_PASSING.put(7.0, 1.5);
@@ -299,12 +300,12 @@ public final class Constants {
       LAUNCHER_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.ControlTimesyncFreqHz = 0;
-      LAUNCHER_TALON_CONFIG.Slot0.kP = 12;
+      LAUNCHER_TALON_CONFIG.Slot0.kP = 4.69;
       LAUNCHER_TALON_CONFIG.Slot0.kI = 0;
       LAUNCHER_TALON_CONFIG.Slot0.kD = 0;
-      LAUNCHER_TALON_CONFIG.Slot0.kV = 0.29;
+      LAUNCHER_TALON_CONFIG.Slot0.kV = 0.267;
       // LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakForwardTorqueCurrent = 120;
-      // LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakReverseTorqueCurrent = 0;
+      LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakReverseTorqueCurrent = -10;
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakForwardDutyCycle = 1;
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakReverseDutyCycle = 0;
 
@@ -378,7 +379,7 @@ public final class Constants {
     private static final CanCoderConfig TURRETA_CANCODER_CONFIG = new CanCoderConfig();
     private static final CanCoderConfig TURRETB_CANCODER_CONFIG = new CanCoderConfig();
 
-    public static final double ROTATION_SPEED_FF = 0;
+    public static final double ROTATION_SPEED_FF = 16 / 100.0; // Amps per degree per second
     public static final double LEAD_SHOT_OFFSET = 0; // Rotations per RPS of turret base
 
     static {
@@ -397,6 +398,7 @@ public final class Constants {
       TURRETB_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
 
       TURRET_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      TURRET_TALON_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
       // 168t main gear, 26t cancoder A,
       TURRET_TALON_CONFIG.Feedback.SensorToMechanismRatio = ((52.0 / 10.0) * (168.0 / 18.0));
@@ -410,9 +412,9 @@ public final class Constants {
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TURRERT_MIN.in(Rotations);
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-      TURRET_TALON_CONFIG.Slot0.kP = 3310;
+      TURRET_TALON_CONFIG.Slot0.kP = 3310; // 3310
       TURRET_TALON_CONFIG.Slot0.kI = 0;
-      TURRET_TALON_CONFIG.Slot0.kD = 98.7;
+      TURRET_TALON_CONFIG.Slot0.kD = 98.7; // 98.7
       TURRET_TALON_CONFIG.Slot0.kS = 0.5;
       TURRET_TALON_CONFIG.Slot0.kV = 0.05;
       TURRET_TALON_CONFIG.Slot0.kA = 0;
@@ -543,7 +545,7 @@ public final class Constants {
 
   public static class SpindexerC {
     public static final double FEEDING_DC = 1.0;
-    public static final double REVERSE_DC = -0.2;
+    public static final double REVERSE_DC = -1.0;
     public static final double IDLE_DC = 0.0;
     public static final double IDLE_REVERSE_DC = -0.0;
 
@@ -616,7 +618,7 @@ public final class Constants {
       HOOD_TALON_CONFIG.Slot0.kV = 0;
       HOOD_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
-      HOOD_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 70;
+      HOOD_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 60;
       HOOD_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 30;
 
       HOOD_CONFIG.talonCANID = new CANDeviceId(17);

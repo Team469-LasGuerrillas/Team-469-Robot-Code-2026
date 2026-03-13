@@ -63,7 +63,7 @@ public class Turret extends SubsystemBase {
           Drive.getInstance().lastModulePositions,
           Pose2d.kZero);
 
-  private SwerveDrivePoseEstimator turretMotorSpeedEstimator =
+  private SwerveDrivePoseEstimator turretTargetSpeedEstimator =
       new SwerveDrivePoseEstimator(
           Drive.getInstance().kinematics,
           new Rotation2d(),
@@ -119,13 +119,24 @@ public class Turret extends SubsystemBase {
         Clock.time(),
         Constants.Field.TURRET_SPEEDS_STDS);
 
-    turretMotorSpeedEstimator.updateWithTime(
+    turretTargetSpeedEstimator.updateWithTime(
         Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
-    turretMotorSpeedEstimator.addVisionMeasurement(
-        GeomUtil.withRotation(
-            new Pose2d(), new Rotation2d(talonInputs.motorVelocity.in(RadiansPerSecond))),
-        Clock.time(),
-        Constants.Field.TURRET_MOTOR_SPEEDS_STDS);
+
+    double targetAngularVelocityRadiansPerSecond =
+        (targetAngle.in(Radians) - lastTargetAngle.in(Radians)) / 0.02;
+
+    if (Math.abs(targetAngularVelocityRadiansPerSecond) < 18) {
+      turretTargetSpeedEstimator.addVisionMeasurement(
+          GeomUtil.withRotation(
+              new Pose2d(), new Rotation2d(targetAngularVelocityRadiansPerSecond)),
+          Clock.time(),
+          Constants.Field.TURRET_MOTOR_SPEEDS_STDS);
+    }
+
+    Logger.recordOutput(
+        "TurretTargetAngularVelocity", RadiansPerSecond.of(targetAngularVelocityRadiansPerSecond));
+
+    lastTargetAngle = targetAngle;
 
     lastTurretPoseFieldSpace = getTurretPoseFieldSpace();
 
@@ -215,7 +226,7 @@ public class Turret extends SubsystemBase {
         closestAfter.plus(
             Rotations.of(
                 0.0
-                    * turretMotorSpeedEstimator
+                    * turretTargetSpeedEstimator
                         .getEstimatedPosition()
                         .getRotation()
                         .getRotations()));
@@ -226,8 +237,6 @@ public class Turret extends SubsystemBase {
         RotationsPerSecondPerSecond.of(9999),
         0,
         calculateFF());
-
-    lastTargetAngle = closestAfter;
   }
 
   /**
@@ -287,6 +296,12 @@ public class Turret extends SubsystemBase {
     return GeomUtil.toChassisSpeeds(turretSpeedEstimator.getEstimatedPosition());
   }
 
+  @AutoLogOutput(key = "Turret/TurretTargetSpeed")
+  public AngularVelocity getTargetAngularVelocity() {
+    return RadiansPerSecond.of(
+        turretTargetSpeedEstimator.getEstimatedPosition().getRotation().getRadians());
+  }
+
   @AutoLogOutput(key = "Turret/CurrentAngle")
   public Angle getAngle() {
     if (easyCRT.getAngleOptional().isPresent()) {
@@ -339,7 +354,6 @@ public class Turret extends SubsystemBase {
 
   @AutoLogOutput(key = "Turret/FF")
   private double calculateFF() {
-    return Units.radiansToRotations(getTurretSpeedsFieldSpace().omegaRadiansPerSecond)
-        * -Constants.TurretC.ROTATION_SPEED_FF;
+    return getTargetAngularVelocity().in(DegreesPerSecond) * Constants.TurretC.ROTATION_SPEED_FF;
   }
 }

@@ -15,7 +15,9 @@ public class AutonCommands {
       return Commands.sequence(
           Commands.deadline(
               Commands.sequence(
-                  Commands.deadline(Commands.waitSeconds(3), IntakeCommands.deployAndRun()),
+                  Commands.deadline(
+                      Commands.waitSeconds(3),
+                      Commands.sequence(Commands.waitSeconds(0.3), IntakeCommands.deployAndRun())),
                   Commands.deadline(
                       Commands.waitUntil(
                           () ->
@@ -41,6 +43,14 @@ public class AutonCommands {
                   Commands.deadline(
                       Commands.waitSeconds(5), CommandFactory.scoring(), IntakeCommands.agitate())),
               AutoBuilder.followPath(PathPlannerPath.fromPathFile("S_B").flipPath())));
+    } catch (Exception e) {
+      return Commands.none();
+    }
+  }
+
+  public static Command testAuto() {
+    try {
+      return AutoBuilder.followPath(PathPlannerPath.fromPathFile("TestA").flipPath());
     } catch (Exception e) {
       return Commands.none();
     }
