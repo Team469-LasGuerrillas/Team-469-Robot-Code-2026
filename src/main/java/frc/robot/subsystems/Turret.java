@@ -171,14 +171,15 @@ public class Turret extends SubsystemBase {
 
     boolean onTarget =
         (!nearWrapMax
-            && !targetFar
-            && !nearWrapMin
-            && !tooFastTurret
-            && !tooFastChassis
-            && ToleranceUtil.epsilonEquals(
-                getAngle().in(Rotations),
-                targetAngle.in(Rotations),
-                Constants.TurretC.TURRET_TOLERANCE.in(Rotations))) || turretOverrideLock;
+                && !targetFar
+                && !nearWrapMin
+                && !tooFastTurret
+                && !tooFastChassis
+                && ToleranceUtil.epsilonEquals(
+                    getAngle().in(Rotations),
+                    targetAngle.in(Rotations),
+                    Constants.TurretC.TURRET_TOLERANCE.in(Rotations)))
+            || turretOverrideLock;
 
     if (onTarget) {
       RobotState.setTurretState(TurretState.LOCKED);
@@ -240,11 +241,7 @@ public class Turret extends SubsystemBase {
 
     if (turretOverrideLock) {
       turd.setMagicalPositionSetpoint(
-          turretOverrideAngle,
-          RotationsPerSecond.of(1),
-          RotationsPerSecondPerSecond.of(3),
-          0,
-          0);
+          turretOverrideAngle, RotationsPerSecond.of(1), RotationsPerSecondPerSecond.of(3), 0, 0);
     } else {
       turd.setMagicalPositionSetpoint(
           closestAfter,

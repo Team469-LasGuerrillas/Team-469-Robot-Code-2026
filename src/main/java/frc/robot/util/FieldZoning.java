@@ -36,13 +36,13 @@ public class FieldZoning {
       targetY =
           Constants.Field.MAX_FIELD_Y.in(Meters)
               - 1.469
-              - 0.8
+              - 0.4
                   * Constants.Field.MID_FIELD_Y.in(Meters)
                   * (turretCurrentPoseY / Constants.Field.MID_FIELD_Y.in(Meters));
     } else {
       targetY =
           1.469
-              - 0.8
+              - 0.4
                   * Constants.Field.MID_FIELD_Y.in(Meters)
                   * (turretCurrentPoseY / Constants.Field.MID_FIELD_Y.in(Meters));
     }

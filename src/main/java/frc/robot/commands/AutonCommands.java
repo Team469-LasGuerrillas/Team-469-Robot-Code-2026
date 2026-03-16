@@ -14,7 +14,7 @@ public class AutonCommands {
     try {
 
       PathPlannerPath firstPath = PathPlannerPath.fromPathFile("S_A");
-      PathPlannerPath secondPath = PathPlannerPath.fromPathFile("S_B");
+      PathPlannerPath secondPath = PathPlannerPath.fromPathFile("S_C");
 
       if (rightSide) {
         firstPath = firstPath.mirrorPath();

@@ -91,7 +91,7 @@ public final class Constants {
 
     public static final PPHolonomicDriveController PP_CONTROLLER =
         new PPHolonomicDriveController(
-            new PIDConstants(6.7, 0.0, 0.167), new PIDConstants(6.0, 0.0, 0.4));
+            new PIDConstants(7.1, 0.0, 0.27), new PIDConstants(5.3, 0.0, 0.6));
   }
 
   public static class Field {
@@ -113,9 +113,9 @@ public final class Constants {
     public static final Distance BLUE_TRENCH_SCORING = Inches.of(182.11);
     public static final Distance RED_TRENCH_SCORING = MAX_FIELD_X.minus(Inches.of(182.11));
 
-    public static final Distance REGULAR_DECAPITATION_ZONE = Meters.of(0.3);
+    public static final Distance REGULAR_DECAPITATION_ZONE = Meters.of(0.5);
 
-    public static final double DECAPITATION_SPEED_FACTOR = 0.16;
+    public static final double DECAPITATION_SPEED_FACTOR = 0.2;
 
     public static final Translation2d BLUE_HUB =
         new Translation2d(BLUE_TRENCH_SCORING.in(Meters), MID_FIELD_Y.in(Meters));
@@ -191,9 +191,9 @@ public final class Constants {
         VisionIOLimelight.getInstance(
             "limelight-climb",
             new Pose3d(
-                -0.093280,
+                -0.093280 - Units.inchesToMeters(0.5),
                 0.120650,
-                0.503137 + Units.inchesToMeters(1) - Units.inchesToMeters(0.125),
+                0.503137 + Units.inchesToMeters(0.625) - Units.inchesToMeters(0.125),
                 new Rotation3d(0, Units.degreesToRadians(17), Units.degreesToRadians(0.2))));
 
     public static final VisionIOLimelight TURD_LIMELIGHT =
@@ -207,12 +207,12 @@ public final class Constants {
   }
 
   public static class LauncherC {
-    public static final double RAMP_DC = 1;
+    public static final double RAMP_DC = 0.95;
     public static final double UNJAM_DC = -0.5;
     public static final double IDLE_DC = 0.0;
 
-    public static final AngularVelocity HUB_SPEED_TOLERANCE = RotationsPerSecond.of(10);
-    public static final AngularVelocity PASS_SPEED_TOLERANCE = RotationsPerSecond.of(12);
+    public static final AngularVelocity HUB_SPEED_TOLERANCE = RotationsPerSecond.of(6.7);
+    public static final AngularVelocity PASS_SPEED_TOLERANCE = RotationsPerSecond.of(44);
     public static final AngularVelocity RAMP_SPEED_TOLERANCE = RotationsPerSecond.of(15);
 
     public static double phaseDelay;
@@ -247,6 +247,7 @@ public final class Constants {
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(2.0, 45.0);
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(5.0, 55.0);
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(10.0, 65.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(20.0, 75.0);
 
       TIME_OF_FLIGHT_MAP_SHOOTING.put(0.2, 0.3);
       TIME_OF_FLIGHT_MAP_SHOOTING.put(1.0, 0.8);
@@ -256,7 +257,7 @@ public final class Constants {
       TIME_OF_FLIGHT_MAP_SHOOTING.put(5.0, 1.53);
       TIME_OF_FLIGHT_MAP_SHOOTING.put(6.0, 1.59);
 
-      TIME_OF_FLIGHT_MAP_PASSING.put(1.0, 1.0);
+      TIME_OF_FLIGHT_MAP_PASSING.put(1.0, 0.8);
       TIME_OF_FLIGHT_MAP_PASSING.put(7.0, 1.5);
       TIME_OF_FLIGHT_MAP_PASSING.put(20.0, 1.8);
 
@@ -269,9 +270,9 @@ public final class Constants {
 
       SHOOTER_HOOD_MAP_PASSING.put(0.5, 0.0);
       SHOOTER_HOOD_MAP_PASSING.put(2.0, 3.0);
-      SHOOTER_HOOD_MAP_PASSING.put(4.0, 10.0);
-      SHOOTER_HOOD_MAP_PASSING.put(7.0, 18.0);
-      SHOOTER_HOOD_MAP_PASSING.put(10.0, 28.0);
+      SHOOTER_HOOD_MAP_PASSING.put(4.0, 12.0);
+      SHOOTER_HOOD_MAP_PASSING.put(7.0, 20.0);
+      SHOOTER_HOOD_MAP_PASSING.put(20.0, 22.0);
     }
 
     public static final ServoMotorSubsystemWithFollowersConfig LAUNCHER_CONFIG =
@@ -461,8 +462,8 @@ public final class Constants {
       CLIMB_TALON_CONFIG.Slot0.kV = 0;
       CLIMB_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
-      CLIMB_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
-      CLIMB_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
+      CLIMB_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 0.469;
+      CLIMB_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 0.469;
 
       CLIMB_CONFIG.talonCANID = new CANDeviceId(18);
       CLIMB_CONFIG.fxConfig = CLIMB_TALON_CONFIG;
@@ -521,8 +522,8 @@ public final class Constants {
       INTAKE_PIVOT_TALON_CONFIG.Slot0.kV = 0;
       DROP_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
-      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
-      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 40;
+      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 90;
+      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 30;
 
       DROP_CONFIG.talonCANID = new CANDeviceId(9);
       DROP_CONFIG.canCoderConfig = INTAKE_PIVOT_CANCODER_CONFIG;

@@ -266,6 +266,7 @@ public class RobotContainer {
     kyle.rightBumper().whileTrue(CommandFactory.unJam());
     kyle.leftTrigger().whileTrue(CommandFactory.outTake());
     kyle.back().and(kyle.start()).onTrue(Commands.runOnce(() -> Turret.getInstance().lockAngle()));
+    kyle.povDown().onTrue(Commands.runOnce(() -> Hood.getInstance().resetHood()));
   }
 
   /**

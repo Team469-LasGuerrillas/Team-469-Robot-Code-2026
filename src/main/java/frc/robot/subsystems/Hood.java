@@ -46,6 +46,11 @@ public class Hood extends SubsystemBase {
     this.hoodMotor = pivotMotor;
   }
 
+  public void resetHood() {
+    zeroed = false;
+    disabledLimits = false;
+  }
+
   @Override
   public void periodic() {
     hoodMotor.readInputs(pivotInputs);
