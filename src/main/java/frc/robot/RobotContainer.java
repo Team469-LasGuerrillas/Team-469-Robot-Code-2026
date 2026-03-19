@@ -268,6 +268,10 @@ public class RobotContainer {
     kyle.leftTrigger().whileTrue(CommandFactory.outTake());
     kyle.back().and(kyle.start()).onTrue(Commands.runOnce(() -> Turret.getInstance().lockAngle()));
     kyle.povDown().onTrue(Commands.runOnce(() -> Hood.getInstance().resetHood()));
+
+    // Set ignore hub state commands
+    marcus.rightTrigger().onTrue(ShooterCommands.ignoreHubStateCommand());
+    marcus.leftTrigger().onTrue(ShooterCommands.respectHubStateCommand());
   }
 
   /**

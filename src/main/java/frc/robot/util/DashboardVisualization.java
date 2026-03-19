@@ -3,6 +3,7 @@
 // import org.littletonrobotics.junction.Logger;
 
 // import edu.wpi.first.math.geometry.Pose2d;
+// import edu.wpi.first.wpilibj.Timer;
 // import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 // import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 // import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -11,14 +12,36 @@
 // import frc.lib.drivers.Elastic;
 
 // public class DashboardVisualization {
-//   private static String robotOnField = "Field";
 
-//   public static void setRobotPose(Pose2d robotPose2d) {
-//   Logger.recordOutput("Dashboard/Field", setRobotPose(robotPose2d));
-//   }
+//     private static Timer autonTimer; // How have we been in auto?
+//     private static Timer teleopTimer; // How long have we been in teleop?
+//     private static Timer nextGoalSwapTimer; // How long the current goal has been active?
+//     private static Boolean didWeWinAuton = false; // true = yes
+//     private static Boolean initiated = false; // true = yes
 
-//   public static void getRobotPose(Pose2d robotPose2d) {
-//   Logger.recordOutput("Dashboard/Field", getRobotPose(robotPose2d));
-//   }
+//     // "hello world"
+//     public static double getTimeRemainingInAuton() {
+//         return 20 - autonTimer.get();
+//     }
 
-//   }
+//     // Call me once ever rio loop please!
+//     public static void periodic() {
+//         if (!initiated) {
+//             // run init routinen
+
+//             autonTimer = new Timer();
+//             teleopTimer = new Timer();
+//             nextGoalSwapTimer = new Timer();
+//             initiated = true;
+//         }
+
+//     }
+
+//     // Call me once when auton begins!
+//     public static void autonStart() {
+
+//     }
+
+//     //
+
+// }

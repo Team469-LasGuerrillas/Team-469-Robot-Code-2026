@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.util.HubShiftUtil;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -15,10 +16,31 @@ public class RobotState {
             > 0.5;
   }
 
+  private static boolean overrideHubState = false;
+
   public static boolean weLockedHub() {
     return getTurretState() == TurretState.LOCKED
         && getHoodState() == HoodState.LOCKED
-        && getFlywheelState() == FlywheelState.HUBLOCKED;
+        && getFlywheelState() == FlywheelState.HUBLOCKED
+        && (getHubState() == HubState.ACTIVE || overrideHubState);
+  }
+
+  public static void setOverrideHubState(boolean override) {
+    overrideHubState = override;
+  }
+
+  public enum HubState {
+    ACTIVE,
+    INACTIVE,
+  }
+
+  public static HubState getHubState() {
+    HubState state;
+    if (HubShiftUtil.getShiftedShiftInfo().active()) state = HubState.ACTIVE;
+    else state = HubState.INACTIVE;
+
+    Logger.recordOutput("State/HubState", state);
+    return state;
   }
 
   public enum TurretState {

@@ -6,6 +6,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
+import frc.robot.RobotState;
 import frc.robot.subsystems.Shooter;
 import java.util.function.Supplier;
 
@@ -43,5 +44,15 @@ public class ShooterCommands {
         () -> shooter.setOpenLoopDutyCycle(Constants.LauncherC.IDLE_DC),
         () -> shooter.setOpenLoopDutyCycle(Constants.LauncherC.IDLE_DC),
         shooter);
+  }
+
+  public static Command ignoreHubStateCommand() {
+    return Commands.startRun(
+        () -> RobotState.setOverrideHubState(true), () -> RobotState.setOverrideHubState(true));
+  }
+
+  public static Command respectHubStateCommand() {
+    return Commands.startRun(
+        () -> RobotState.setOverrideHubState(false), () -> RobotState.setOverrideHubState(false));
   }
 }
