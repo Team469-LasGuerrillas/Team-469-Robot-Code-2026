@@ -19,6 +19,7 @@ public class ShootTarget {
     goal =
         ShootAndMove.getTransformed(
             Drive.getInstance().getFieldSpeedsFiltered(),
+            Drive.getInstance().getFieldAccelerationsFiltered(),
             Drive.getInstance().getPose(),
             target.get(),
             Constants.TurretC.TURD_CENTER,

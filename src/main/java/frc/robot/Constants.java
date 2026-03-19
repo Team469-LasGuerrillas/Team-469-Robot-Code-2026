@@ -106,6 +106,7 @@ public final class Constants {
     public static final double MID_FIELD_Y_METERS = MID_FIELD_Y.in(Meters);
 
     public static final Matrix<N3, N1> FIELD_SPEEDS_STDS = VecBuilder.fill(0.067, 0.067, 0.08);
+    public static final Matrix<N3, N1> FIELD_ACCELERATIONS_STDS = VecBuilder.fill(0.3, 0.3, 0.3);
     public static final Matrix<N3, N1> TURRET_SPEEDS_STDS = VecBuilder.fill(0.1, 0.1, 0.1);
     public static final Matrix<N3, N1> TURRET_MOTOR_SPEEDS_STDS =
         VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(80));
@@ -215,6 +216,8 @@ public final class Constants {
     public static final AngularVelocity PASS_SPEED_TOLERANCE = RotationsPerSecond.of(44);
     public static final AngularVelocity RAMP_SPEED_TOLERANCE = RotationsPerSecond.of(15);
 
+    public static final double FEEDER_LEAD_TIME_SECONDS = 0.07;
+
     public static double phaseDelay;
 
     public static final InterpolatingDoubleTreeMap FLYWHEEL_SHOT_SPEEDMAP_SHOOTING =
@@ -250,12 +253,12 @@ public final class Constants {
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(20.0, 75.0);
 
       TIME_OF_FLIGHT_MAP_SHOOTING.put(0.2, 0.3);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.0, 0.8);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.8, 1.1);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(2.5, 1.3);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(3.5, 1.44);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(5.0, 1.53);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(6.0, 1.59);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.0, 0.78);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.8, 1.05);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(2.5, 1.22);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(3.5, 1.35);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(5.0, 1.43);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(6.0, 1.50);
 
       TIME_OF_FLIGHT_MAP_PASSING.put(1.0, 0.8);
       TIME_OF_FLIGHT_MAP_PASSING.put(7.0, 1.5);

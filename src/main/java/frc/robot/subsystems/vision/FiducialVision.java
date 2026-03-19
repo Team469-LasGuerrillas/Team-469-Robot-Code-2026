@@ -140,7 +140,9 @@ public class FiducialVision extends SubsystemBase {
                 || FiducialFilters.FiducialRejections.tooSmall(observation)
                 || LimelightHelpers.getCameraPose3d_RobotSpace(visionInputs.cameraName).getX() == 0
                 || !observation.isUpdated()
-                || (mt2Difference > 0.8 && observation.type() == PoseObservationType.MT2)
+                || (mt2Difference > 0.8
+                    && observation.type() == PoseObservationType.MT2
+                    && observation.tagCount() > 1)
                 || (distrustTurret && visionInputs.cameraName.equals("limelight-turd"));
 
         if (observation.type() == PoseObservationType.MT1) {

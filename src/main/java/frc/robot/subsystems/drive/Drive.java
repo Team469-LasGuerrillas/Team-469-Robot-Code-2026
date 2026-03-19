@@ -109,6 +109,11 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator fieldSpeedEstimator =
       new SwerveDrivePoseEstimator(kinematics, new Rotation2d(), lastModulePositions, Pose2d.kZero);
 
+  private SwerveDrivePoseEstimator fieldAccelerationEstimator =
+      new SwerveDrivePoseEstimator(kinematics, new Rotation2d(), lastModulePositions, Pose2d.kZero);
+
+  private ChassisSpeeds lastFieldSpeeds = new ChassisSpeeds();
+
   public static Drive getInstance(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -237,10 +242,25 @@ public class Drive extends SubsystemBase {
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
 
+    ChassisSpeeds updatedSpeeds = getFieldSpeeds();
+
     fieldSpeedEstimator.updateWithTime(
         Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
     fieldSpeedEstimator.addVisionMeasurement(
         GeomUtil.toPose2d(getFieldSpeeds()), Clock.time(), Constants.Field.FIELD_SPEEDS_STDS);
+
+    ChassisSpeeds deltaSpeeds =
+        new ChassisSpeeds(
+            (updatedSpeeds.vxMetersPerSecond - lastFieldSpeeds.vxMetersPerSecond) / 0.02,
+            (updatedSpeeds.vyMetersPerSecond - lastFieldSpeeds.vyMetersPerSecond) / 0.02,
+            (updatedSpeeds.omegaRadiansPerSecond - lastFieldSpeeds.omegaRadiansPerSecond) / 0.02);
+
+    fieldAccelerationEstimator.updateWithTime(
+        Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
+    fieldAccelerationEstimator.addVisionMeasurement(
+        GeomUtil.toPose2d(deltaSpeeds), Clock.time(), Constants.Field.FIELD_ACCELERATIONS_STDS);
+
+    lastFieldSpeeds = updatedSpeeds;
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode == Mode.REAL);
@@ -355,6 +375,11 @@ public class Drive extends SubsystemBase {
   @AutoLogOutput(key = "FieldFiteredChassisSpeeds/Measured")
   public ChassisSpeeds getFieldSpeedsFiltered() {
     return GeomUtil.toChassisSpeeds(fieldSpeedEstimator.getEstimatedPosition());
+  }
+
+  @AutoLogOutput(key = "FieldFiteredChassisAccelerations/Measured")
+  public ChassisSpeeds getFieldAccelerationsFiltered() {
+    return GeomUtil.toChassisSpeeds(fieldAccelerationEstimator.getEstimatedPosition());
   }
 
   /** Returns the position of each module in radians. */

@@ -14,6 +14,7 @@ import frc.robot.Constants;
 public class ShootAndMove {
   public static Translation2d getTransformed(
       ChassisSpeeds fieldRelativeRobotSpeeds,
+      ChassisSpeeds fieldRelativeAcclerations,
       Pose2d currentPose,
       Translation2d target,
       Pose3d turretPose,
@@ -32,7 +33,11 @@ public class ShootAndMove {
     Translation2d returnTarget = new Translation2d();
 
     double turretDist = Math.hypot(turretPose.getX(), turretPose.getY());
-    double turretTangentVelocity = fieldRelativeRobotSpeeds.omegaRadiansPerSecond * turretDist;
+    double turretTangentVelocity =
+        (fieldRelativeRobotSpeeds.omegaRadiansPerSecond
+                + (fieldRelativeAcclerations.omegaRadiansPerSecond
+                    * Constants.LauncherC.FEEDER_LEAD_TIME_SECONDS))
+            * turretDist;
 
     Angle turretTangentAngle =
         Radians.of(
@@ -49,8 +54,16 @@ public class ShootAndMove {
 
       Translation2d offset =
           new Translation2d(
-              lastLoopTimeOfFlight * (fieldRelativeRobotSpeeds.vxMetersPerSecond + turretTangentX),
-              lastLoopTimeOfFlight * (fieldRelativeRobotSpeeds.vyMetersPerSecond + turretTangentY));
+              lastLoopTimeOfFlight
+                  * ((fieldRelativeRobotSpeeds.vxMetersPerSecond
+                          + (fieldRelativeAcclerations.vxMetersPerSecond
+                              * Constants.LauncherC.FEEDER_LEAD_TIME_SECONDS))
+                      + turretTangentX),
+              lastLoopTimeOfFlight
+                  * ((fieldRelativeRobotSpeeds.vyMetersPerSecond
+                          + (fieldRelativeAcclerations.vyMetersPerSecond
+                              * Constants.LauncherC.FEEDER_LEAD_TIME_SECONDS))
+                      + turretTangentY));
 
       returnTarget = target.minus(offset);
       Distance updatedDist = Meters.of(returnTarget.getDistance(currentPose.getTranslation()));
