@@ -100,17 +100,19 @@ public class MotorIOTalonFX implements MotorIO {
 
     CANStatusLogger.getInstance().registerTalonFX(config.name, talon, config.talonCANID);
 
-    // CTREUtil.tryUntilOK(
-    //     () -> BaseStatusSignal.setUpdateFrequencyForAll(50, signals), talon.getDeviceID());
-
     if (talon.getDeviceID() == 13) {
       CTREUtil.tryUntilOK(
           () -> BaseStatusSignal.setUpdateFrequencyForAll(500, torqueCurrentSignal),
           talon.getDeviceID());
+    } else if (talon.getDeviceID() == 20) {
+      CTREUtil.tryUntilOK(
+          () -> BaseStatusSignal.setUpdateFrequencyForAll(800, signals), talon.getDeviceID());
     } else {
       CTREUtil.tryUntilOK(
-          () -> BaseStatusSignal.setUpdateFrequencyForAll(100, torqueCurrentSignal),
+          () -> BaseStatusSignal.setUpdateFrequencyForAll(50, torqueCurrentSignal),
           talon.getDeviceID());
+      CTREUtil.tryUntilOK(
+          () -> BaseStatusSignal.setUpdateFrequencyForAll(50, signals), talon.getDeviceID());
     }
     CTREUtil.tryUntilOK(() -> talon.optimizeBusUtilization(), talon.getDeviceID());
   }
@@ -139,7 +141,6 @@ public class MotorIOTalonFX implements MotorIO {
   @Override
   public void readInputs(MotorInputsAutoLogged inputs) {
     BaseStatusSignal.refreshAll(signals);
-
     inputs.motorPosition = Rotations.of(rotorToUnits(positionSignal.getValueAsDouble()));
     inputs.motorVelocity = RotationsPerSecond.of(rotorToUnits(velocitySignal.getValueAsDouble()));
     inputs.motorAngularAcceleration =

@@ -22,7 +22,6 @@ import frc.lib.subsystems.interfaces.CanCoderIO;
 import frc.lib.subsystems.interfaces.CancoderInputsAutoLogged;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.MotorInputsAutoLogged;
-import frc.lib.utilities.field.Clock;
 import frc.lib.utilities.math.GeomUtil;
 import frc.lib.utilities.math.ToleranceUtil;
 import frc.robot.Constants;
@@ -56,6 +55,8 @@ public class Turret extends SubsystemBase {
   private boolean offsetHasBeenSet = false;
   private boolean turretOverrideLock = false;
   private Angle turretOverrideAngle;
+
+  private int loopCount = 0;
 
   private Pose2d lastTurretPoseFieldSpace = new Pose2d();
   private SwerveDrivePoseEstimator turretSpeedEstimator =
@@ -108,35 +109,36 @@ public class Turret extends SubsystemBase {
     canCoderB.readInputs(ccBInputs);
     Logger.processInputs(getName() + " CanCoder B", ccBInputs);
 
-    turretSpeedEstimator.updateWithTime(
-        Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
-    turretSpeedEstimator.addVisionMeasurement(
-        GeomUtil.withRotation(
-            GeomUtil.toPose2d(
-                GeomUtil.toPose2d(getTurretTranslationFieldSpace())
-                    .minus(lastTurretPoseFieldSpace)
-                    .div(0.02)),
-            Rotation2d.fromRadians(
-                Drive.getInstance().getFieldSpeedsFiltered().omegaRadiansPerSecond)),
-        Clock.time(),
-        Constants.Field.TURRET_SPEEDS_STDS);
+    // turretSpeedEstimator.updateWithTime(
+    //     Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
+    // turretSpeedEstimator.addVisionMeasurement(
+    //     GeomUtil.withRotation(
+    //         GeomUtil.toPose2d(
+    //             GeomUtil.toPose2d(getTurretTranslationFieldSpace())
+    //                 .minus(lastTurretPoseFieldSpace)
+    //                 .div(0.02)),
+    //         Rotation2d.fromRadians(
+    //             Drive.getInstance().getFieldSpeedsFiltered().omegaRadiansPerSecond)),
+    //     Clock.time(),
+    //     Constants.Field.TURRET_SPEEDS_STDS);
 
-    turretTargetSpeedEstimator.updateWithTime(
-        Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
+    // turretTargetSpeedEstimator.updateWithTime(
+    //     Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
 
-    double targetAngularVelocityRadiansPerSecond =
-        (targetAngle.in(Radians) - lastTargetAngle.in(Radians)) / 0.02;
+    // double targetAngularVelocityRadiansPerSecond =
+    //     (targetAngle.in(Radians) - lastTargetAngle.in(Radians)) / 0.02;
 
-    if (Math.abs(targetAngularVelocityRadiansPerSecond) < 18) {
-      turretTargetSpeedEstimator.addVisionMeasurement(
-          GeomUtil.withRotation(
-              new Pose2d(), new Rotation2d(targetAngularVelocityRadiansPerSecond)),
-          Clock.time(),
-          Constants.Field.TURRET_MOTOR_SPEEDS_STDS);
-    }
+    // if (Math.abs(targetAngularVelocityRadiansPerSecond) < 18) {
+    //   turretTargetSpeedEstimator.addVisionMeasurement(
+    //       GeomUtil.withRotation(
+    //           new Pose2d(), new Rotation2d(targetAngularVelocityRadiansPerSecond)),
+    //       Clock.time(),
+    //       Constants.Field.TURRET_MOTOR_SPEEDS_STDS);
+    // }
 
-    Logger.recordOutput(
-        "TurretTargetAngularVelocity", RadiansPerSecond.of(targetAngularVelocityRadiansPerSecond));
+    // Logger.recordOutput(
+    //     "TurretTargetAngularVelocity",
+    // RadiansPerSecond.of(targetAngularVelocityRadiansPerSecond));
 
     lastTargetAngle = targetAngle;
 
@@ -186,6 +188,9 @@ public class Turret extends SubsystemBase {
     } else {
       RobotState.setTurretState(TurretState.UNLOCKED);
     }
+
+    loopCount++;
+    Logger.recordOutput("LoopCount", loopCount);
   }
 
   public void lockAngle() {
@@ -246,7 +251,7 @@ public class Turret extends SubsystemBase {
       turd.setMagicalPositionSetpoint(
           closestAfter,
           RotationsPerSecond.of(10),
-          RotationsPerSecondPerSecond.of(9999),
+          RotationsPerSecondPerSecond.of(990),
           0,
           calculateFF());
     }

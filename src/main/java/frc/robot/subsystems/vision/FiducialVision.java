@@ -76,6 +76,7 @@ public class FiducialVision extends SubsystemBase {
 
   @Override
   public void periodic() {
+
     io.readInputs(visionInputs);
     io.setRobotRotationUpdate(
         Drive.getInstance().getRotation(),
@@ -109,6 +110,10 @@ public class FiducialVision extends SubsystemBase {
     if (!hasOriginalPoseBeenSet) {
       originalCameraPose = visionInputs.cameraPose;
       hasOriginalPoseBeenSet = true;
+    }
+
+    if (!visionInputs.cameraName.equals("limelight_turd")) {
+      io.setPoseRobotSpace(originalCameraPose);
     }
 
     List<PoseObservation> robotPosesAccepted = new LinkedList<>();

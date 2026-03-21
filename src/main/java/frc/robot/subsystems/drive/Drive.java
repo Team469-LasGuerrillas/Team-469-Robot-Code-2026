@@ -58,7 +58,7 @@ public class Drive extends SubsystemBase {
   private final Field2d cameraField = new Field2d();
 
   // TunerConstants doesn't include these constants, so they are declared locally
-  static final double ODOMETRY_FREQUENCY = TunerConstants.kCANBus.isNetworkFD() ? 250.0 : 100.0;
+  static final double ODOMETRY_FREQUENCY = TunerConstants.kCANBus.isNetworkFD() ? 250.0 : 250.0;
   public static final double DRIVE_BASE_RADIUS =
       Math.max(
           Math.max(

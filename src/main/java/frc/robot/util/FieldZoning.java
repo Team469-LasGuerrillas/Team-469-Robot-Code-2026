@@ -8,6 +8,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.lib.utilities.field.Station;
 import frc.robot.Constants;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.drive.Drive;
 
 public class FieldZoning {
   public static boolean inNeutralZone() {
@@ -58,7 +59,9 @@ public class FieldZoning {
 
   public static boolean retractHood() {
     Pose2d turretCurrentPose = Turret.getInstance().getTurretPoseFieldSpace();
-    ChassisSpeeds turretSpeedsFieldSpace = Turret.getInstance().getTurretSpeedsFieldSpace();
+    ChassisSpeeds turretSpeedsFieldSpace =
+        Drive.getInstance()
+            .getFieldSpeedsFiltered(); // Turret.getInstance().getTurretSpeedsFieldSpace();
 
     double xDeltaBlue =
         Math.abs(turretCurrentPose.getX() - Constants.Field.BLUE_TRENCH_SCORING.in(Meters));

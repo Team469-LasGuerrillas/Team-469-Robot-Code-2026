@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
@@ -9,7 +7,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.MotorInputsAutoLogged;
-import org.littletonrobotics.junction.Logger;
 
 public class Climb extends SubsystemBase {
   private static Climb instance;
@@ -49,6 +46,7 @@ public class Climb extends SubsystemBase {
 
   @Override
   public void periodic() {
+    /*
     climbMotor.readInputs(climbInputs);
     Logger.processInputs(getName() + "Climb Motor", climbInputs);
 
@@ -68,5 +66,6 @@ public class Climb extends SubsystemBase {
       climbMotor.setEnableSoftLimits(true, true);
       zeroed = true;
     }
+      */
   }
 }

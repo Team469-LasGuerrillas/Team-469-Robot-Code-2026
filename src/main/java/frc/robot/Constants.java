@@ -123,7 +123,7 @@ public final class Constants {
     public static final Translation2d RED_HUB =
         new Translation2d(RED_TRENCH_SCORING.in(Meters), MID_FIELD_Y.in(Meters));
 
-    public static final Distance PASS_WALL_DISTANCE = Meters.of(2);
+    public static final Distance PASS_WALL_DISTANCE = Meters.of(3.5);
   }
 
   public static class VisionC {
@@ -192,17 +192,17 @@ public final class Constants {
         VisionIOLimelight.getInstance(
             "limelight-climb",
             new Pose3d(
-                -0.093280 - Units.inchesToMeters(0.5),
-                0.120650,
-                0.503137 + Units.inchesToMeters(0.625) - Units.inchesToMeters(0.125),
-                new Rotation3d(0, Units.degreesToRadians(17), Units.degreesToRadians(0.2))));
+                -0.215665,
+                0.289118,
+                0.522026 - Units.inchesToMeters(0.125),
+                new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(-15))));
 
     public static final VisionIOLimelight TURD_LIMELIGHT =
         VisionIOLimelight.getInstance(
             "limelight-turd",
             new Pose3d(
                 0.081752,
-                -0.201245,
+                -0.201245 - 2 * 0.040055 + 0.165100,
                 0.501594 - Units.inchesToMeters(0.125),
                 new Rotation3d(0, Units.degreesToRadians(13.396331), Units.rotationsToRadians(0))));
   }
@@ -363,8 +363,8 @@ public final class Constants {
 
     public static final Angle TURRET_TOLERANCE = Degrees.of(3.8);
 
-    public static final Angle TURRERT_MAX = Rotations.of(0.35);
-    public static final Angle TURRERT_MIN = Rotations.of(-0.7);
+    public static final Angle TURRERT_MAX = Rotations.of(0.44);
+    public static final Angle TURRERT_MIN = Rotations.of(-0.84);
 
     public static final double WRAPAROUND_PREDICTION_FACOTR = 0.2;
 
@@ -383,7 +383,7 @@ public final class Constants {
     private static final CanCoderConfig TURRETA_CANCODER_CONFIG = new CanCoderConfig();
     private static final CanCoderConfig TURRETB_CANCODER_CONFIG = new CanCoderConfig();
 
-    public static final double ROTATION_SPEED_FF = 16 / 100.0; // Amps per degree per second
+    public static final double ROTATION_SPEED_FF = 0; // 16 / 100.0; // Amps per degree per second
     public static final double LEAD_SHOT_OFFSET = 0; // Rotations per RPS of turret base
 
     static {
@@ -420,7 +420,7 @@ public final class Constants {
       TURRET_TALON_CONFIG.Slot0.kI = 0;
       TURRET_TALON_CONFIG.Slot0.kD = 98.7; // 98.7
       TURRET_TALON_CONFIG.Slot0.kS = 0.5;
-      TURRET_TALON_CONFIG.Slot0.kV = 0.05;
+      TURRET_TALON_CONFIG.Slot0.kV = (16.0 / 100.0) * 360.0 * 1.5;
       TURRET_TALON_CONFIG.Slot0.kA = 0;
       SERVO_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
@@ -583,7 +583,7 @@ public final class Constants {
       SERVO_CONFIG.talonCANID = new CANDeviceId(12);
       SERVO_CONFIG.fxConfig = FEEDER_MOTOR_CONFIG;
 
-      FEEDER_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      FEEDER_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
       FEEDER_MOTOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
       FEEDER_MOTOR_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
