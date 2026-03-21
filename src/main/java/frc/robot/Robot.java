@@ -11,9 +11,9 @@ import static edu.wpi.first.units.Units.Rotations;
 
 import com.pathplanner.lib.commands.FollowPathCommand;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.IntakeCommands;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.vision.FiducialVision;
 import frc.robot.util.HubShiftUtil;
@@ -35,6 +35,8 @@ public class Robot extends LoggedRobot {
   private RobotContainer robotContainer;
 
   private boolean firstLoop = true;
+
+  private boolean loggingMode = false;
 
   public Robot() {
     // Record metadata
@@ -74,7 +76,9 @@ public class Robot extends LoggedRobot {
     }
 
     // Start AdvantageKit logger
-    Logger.start();
+    if (loggingMode) {
+      Logger.start();
+    }
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
@@ -90,7 +94,9 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
     // Optionally switch the thread to high priority to improve loop
     // timing (see the template project documentation for details)
-    // Threads.setCurrentThreadPriority(true, 99);
+    if (!loggingMode) {
+      Threads.setCurrentThreadPriority(true, 99);
+    }
 
     if (!firstLoop) {
       robotContainer.limelightTurd.setPositionTurret(
@@ -159,7 +165,7 @@ public class Robot extends LoggedRobot {
 
     Dashboard.setChangeTabToTeleop();
 
-    CommandScheduler.getInstance().schedule(IntakeCommands.deployAndRun());
+    // CommandScheduler.getInstance().schedule(IntakeCommands.deployAndRun());
   }
 
   /** This function is called periodically during operator control. */

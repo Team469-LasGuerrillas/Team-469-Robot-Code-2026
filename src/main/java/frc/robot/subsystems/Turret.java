@@ -103,11 +103,11 @@ public class Turret extends SubsystemBase {
   @Override
   public void periodic() {
     turd.readInputs(talonInputs);
-    Logger.processInputs(getName() + " Motor", talonInputs);
+    // Logger.processInputs(getName() + " Motor", talonInputs);
     canCoderA.readInputs(ccAInputs);
-    Logger.processInputs(getName() + " CanCoder A", ccAInputs);
+    // Logger.processInputs(getName() + " CanCoder A", ccAInputs);
     canCoderB.readInputs(ccBInputs);
-    Logger.processInputs(getName() + " CanCoder B", ccBInputs);
+    // Logger.processInputs(getName() + " CanCoder B", ccBInputs);
 
     // turretSpeedEstimator.updateWithTime(
     //     Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);

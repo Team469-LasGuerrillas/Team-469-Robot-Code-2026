@@ -11,7 +11,6 @@ import frc.lib.utilities.math.ToleranceUtil;
 import frc.robot.Constants;
 import frc.robot.RobotState;
 import frc.robot.RobotState.FlywheelState;
-import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
 
@@ -62,7 +61,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     leadFlywheel.readInputs(leadInputs);
-    Logger.processInputs(getName() + "flywheelLead", leadInputs);
+    // Logger.processInputs(getName() + "flywheelLead", leadInputs);
 
     boolean onTargetHub =
         ToleranceUtil.epsilonEquals(

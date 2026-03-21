@@ -202,7 +202,7 @@ public final class Constants {
             "limelight-turd",
             new Pose3d(
                 0.081752,
-                -0.201245 - 2 * 0.040055 + 0.165100,
+                -0.201245 - 0.040055 - 0.040055 + 0.165100,
                 0.501594 - Units.inchesToMeters(0.125),
                 new Rotation3d(0, Units.degreesToRadians(13.396331), Units.rotationsToRadians(0))));
   }
@@ -361,7 +361,7 @@ public final class Constants {
 
   public static class TurretC {
 
-    public static final Angle TURRET_TOLERANCE = Degrees.of(3.8);
+    public static final Angle TURRET_TOLERANCE = Degrees.of(6.7);
 
     public static final Angle TURRERT_MAX = Rotations.of(0.44);
     public static final Angle TURRERT_MIN = Rotations.of(-0.84);
@@ -420,7 +420,7 @@ public final class Constants {
       TURRET_TALON_CONFIG.Slot0.kI = 0;
       TURRET_TALON_CONFIG.Slot0.kD = 98.7; // 98.7
       TURRET_TALON_CONFIG.Slot0.kS = 0.5;
-      TURRET_TALON_CONFIG.Slot0.kV = (16.0 / 100.0) * 360.0 * 1.5;
+      TURRET_TALON_CONFIG.Slot0.kV = (16.0 / 100.0) * 360.0 * 2;
       TURRET_TALON_CONFIG.Slot0.kA = 0;
       SERVO_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 

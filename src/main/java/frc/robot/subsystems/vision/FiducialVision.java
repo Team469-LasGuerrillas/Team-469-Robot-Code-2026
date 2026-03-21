@@ -81,7 +81,7 @@ public class FiducialVision extends SubsystemBase {
     io.setRobotRotationUpdate(
         Drive.getInstance().getRotation(),
         RadiansPerSecond.of(Drive.getInstance().getFieldSpeeds().omegaRadiansPerSecond));
-    Logger.processInputs(getCameraName(), visionInputs);
+    // Logger.processInputs(getCameraName(), visionInputs);
 
     if (DriverStation.isDisabled() && !wasLastDisabled) {
       if (visionInputs.cameraName.equals("limelight-turd")) {
@@ -112,9 +112,9 @@ public class FiducialVision extends SubsystemBase {
       hasOriginalPoseBeenSet = true;
     }
 
-    if (!visionInputs.cameraName.equals("limelight_turd")) {
-      io.setPoseRobotSpace(originalCameraPose);
-    }
+    // if (!visionInputs.cameraName.equals("limelight_turd")) {
+    //   io.setPoseRobotSpace(originalCameraPose);
+    // }
 
     List<PoseObservation> robotPosesAccepted = new LinkedList<>();
     List<PoseObservation> robotPosesRejected = new LinkedList<>();

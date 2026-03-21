@@ -54,7 +54,7 @@ public class Hood extends SubsystemBase {
   @Override
   public void periodic() {
     hoodMotor.readInputs(pivotInputs);
-    Logger.processInputs(getName() + " Motor", pivotInputs);
+    // Logger.processInputs(getName() + " Motor", pivotInputs);
 
     Angle updatedRequestedAngle = requestedAngle;
 

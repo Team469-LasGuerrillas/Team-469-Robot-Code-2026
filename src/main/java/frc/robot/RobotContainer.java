@@ -200,8 +200,8 @@ public class RobotContainer {
 
     // Configure the button
     configurePPNamedCommands();
-    // configureDefaultCommands();
-    // configureButtonBindings();
+    configureDefaultCommands();
+    configureButtonBindings();
 
     Dashboard.configureAutonDashboard();
   }
@@ -209,7 +209,7 @@ public class RobotContainer {
   private void configurePPNamedCommands() {
     NamedCommands.registerCommand("IntakeStart", IntakeCommands.deployAndRun());
   }
-/*
+
   private void configureDefaultCommands() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -272,7 +272,7 @@ public class RobotContainer {
     // Set ignore hub state commands
     marcus.rightTrigger().onTrue(ShooterCommands.ignoreHubStateCommand());
     marcus.leftTrigger().onTrue(ShooterCommands.respectHubStateCommand());
-  }*/
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

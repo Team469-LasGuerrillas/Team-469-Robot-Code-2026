@@ -16,7 +16,7 @@ public class RobotState {
             > 0.5;
   }
 
-  private static boolean overrideHubState = false;
+  private static boolean overrideHubState = true;
 
   public static boolean weLockedHub() {
     return getTurretState() == TurretState.LOCKED
