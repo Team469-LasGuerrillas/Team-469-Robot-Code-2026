@@ -22,6 +22,13 @@ public class FeederCommands {
         feeder);
   }
 
+  public static Command idleReverse() {
+    return Commands.startRun(
+        () -> feeder.setOpenLoopDutyCycle(Constants.FeederC.IDLE_REVERSE_DC),
+        () -> feeder.setOpenLoopDutyCycle(Constants.FeederC.IDLE_REVERSE_DC),
+        feeder);
+  }
+
   public static Command idleCommand() {
     return Commands.startRun(
         () -> feeder.setOpenLoopDutyCycle(Constants.FeederC.IDLE_DC),

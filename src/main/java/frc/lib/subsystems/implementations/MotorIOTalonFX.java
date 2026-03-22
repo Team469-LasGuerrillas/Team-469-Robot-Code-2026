@@ -35,6 +35,7 @@ import frc.lib.drivers.CTREUtil;
 import frc.lib.subsystems.configs.ServoMotorSubsystemConfig;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.MotorInputsAutoLogged;
+import java.util.ArrayList;
 
 public class MotorIOTalonFX implements MotorIO {
   protected final TalonFX talon;
@@ -69,6 +70,9 @@ public class MotorIOTalonFX implements MotorIO {
 
   private final BaseStatusSignal[] signals;
 
+  private static final ArrayList<BaseStatusSignal> canivoreASignals = new ArrayList<>();
+  private static final ArrayList<BaseStatusSignal> canivoreBSignals = new ArrayList<>();
+
   public MotorIOTalonFX(ServoMotorSubsystemConfig config) {
     this.config = config;
     talon = new TalonFX(config.talonCANID.getDeviceNumber(), config.talonCANID.getBus());
@@ -102,19 +106,31 @@ public class MotorIOTalonFX implements MotorIO {
 
     if (talon.getDeviceID() == 13) {
       CTREUtil.tryUntilOK(
-          () -> BaseStatusSignal.setUpdateFrequencyForAll(500, torqueCurrentSignal),
+          () -> BaseStatusSignal.setUpdateFrequencyForAll(1000, torqueCurrentSignal),
           talon.getDeviceID());
+      CTREUtil.tryUntilOK(
+          () -> BaseStatusSignal.setUpdateFrequencyForAll(250, signals), talon.getDeviceID());
     } else if (talon.getDeviceID() == 20) {
       CTREUtil.tryUntilOK(
-          () -> BaseStatusSignal.setUpdateFrequencyForAll(800, signals), talon.getDeviceID());
+          () -> BaseStatusSignal.setUpdateFrequencyForAll(500, signals), talon.getDeviceID());
     } else {
       CTREUtil.tryUntilOK(
           () -> BaseStatusSignal.setUpdateFrequencyForAll(50, torqueCurrentSignal),
           talon.getDeviceID());
       CTREUtil.tryUntilOK(
-          () -> BaseStatusSignal.setUpdateFrequencyForAll(50, signals), talon.getDeviceID());
+          () -> BaseStatusSignal.setUpdateFrequencyForAll(250, signals), talon.getDeviceID());
     }
     CTREUtil.tryUntilOK(() -> talon.optimizeBusUtilization(), talon.getDeviceID());
+
+    if (config.talonCANID.getBus().equals("469CanivoreB")) {
+      for (BaseStatusSignal s : signals) {
+        canivoreBSignals.add(s);
+      }
+    } else {
+      for (BaseStatusSignal s : signals) {
+        canivoreASignals.add(s);
+      }
+    }
   }
 
   private double rotorToUnits(double rotor) {
@@ -138,9 +154,14 @@ public class MotorIOTalonFX implements MotorIO {
     return units / config.unitToRotorRatio;
   }
 
+  public static void refreshAllSignals() {
+    BaseStatusSignal.refreshAll(canivoreASignals);
+    BaseStatusSignal.refreshAll(canivoreBSignals);
+  }
+
   @Override
   public void readInputs(MotorInputsAutoLogged inputs) {
-    BaseStatusSignal.refreshAll(signals);
+    // BaseStatusSignal.waitForAll(0.0, signals);
     inputs.motorPosition = Rotations.of(rotorToUnits(positionSignal.getValueAsDouble()));
     inputs.motorVelocity = RotationsPerSecond.of(rotorToUnits(velocitySignal.getValueAsDouble()));
     inputs.motorAngularAcceleration =

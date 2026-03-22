@@ -86,7 +86,7 @@ public class VisionIOLimelight implements VisionIO {
     totalLatencyMs = inputs.totalLatencyMs;
 
     inputs.poseObservations = parsePoseObservations();
-    inputs.trackedTargets = parseTargets();
+    // inputs.trackedTargets = parseTargets();
 
     double[] hw =
         NetworkTableInstance.getDefault()

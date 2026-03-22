@@ -231,7 +231,7 @@ public class RobotContainer {
 
     shooter.setDefaultCommand(ShooterCommands.idleCommand());
 
-    feeder.setDefaultCommand(FeederCommands.idleCommand());
+    feeder.setDefaultCommand(FeederCommands.idleReverse());
 
     hood.setDefaultCommand(HoodCommands.stowHood());
 

@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.lib.subsystems.implementations.MotorIOTalonFX;
+import frc.robot.commands.IntakeCommands;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.vision.FiducialVision;
 import frc.robot.util.HubShiftUtil;
@@ -89,13 +91,22 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
   }
 
+  private int gcLoopCounter = 0;
+
   /** This function is called periodically during all modes. */
   @Override
   public void robotPeriodic() {
     // Optionally switch the thread to high priority to improve loop
     // timing (see the template project documentation for details)
-    if (!loggingMode) {
-      Threads.setCurrentThreadPriority(true, 99);
+    if (!loggingMode) {}
+    Threads.setCurrentThreadPriority(true, 99);
+
+    MotorIOTalonFX.refreshAllSignals();
+
+    if (gcLoopCounter % 5 == 0) {
+      // explicitly run java gc every 5 loops
+      System.gc();
+      gcLoopCounter++;
     }
 
     if (!firstLoop) {
@@ -165,7 +176,7 @@ public class Robot extends LoggedRobot {
 
     Dashboard.setChangeTabToTeleop();
 
-    // CommandScheduler.getInstance().schedule(IntakeCommands.deployAndRun());
+    CommandScheduler.getInstance().schedule(IntakeCommands.deployAndRun());
   }
 
   /** This function is called periodically during operator control. */

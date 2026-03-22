@@ -22,6 +22,7 @@ import frc.lib.subsystems.interfaces.CanCoderIO;
 import frc.lib.subsystems.interfaces.CancoderInputsAutoLogged;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.MotorInputsAutoLogged;
+import frc.lib.utilities.field.Clock;
 import frc.lib.utilities.math.GeomUtil;
 import frc.lib.utilities.math.ToleranceUtil;
 import frc.robot.Constants;
@@ -103,7 +104,7 @@ public class Turret extends SubsystemBase {
   @Override
   public void periodic() {
     turd.readInputs(talonInputs);
-    // Logger.processInputs(getName() + " Motor", talonInputs);
+    Logger.processInputs(getName() + " Motor", talonInputs);
     canCoderA.readInputs(ccAInputs);
     // Logger.processInputs(getName() + " CanCoder A", ccAInputs);
     canCoderB.readInputs(ccBInputs);
@@ -122,19 +123,19 @@ public class Turret extends SubsystemBase {
     //     Clock.time(),
     //     Constants.Field.TURRET_SPEEDS_STDS);
 
-    // turretTargetSpeedEstimator.updateWithTime(
-    //     Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
+    turretTargetSpeedEstimator.updateWithTime(
+        Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
 
-    // double targetAngularVelocityRadiansPerSecond =
-    //     (targetAngle.in(Radians) - lastTargetAngle.in(Radians)) / 0.02;
+    double targetAngularVelocityRadiansPerSecond =
+        (targetAngle.in(Radians) - lastTargetAngle.in(Radians)) / 0.02;
 
-    // if (Math.abs(targetAngularVelocityRadiansPerSecond) < 18) {
-    //   turretTargetSpeedEstimator.addVisionMeasurement(
-    //       GeomUtil.withRotation(
-    //           new Pose2d(), new Rotation2d(targetAngularVelocityRadiansPerSecond)),
-    //       Clock.time(),
-    //       Constants.Field.TURRET_MOTOR_SPEEDS_STDS);
-    // }
+    if (Math.abs(targetAngularVelocityRadiansPerSecond) < 180) {
+      turretTargetSpeedEstimator.addVisionMeasurement(
+          GeomUtil.withRotation(
+              new Pose2d(), new Rotation2d(targetAngularVelocityRadiansPerSecond)),
+          Clock.time(),
+          Constants.Field.TURRET_MOTOR_SPEEDS_STDS);
+    }
 
     // Logger.recordOutput(
     //     "TurretTargetAngularVelocity",
@@ -238,7 +239,7 @@ public class Turret extends SubsystemBase {
     closestAfter =
         closestAfter.plus(
             Rotations.of(
-                0.0
+                0.04
                     * turretTargetSpeedEstimator
                         .getEstimatedPosition()
                         .getRotation()

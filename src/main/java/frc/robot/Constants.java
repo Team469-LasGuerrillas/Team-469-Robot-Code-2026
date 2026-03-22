@@ -297,7 +297,7 @@ public final class Constants {
 
     static {
       LAUNCHER_CONFIG.name = "Launcher";
-      LAUNCHER_CONFIG.talonCANID = new CANDeviceId(13);
+      LAUNCHER_CONFIG.talonCANID = new CANDeviceId(13, "469CanivoreB");
 
       LAUNCHER_CONFIG.unitToRotorRatio = 1 / 1.25;
 
@@ -339,9 +339,9 @@ public final class Constants {
       FOLLOWER_2_CONFIG.inverted = true;
       FOLLOWER_3_CONFIG.inverted = true;
 
-      FOLLOWER_1_CONFIG.config.talonCANID = new CANDeviceId(14);
-      FOLLOWER_2_CONFIG.config.talonCANID = new CANDeviceId(15);
-      FOLLOWER_3_CONFIG.config.talonCANID = new CANDeviceId(16);
+      FOLLOWER_1_CONFIG.config.talonCANID = new CANDeviceId(14, "469CanivoreB");
+      FOLLOWER_2_CONFIG.config.talonCANID = new CANDeviceId(15, "469CanivoreB");
+      FOLLOWER_3_CONFIG.config.talonCANID = new CANDeviceId(16, "469CanivoreB");
 
       LAUNCHER_CONFIG.followers =
           new ServoMotorSubsystemWithFollowersConfig.FollowerConfig[] {
@@ -387,14 +387,14 @@ public final class Constants {
     public static final double LEAD_SHOT_OFFSET = 0; // Rotations per RPS of turret base
 
     static {
-      TURRETA_CANCODER_CONFIG.CANID = new CANDeviceId(6);
+      TURRETA_CANCODER_CONFIG.CANID = new CANDeviceId(6, "469CanivoreB");
       TURRETA_CANCODER_CONFIG.config = new CANcoderConfiguration();
       TURRETA_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = 0;
       TURRETA_CANCODER_CONFIG.config.MagnetSensor.SensorDirection =
           SensorDirectionValue.Clockwise_Positive;
       TURRETA_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
 
-      TURRETB_CANCODER_CONFIG.CANID = new CANDeviceId(7);
+      TURRETB_CANCODER_CONFIG.CANID = new CANDeviceId(7, "469CanivoreB");
       TURRETB_CANCODER_CONFIG.config = new CANcoderConfiguration();
       TURRETB_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = 0;
       TURRETB_CANCODER_CONFIG.config.MagnetSensor.SensorDirection =
@@ -427,7 +427,7 @@ public final class Constants {
       TURRET_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
       TURRET_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 70;
 
-      SERVO_CONFIG.talonCANID = new CANDeviceId(20);
+      SERVO_CONFIG.talonCANID = new CANDeviceId(20, "469CanivoreB");
       // SERVO_CONFIG.canCoderConfig = TURRETA_CANCODER_CONFIG;
       // SERVO_CONFIG.isFusedCancoder = true;
       SERVO_CONFIG.fxConfig = TURRET_TALON_CONFIG;
@@ -481,7 +481,7 @@ public final class Constants {
     public static final double IDLE_DC = 0;
     // public static final Angle PIVOT_RAISED = Radians.of(0.33);
     public static final Angle PIVOT_LOWERED = Radians.of(2.195);
-    public static final Angle PIVOT_RAISED = Degrees.of(35);
+    public static final Angle PIVOT_RAISED = Degrees.of(45);
     public static final Angle PIVOT_AGITATE = Degrees.of(45);
 
     private static final ServoMotorSubsystemWithCancoderConfig DROP_CONFIG =
@@ -548,7 +548,7 @@ public final class Constants {
   }
 
   public static class SpindexerC {
-    public static final double FEEDING_DC = 1.0;
+    public static final double FEEDING_DC = 0.85;
     public static final double REVERSE_DC = -1.0;
     public static final double IDLE_DC = 0.0;
     public static final double IDLE_REVERSE_DC = -0.0;
@@ -573,6 +573,7 @@ public final class Constants {
   public static class FeederC {
     public static final double FEEDING_DC = 1;
     public static final double REVERSE_DC = -1;
+    public static final double IDLE_REVERSE_DC = -0.0;
     public static final double IDLE_DC = 0;
 
     private static final ServoMotorSubsystemWithCancoderConfig SERVO_CONFIG =
@@ -580,7 +581,7 @@ public final class Constants {
     private static final TalonFXConfiguration FEEDER_MOTOR_CONFIG = new TalonFXConfiguration();
 
     static {
-      SERVO_CONFIG.talonCANID = new CANDeviceId(12);
+      SERVO_CONFIG.talonCANID = new CANDeviceId(12, "469CanivoreB");
       SERVO_CONFIG.fxConfig = FEEDER_MOTOR_CONFIG;
 
       FEEDER_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -625,7 +626,7 @@ public final class Constants {
       HOOD_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 60;
       HOOD_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 30;
 
-      HOOD_CONFIG.talonCANID = new CANDeviceId(17);
+      HOOD_CONFIG.talonCANID = new CANDeviceId(17, "469CanivoreB");
       HOOD_CONFIG.fxConfig = HOOD_TALON_CONFIG;
     }
 

@@ -14,6 +14,12 @@ public class SpindexerCommands {
         Commands.deadline(Commands.waitSeconds(0.5), idleReverseCommand()));
   }
 
+  public static Command shootingAgitate() {
+    return Commands.repeatingSequence(
+        Commands.deadline(Commands.waitSeconds(1), runPositive()),
+        Commands.deadline(Commands.waitSeconds(0.25), idleCommand()));
+  }
+
   public static Command runPositive() {
     return Commands.startRun(
         () -> spindexer.setOpenLoopDutyCycle(Constants.SpindexerC.FEEDING_DC),
