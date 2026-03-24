@@ -23,6 +23,20 @@ public class FieldZoning {
     return false;
   }
 
+  public static boolean notAllowedToPass() {
+    boolean xLimits;
+    if (Station.isRed()) {
+      xLimits =
+          Drive.getInstance().getPose().getX() > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 1;
+    } else {
+      xLimits =
+          Drive.getInstance().getPose().getX() < Constants.Field.BLUE_TRENCH_SCORING.in(Meters) + 1;
+    }
+
+    return Math.abs(Drive.getInstance().getPose().getY() - Constants.Field.MID_FIELD_Y_METERS) < 0.5
+        && xLimits;
+  }
+
   public static Translation2d dynamicPassLocation() {
     // This has 0 being Y mid line
     double turretCurrentPoseY =

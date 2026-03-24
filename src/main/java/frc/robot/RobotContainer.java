@@ -22,7 +22,6 @@ import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.VisionIO;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.robot.commands.AutonCommands;
-import frc.robot.commands.ClimbCommands;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeederCommands;
@@ -32,7 +31,6 @@ import frc.robot.commands.ShooterCommands;
 import frc.robot.commands.SpindexerCommands;
 import frc.robot.commands.TurretCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
@@ -72,7 +70,7 @@ public class RobotContainer {
   public final Shooter shooter;
   public final Feeder feeder;
   public final Hood hood;
-  public final Climb climb;
+  // public final Climb climb;
 
   // Controller
   private final CommandXboxController marcus = new CommandXboxController(0);
@@ -139,7 +137,7 @@ public class RobotContainer {
 
         hood = Hood.createinstance(Constants.HoodC.PIVOT_MOTOR);
 
-        climb = Climb.createInstance(Constants.ClimbC.CLIMB_MOTOR);
+        // climb = Climb.createInstance(Constants.ClimbC.CLIMB_MOTOR);
 
         break;
 
@@ -188,7 +186,7 @@ public class RobotContainer {
 
         hood = Hood.createinstance(new MotorIO() {});
 
-        climb = Climb.createInstance(new MotorIO() {});
+        // climb = Climb.createInstance(new MotorIO() {});
 
         break;
     }
@@ -235,7 +233,7 @@ public class RobotContainer {
 
     hood.setDefaultCommand(HoodCommands.stowHood());
 
-    climb.setDefaultCommand(ClimbCommands.setClimbOff());
+    // climb.setDefaultCommand(ClimbCommands.setClimbOff());
   }
 
   private void configureButtonBindings() {
@@ -243,8 +241,8 @@ public class RobotContainer {
     driveList.add(Drive.getInstance());
 
     // Lock to 0° when A button is held
-    marcus.povUp().whileTrue(ClimbCommands.setClimbUp());
-    marcus.povDown().whileTrue(ClimbCommands.setClimbDown());
+    // marcus.povUp().whileTrue(ClimbCommands.setClimbUp());
+    // marcus.povDown().whileTrue(ClimbCommands.setClimbDown());
     marcus.povUp().onTrue(TurretCommands.targetAngle(Rotations.of(-0.23)));
 
     // Switch to X pattern when X button is pressed

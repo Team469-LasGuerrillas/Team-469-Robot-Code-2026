@@ -1,6 +1,6 @@
 package frc.robot;
 
-import frc.robot.subsystems.drive.Drive;
+import frc.robot.util.FieldZoning;
 import frc.robot.util.HubShiftUtil;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -8,12 +8,11 @@ import org.littletonrobotics.junction.Logger;
 public class RobotState {
 
   public static boolean weLockedPass() {
-    return getTurretState() == TurretState.LOCKED
+    return !FieldZoning.notAllowedToPass()
+        && getTurretState() == TurretState.LOCKED
         && getHoodState() == HoodState.LOCKED
         && (getFlywheelState() == FlywheelState.PASSLOCKED
-            || getFlywheelState() == FlywheelState.HUBLOCKED)
-        && Math.abs(Drive.getInstance().getPose().getY() - Constants.Field.MID_FIELD_Y_METERS)
-            > 0.5;
+            || getFlywheelState() == FlywheelState.HUBLOCKED);
   }
 
   private static boolean overrideHubState = true;

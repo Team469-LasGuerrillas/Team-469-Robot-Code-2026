@@ -254,12 +254,12 @@ public final class Constants {
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(20.0, 75.0);
 
       TIME_OF_FLIGHT_MAP_SHOOTING.put(0.2, 0.3);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.0, 0.78);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.8, 1.05);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(2.5, 1.22);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(3.5, 1.35);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(5.0, 1.43);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(6.0, 1.50);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.0, 0.76);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.8, 1.0);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(2.5, 1.18);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(3.5, 1.3);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(5.0, 1.38);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(6.0, 1.47);
 
       TIME_OF_FLIGHT_MAP_PASSING.put(1.0, 0.8);
       TIME_OF_FLIGHT_MAP_PASSING.put(4.0, 1.1);
@@ -474,7 +474,7 @@ public final class Constants {
       CLIMB_CONFIG.fxConfig = CLIMB_TALON_CONFIG;
     }
 
-    public static final MotorIO CLIMB_MOTOR = new MotorIOTalonFX(CLIMB_CONFIG);
+    // public static final MotorIO CLIMB_MOTOR = new MotorIOTalonFX(CLIMB_CONFIG);
   }
 
   public static class IntakeC {
@@ -500,7 +500,7 @@ public final class Constants {
     static {
       INTAKE_PIVOT_CANCODER_CONFIG.CANID = new CANDeviceId(5);
       INTAKE_PIVOT_CANCODER_CONFIG.config = new CANcoderConfiguration();
-      INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = 1.232666;
+      INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = 1.229004;
       INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.SensorDirection =
           SensorDirectionValue.Clockwise_Positive;
       INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;

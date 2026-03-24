@@ -9,6 +9,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Rotations;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Threads;
@@ -86,6 +87,8 @@ public class Robot extends LoggedRobot {
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
 
+    SignalLogger.enableAutoLogging(false);
+
     RobotController.setBrownoutVoltage(6.0);
 
     CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
@@ -99,14 +102,14 @@ public class Robot extends LoggedRobot {
     // Optionally switch the thread to high priority to improve loop
     // timing (see the template project documentation for details)
     if (!loggingMode) {}
-    Threads.setCurrentThreadPriority(true, 99);
+    Threads.setCurrentThreadPriority(true, 1);
 
     MotorIOTalonFX.refreshAllSignals();
 
+    gcLoopCounter++;
     if (gcLoopCounter % 5 == 0) {
       // explicitly run java gc every 5 loops
       System.gc();
-      gcLoopCounter++;
     }
 
     if (!firstLoop) {
@@ -121,9 +124,6 @@ public class Robot extends LoggedRobot {
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    // robotContainer.limelightTurd.setPoseRobotSpace(
-    // new Pose3d(0, 0, 1, new Rotation3d(new
-    // Rotation2d(robotContainer.exampe.getPosition()))));
 
     FiducialVision.applyUpdates();
     Logger.recordOutput("WeLocked/Pass", RobotState.weLockedPass());
@@ -135,12 +135,14 @@ public class Robot extends LoggedRobot {
     firstLoop = false;
 
     // Return to non-RT thread priority (do not modify the first argument)
-    // Threads.setCurrentThreadPriority(false, 10);
+    Threads.setCurrentThreadPriority(false, 10);
   }
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    SignalLogger.enableAutoLogging(false);
+  }
 
   /** This function is called periodically when disabled. */
   @Override
