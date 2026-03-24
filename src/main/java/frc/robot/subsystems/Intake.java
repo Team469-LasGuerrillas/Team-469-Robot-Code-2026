@@ -11,6 +11,7 @@ import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.MotorInputsAutoLogged;
 import frc.robot.Constants;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
 
 public class Intake extends SubsystemBase {
@@ -52,9 +53,9 @@ public class Intake extends SubsystemBase {
     rollerMotor.readInputs(rollerInputs);
     // Logger.processInputs(getName() + "Roller Motor", rollerInputs);
     pivotMotor.readInputs(pivotInputs);
-    // Logger.processInputs(getName() + "Pivot Motor", pivotInputs);
+    Logger.processInputs(getName() + "Pivot Motor", pivotInputs);
     coder.readInputs(coderInputs);
-    // Logger.processInputs(getName() + "Cancoder", coderInputs);
+    Logger.processInputs(getName() + "Cancoder", coderInputs);
 
     pivotMotor.setMagicalPositionSetpoint(
         requestedAngle,
