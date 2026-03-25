@@ -156,7 +156,8 @@ public class Turret extends SubsystemBase {
         Constants.TurretC.TURRERT_MIN.in(Rotations)
             - talonInputs.motorPosition.in(Rotations)) < wrapOffset;
 
-    boolean targetFar = Math.abs(targetAngle.minus(talonInputs.motorPosition).in(Degrees)) > 40;
+    // boolean targetFar = Math.abs(targetAngle.minus(talonInputs.motorPosition).in(Degrees)) > 40;
+    boolean targetFar = Math.abs(targetAngle.in(Degrees) - talonInputs.motorPosition.in(Degrees)) > 40;
 
     boolean tooFastTurret = Math.abs(talonInputs.motorVelocity.in(DegreesPerSecond)) > 100;
     boolean tooFastChassis = Math
@@ -217,9 +218,11 @@ public class Turret extends SubsystemBase {
     }
 
     if (closestAfter.in(Rotations) > Constants.TurretC.TURRERT_MAX.in(Rotations)) {
-      closestAfter = closestAfter.minus(Rotations.of(1));
+      closestAfter = Rotations.of(closestAfter.in(Rotations) - 1);
+      // closestAfter = closestAfter.minus(Rotations.of(1));
     } else if (closestAfter.in(Rotations) < Constants.TurretC.TURRERT_MIN.in(Rotations)) {
-      closestAfter = closestAfter.plus(Rotations.of(1));
+      closestAfter = Rotations.of(closestAfter.in(Rotations) + 1);
+      // closestAfter = closestAfter.plus(Rotations.of(1));
     }
 
     targetAngle = closestAfter;

@@ -111,7 +111,8 @@ public class Robot extends LoggedRobot {
 
     if (!firstLoop) {
       robotContainer.limelightTurd.setPositionTurret(
-          Turret.getInstance().getAngleForTurretLL().plus(Rotations.of(0.25 - 0.0262)),
+          (Rotations.of(Turret.getInstance().getAngleForTurretLL().in(Rotations) + (0.25 - 0.0262))),
+          // Turret.getInstance().getAngleForTurretLL().plus(Rotations.of(0.25 - 0.0262)),
           Constants.TurretC.TURD_CENTER_WITHOUT_ROTATION);
     }
 
