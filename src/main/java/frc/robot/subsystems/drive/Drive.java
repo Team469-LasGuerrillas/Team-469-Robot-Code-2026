@@ -114,6 +114,8 @@ public class Drive extends SubsystemBase {
 
   private ChassisSpeeds lastFieldSpeeds = new ChassisSpeeds();
 
+  private double lastTimestamp;
+
   public static Drive getInstance(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -249,11 +251,15 @@ public class Drive extends SubsystemBase {
     fieldSpeedEstimator.addVisionMeasurement(
         GeomUtil.toPose2d(getFieldSpeeds()), Clock.time(), Constants.Field.FIELD_SPEEDS_STDS);
 
+    double deltaTime = Clock.time() - lastTimestamp;
+
     ChassisSpeeds deltaSpeeds =
         new ChassisSpeeds(
-            (updatedSpeeds.vxMetersPerSecond - lastFieldSpeeds.vxMetersPerSecond) / 0.02,
-            (updatedSpeeds.vyMetersPerSecond - lastFieldSpeeds.vyMetersPerSecond) / 0.02,
-            (updatedSpeeds.omegaRadiansPerSecond - lastFieldSpeeds.omegaRadiansPerSecond) / 0.02);
+            (updatedSpeeds.vxMetersPerSecond - lastFieldSpeeds.vxMetersPerSecond) / deltaTime,
+            (updatedSpeeds.vyMetersPerSecond - lastFieldSpeeds.vyMetersPerSecond) / deltaTime,
+            (updatedSpeeds.omegaRadiansPerSecond - lastFieldSpeeds.omegaRadiansPerSecond) / deltaTime);
+
+    lastTimestamp = Clock.time();
 
     fieldAccelerationEstimator.updateWithTime(
         Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);

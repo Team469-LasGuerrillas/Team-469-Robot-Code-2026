@@ -59,6 +59,8 @@ public class Turret extends SubsystemBase {
 
   private int loopCount = 0;
 
+  private double lastTimestamp = Clock.time();
+
   private Pose2d lastTurretPoseFieldSpace = new Pose2d();
   private SwerveDrivePoseEstimator turretSpeedEstimator = new SwerveDrivePoseEstimator(
       Drive.getInstance().kinematics,
@@ -123,14 +125,18 @@ public class Turret extends SubsystemBase {
     turretTargetSpeedEstimator.updateWithTime(
         Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
 
-    double targetAngularVelocityRadiansPerSecond = (targetAngle.in(Radians) - lastTargetAngle.in(Radians)) / 0.02;
+    double deltaTime = Clock.time() - lastTimestamp;
+
+    double targetAngularVelocityRadiansPerSecond = (targetAngle.in(Radians) - lastTargetAngle.in(Radians)) / deltaTime;
+
+    lastTimestamp = Clock.time();
 
     if (Math.abs(targetAngularVelocityRadiansPerSecond) < 180) {
       turretTargetSpeedEstimator.addVisionMeasurement(
           GeomUtil.withRotation(
               new Pose2d(), new Rotation2d(targetAngularVelocityRadiansPerSecond)),
           Clock.time(),
-          Constants.Field.TURRET_MOTOR_SPEEDS_STDS);
+          Constants.Field.TURRET_TARGET_SPEEDS_STDS);
     }
 
     // Logger.recordOutput(

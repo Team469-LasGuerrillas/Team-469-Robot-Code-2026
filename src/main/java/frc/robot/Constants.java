@@ -106,10 +106,12 @@ public final class Constants {
     public static final double MID_FIELD_Y_METERS = MID_FIELD_Y.in(Meters);
 
     public static final Matrix<N3, N1> FIELD_SPEEDS_STDS = VecBuilder.fill(0.067, 0.067, 0.08);
-    public static final Matrix<N3, N1> FIELD_ACCELERATIONS_STDS = VecBuilder.fill(0.3, 0.3, 0.3);
+    public static final Matrix<N3, N1> FIELD_ACCELERATIONS_STDS = VecBuilder.fill(0.18, 0.18, 0.18);
     public static final Matrix<N3, N1> TURRET_SPEEDS_STDS = VecBuilder.fill(0.1, 0.1, 0.1);
     public static final Matrix<N3, N1> TURRET_MOTOR_SPEEDS_STDS =
         VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(80));
+        public static final Matrix<N3, N1> TURRET_TARGET_SPEEDS_STDS = VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(44.14));
+
 
     public static final Distance BLUE_TRENCH_SCORING = Inches.of(182.11);
     public static final Distance RED_TRENCH_SCORING = MAX_FIELD_X.minus(Inches.of(182.11));
