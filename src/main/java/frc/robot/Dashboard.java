@@ -25,10 +25,10 @@ public class Dashboard {
     Elastic.selectTab(autonTab);
 
     autonChooser.setDefaultOption("Default Option", Commands.none());
-    autonChooser.addOption("BlueLeft", AutonCommands.leftPassRed(false, false));
-    autonChooser.addOption("BlueRight", AutonCommands.leftPassRed(false, true));
-    autonChooser.addOption("RedLeft", AutonCommands.leftPassRed(true, false));
-    autonChooser.addOption("RedRight", AutonCommands.leftPassRed(true, true));
+    autonChooser.addOption("BlueLeft", AutonCommands.opStyleAuto(false, false));
+    autonChooser.addOption("BlueRight", AutonCommands.opStyleAuto(false, true));
+    autonChooser.addOption("RedLeft", AutonCommands.opStyleAuto(true, false));
+    autonChooser.addOption("RedRight", AutonCommands.opStyleAuto(true, true));
 
     SmartDashboard.putData("selected auton", autonChooser);
   }

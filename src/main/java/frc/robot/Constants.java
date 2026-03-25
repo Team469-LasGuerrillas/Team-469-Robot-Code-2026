@@ -621,7 +621,7 @@ public final class Constants {
       HOOD_TALON_CONFIG.Slot0.kP = 3700;
       HOOD_TALON_CONFIG.Slot0.kI = 0;
       HOOD_TALON_CONFIG.Slot0.kD = 80;
-      HOOD_TALON_CONFIG.Slot0.kS = 11;
+      HOOD_TALON_CONFIG.Slot0.kS = 3;
       HOOD_TALON_CONFIG.Slot0.kV = 0;
       HOOD_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
