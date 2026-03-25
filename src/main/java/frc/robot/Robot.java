@@ -12,7 +12,6 @@ import static edu.wpi.first.units.Units.Rotations;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.subsystems.implementations.MotorIOTalonFX;
@@ -102,7 +101,7 @@ public class Robot extends LoggedRobot {
     // Optionally switch the thread to high priority to improve loop
     // timing (see the template project documentation for details)
     if (!loggingMode) {}
-    Threads.setCurrentThreadPriority(true, 1);
+    // Threads.setCurrentThreadPriority(true, 1);
 
     MotorIOTalonFX.refreshAllSignals();
 
@@ -135,7 +134,7 @@ public class Robot extends LoggedRobot {
     firstLoop = false;
 
     // Return to non-RT thread priority (do not modify the first argument)
-    Threads.setCurrentThreadPriority(false, 10);
+    // Threads.setCurrentThreadPriority(false, 10);
   }
 
   /** This function is called once when the robot is disabled. */

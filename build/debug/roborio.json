@@ -3,7 +3,7 @@
     "type": "java",
     "name": "frcJava",
     "port": 8349,
-    "target": "10.4.69.2",
+    "target": "roborio-469-FRC.local",
     "project": "Team-469-Robot-Code-2026"
   }
 ]
