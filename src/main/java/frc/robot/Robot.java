@@ -12,6 +12,8 @@ import static edu.wpi.first.units.Units.Rotations;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.subsystems.implementations.MotorIOTalonFX;
@@ -39,6 +41,8 @@ public class Robot extends LoggedRobot {
   private boolean firstLoop = true;
 
   private boolean loggingMode = false;
+
+  private Timer timer = new Timer();
 
   public Robot() {
     // Record metadata
@@ -91,9 +95,9 @@ public class Robot extends LoggedRobot {
     RobotController.setBrownoutVoltage(6.0);
 
     CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
-  }
 
-  private int gcLoopCounter = 0;
+    timer.start();
+  }
 
   /** This function is called periodically during all modes. */
   @Override
@@ -101,15 +105,9 @@ public class Robot extends LoggedRobot {
     // Optionally switch the thread to high priority to improve loop
     // timing (see the template project documentation for details)
     if (!loggingMode) {}
-    // Threads.setCurrentThreadPriority(true, 1);
+    Threads.setCurrentThreadPriority(true, 1);
 
     MotorIOTalonFX.refreshAllSignals();
-
-    gcLoopCounter++;
-    if (gcLoopCounter % 5 == 0) {
-      // explicitly run java gc every 5 loops
-      System.gc();
-    }
 
     if (!firstLoop) {
       robotContainer.limelightTurd.setPositionTurret(
@@ -134,13 +132,21 @@ public class Robot extends LoggedRobot {
     firstLoop = false;
 
     // Return to non-RT thread priority (do not modify the first argument)
-    // Threads.setCurrentThreadPriority(false, 10);
+    Threads.setCurrentThreadPriority(false, 10);
+
+    if (timer.advanceIfElapsed(60)) {
+      // explicitly run java gc every 5 loops
+      System.gc();
+    }
   }
 
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
     SignalLogger.enableAutoLogging(false);
+    System.gc();
+    timer.reset();
+    timer.start();
   }
 
   /** This function is called periodically when disabled. */
@@ -150,6 +156,9 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    timer.reset();
+    timer.start();
+
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)

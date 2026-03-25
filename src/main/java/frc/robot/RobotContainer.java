@@ -262,7 +262,7 @@ public class RobotContainer {
     marcus.rightBumper().toggleOnTrue(CommandFactory.feedOrScore());
 
     kyle.rightBumper().whileTrue(CommandFactory.unJam());
-    marcus.a().whileTrue(CommandFactory.unJam());
+    marcus.y().whileTrue(CommandFactory.unJam());
     kyle.leftTrigger().whileTrue(CommandFactory.outTake());
     kyle.back().and(kyle.start()).onTrue(Commands.runOnce(() -> Turret.getInstance().lockAngle()));
     kyle.povDown().onTrue(Commands.runOnce(() -> Hood.getInstance().resetHood()));
@@ -278,6 +278,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Dashboard.autonChooser.get();
+    return Dashboard.autonChooser.getSelected();
   }
 }

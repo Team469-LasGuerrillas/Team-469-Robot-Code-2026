@@ -91,7 +91,7 @@ public final class Constants {
 
     public static final PPHolonomicDriveController PP_CONTROLLER =
         new PPHolonomicDriveController(
-            new PIDConstants(7.1, 0.0, 0.27), new PIDConstants(5.3, 0.0, 0.6));
+            new PIDConstants(7.1, 0.0, 0.6), new PIDConstants(5.3, 0.0, 0.6));
   }
 
   public static class Field {

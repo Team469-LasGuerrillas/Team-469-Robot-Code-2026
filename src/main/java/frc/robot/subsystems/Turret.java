@@ -60,19 +60,17 @@ public class Turret extends SubsystemBase {
   private int loopCount = 0;
 
   private Pose2d lastTurretPoseFieldSpace = new Pose2d();
-  private SwerveDrivePoseEstimator turretSpeedEstimator =
-      new SwerveDrivePoseEstimator(
-          Drive.getInstance().kinematics,
-          new Rotation2d(),
-          Drive.getInstance().lastModulePositions,
-          Pose2d.kZero);
+  private SwerveDrivePoseEstimator turretSpeedEstimator = new SwerveDrivePoseEstimator(
+      Drive.getInstance().kinematics,
+      new Rotation2d(),
+      Drive.getInstance().lastModulePositions,
+      Pose2d.kZero);
 
-  private SwerveDrivePoseEstimator turretTargetSpeedEstimator =
-      new SwerveDrivePoseEstimator(
-          Drive.getInstance().kinematics,
-          new Rotation2d(),
-          Drive.getInstance().lastModulePositions,
-          Pose2d.kZero);
+  private SwerveDrivePoseEstimator turretTargetSpeedEstimator = new SwerveDrivePoseEstimator(
+      Drive.getInstance().kinematics,
+      new Rotation2d(),
+      Drive.getInstance().lastModulePositions,
+      Pose2d.kZero);
 
   public static Turret createInstance(MotorIO turd, CanCoderIO canCoderA, CanCoderIO canCoderB) {
     instance = new Turret(turd, canCoderA, canCoderB);
@@ -90,14 +88,13 @@ public class Turret extends SubsystemBase {
 
     turd.setEnableSoftLimits(true, true);
 
-    easyCRTConfig =
-        new EasyCRTConfig(this::getCCAPosition, this::getCCBPosition)
-            .withEncoderRatios(168.0 / 26.0, 168.0 / 28.0)
-            .withAbsoluteEncoder1Inverted(false)
-            .withAbsoluteEncoder2Inverted(false)
-            .withMatchTolerance(Degrees.of(6.7))
-            .withMechanismRange(Rotations.of(-0.99), Rotations.of(0.99))
-            .withAbsoluteEncoderOffsets(Radians.of(-1.059981), Radians.of(1.986505));
+    easyCRTConfig = new EasyCRTConfig(this::getCCAPosition, this::getCCBPosition)
+        .withEncoderRatios(168.0 / 26.0, 168.0 / 28.0)
+        .withAbsoluteEncoder1Inverted(false)
+        .withAbsoluteEncoder2Inverted(false)
+        .withMatchTolerance(Degrees.of(6.7))
+        .withMechanismRange(Rotations.of(-0.99), Rotations.of(0.99))
+        .withAbsoluteEncoderOffsets(Radians.of(-1.059981), Radians.of(1.986505));
     easyCRT = new EasyCRT(easyCRTConfig);
   }
 
@@ -111,23 +108,22 @@ public class Turret extends SubsystemBase {
     // Logger.processInputs(getName() + " CanCoder B", ccBInputs);
 
     // turretSpeedEstimator.updateWithTime(
-    //     Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
+    // Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
     // turretSpeedEstimator.addVisionMeasurement(
-    //     GeomUtil.withRotation(
-    //         GeomUtil.toPose2d(
-    //             GeomUtil.toPose2d(getTurretTranslationFieldSpace())
-    //                 .minus(lastTurretPoseFieldSpace)
-    //                 .div(0.02)),
-    //         Rotation2d.fromRadians(
-    //             Drive.getInstance().getFieldSpeedsFiltered().omegaRadiansPerSecond)),
-    //     Clock.time(),
-    //     Constants.Field.TURRET_SPEEDS_STDS);
+    // GeomUtil.withRotation(
+    // GeomUtil.toPose2d(
+    // GeomUtil.toPose2d(getTurretTranslationFieldSpace())
+    // .minus(lastTurretPoseFieldSpace)
+    // .div(0.02)),
+    // Rotation2d.fromRadians(
+    // Drive.getInstance().getFieldSpeedsFiltered().omegaRadiansPerSecond)),
+    // Clock.time(),
+    // Constants.Field.TURRET_SPEEDS_STDS);
 
     turretTargetSpeedEstimator.updateWithTime(
         Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
 
-    double targetAngularVelocityRadiansPerSecond =
-        (targetAngle.in(Radians) - lastTargetAngle.in(Radians)) / 0.02;
+    double targetAngularVelocityRadiansPerSecond = (targetAngle.in(Radians) - lastTargetAngle.in(Radians)) / 0.02;
 
     if (Math.abs(targetAngularVelocityRadiansPerSecond) < 180) {
       turretTargetSpeedEstimator.addVisionMeasurement(
@@ -138,7 +134,7 @@ public class Turret extends SubsystemBase {
     }
 
     // Logger.recordOutput(
-    //     "TurretTargetAngularVelocity",
+    // "TurretTargetAngularVelocity",
     // RadiansPerSecond.of(targetAngularVelocityRadiansPerSecond));
 
     lastTargetAngle = targetAngle;
@@ -150,39 +146,32 @@ public class Turret extends SubsystemBase {
       offsetHasBeenSet = true;
     }
 
-    double wrapOffset =
-        Constants.TurretC.WRAPAROUND_PREDICTION_FACOTR
-            * talonInputs.motorVelocity.in(RotationsPerSecond);
+    double wrapOffset = Constants.TurretC.WRAPAROUND_PREDICTION_FACOTR
+        * talonInputs.motorVelocity.in(RotationsPerSecond);
 
-    boolean nearWrapMax =
-        Math.abs(
-                Constants.TurretC.TURRERT_MAX.in(Rotations)
-                    - talonInputs.motorPosition.in(Rotations))
-            < wrapOffset;
-    boolean nearWrapMin =
-        Math.abs(
-                Constants.TurretC.TURRERT_MIN.in(Rotations)
-                    - talonInputs.motorPosition.in(Rotations))
-            < wrapOffset;
+    boolean nearWrapMax = Math.abs(
+        Constants.TurretC.TURRERT_MAX.in(Rotations)
+            - talonInputs.motorPosition.in(Rotations)) < wrapOffset;
+    boolean nearWrapMin = Math.abs(
+        Constants.TurretC.TURRERT_MIN.in(Rotations)
+            - talonInputs.motorPosition.in(Rotations)) < wrapOffset;
 
     boolean targetFar = Math.abs(targetAngle.minus(talonInputs.motorPosition).in(Degrees)) > 40;
 
     boolean tooFastTurret = Math.abs(talonInputs.motorVelocity.in(DegreesPerSecond)) > 100;
-    boolean tooFastChassis =
-        Math.abs(Units.radiansToDegrees(Drive.getInstance().getFieldSpeeds().omegaRadiansPerSecond))
-            > 80;
+    boolean tooFastChassis = Math
+        .abs(Units.radiansToDegrees(Drive.getInstance().getFieldSpeeds().omegaRadiansPerSecond)) > 80;
 
-    boolean onTarget =
-        (!nearWrapMax
-                && !targetFar
-                && !nearWrapMin
-                && !tooFastTurret
-                && !tooFastChassis
-                && ToleranceUtil.epsilonEquals(
-                    getAngle().in(Rotations),
-                    targetAngle.in(Rotations),
-                    Constants.TurretC.TURRET_TOLERANCE.in(Rotations)))
-            || turretOverrideLock;
+    boolean onTarget = (!nearWrapMax
+        && !targetFar
+        && !nearWrapMin
+        && !tooFastTurret
+        && !tooFastChassis
+        && ToleranceUtil.epsilonEquals(
+            getAngle().in(Rotations),
+            targetAngle.in(Rotations),
+            Constants.TurretC.TURRET_TOLERANCE.in(Rotations)))
+        || turretOverrideLock;
 
     if (onTarget) {
       RobotState.setTurretState(TurretState.LOCKED);
@@ -201,20 +190,19 @@ public class Turret extends SubsystemBase {
 
   public void setTargetAngle(Angle angle) {
 
-    Angle after =
-        angle.minus(
-            Rotations.of(
-                Constants.TurretC.LEAD_SHOT_OFFSET
-                    * Units.radiansToRotations(getTurretSpeedsFieldSpace().omegaRadiansPerSecond)));
+    Angle after = angle;
 
-    after = after.plus(Rotations.of(Math.round(trueTurretRotation.in(Rotations))));
+    after = Rotations.of(after.in(Rotations) + Math.round(trueTurretRotation.in(Rotations)));
 
-    Angle afterPlus = after.plus(Rotations.of(1));
-    Angle afterMinus = after.minus(Rotations.of(1));
+    // Angle afterPlus = after.plus(Rotations.of(1));
+    // Angle afterMinus = after.minus(Rotations.of(1));
+
+    double afterPlusDouble = after.in(Rotations) + 1;
+    double afterMinusDouble = after.in(Rotations) - 1;
 
     double deltaAfter = Math.abs(after.in(Rotations) - trueTurretRotation.in(Rotations));
-    double deltaAfterPlus = Math.abs(afterPlus.in(Rotations) - trueTurretRotation.in(Rotations));
-    double deltaAfterMinus = Math.abs(afterMinus.in(Rotations) - trueTurretRotation.in(Rotations));
+    double deltaAfterPlus = Math.abs(afterPlusDouble - trueTurretRotation.in(Rotations));
+    double deltaAfterMinus = Math.abs(afterMinusDouble - trueTurretRotation.in(Rotations));
 
     double smallestDelta = Math.min(Math.min(deltaAfterPlus, deltaAfterMinus), deltaAfter);
 
@@ -223,9 +211,9 @@ public class Turret extends SubsystemBase {
     if (smallestDelta == deltaAfter) {
       closestAfter = after;
     } else if (smallestDelta == deltaAfterPlus) {
-      closestAfter = afterPlus;
+      closestAfter = Rotations.of(afterPlusDouble);
     } else {
-      closestAfter = afterMinus;
+      closestAfter = Rotations.of(afterMinusDouble);
     }
 
     if (closestAfter.in(Rotations) > Constants.TurretC.TURRERT_MAX.in(Rotations)) {
@@ -236,14 +224,13 @@ public class Turret extends SubsystemBase {
 
     targetAngle = closestAfter;
 
-    closestAfter =
-        closestAfter.plus(
-            Rotations.of(
-                0.033
-                    * turretTargetSpeedEstimator
-                        .getEstimatedPosition()
-                        .getRotation()
-                        .getRotations()));
+    closestAfter = Rotations.of(
+        closestAfter.in(Rotations) +
+            (0.033
+                * turretTargetSpeedEstimator
+                    .getEstimatedPosition()
+                    .getRotation()
+                    .getRotations()));
 
     if (turretOverrideLock) {
       turd.setMagicalPositionSetpoint(
@@ -275,13 +262,14 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput(
         "Turret/Crosshair",
         GeomUtil.withRotation(
-                Drive.getInstance().getPose(),
-                turretFieldPose.getRotation().plus(new Rotation2d(getAngle())))
+            Drive.getInstance().getPose(),
+            turretFieldPose.getRotation().plus(new Rotation2d(getAngle())))
             .transformBy(new Transform2d(1, 0, new Rotation2d())));
   }
 
   /**
-   * Returns the turret's pose in field space by applying the turret's robot-relative pose as a
+   * Returns the turret's pose in field space by applying the turret's
+   * robot-relative pose as a
    * transform to the robot's pose.
    *
    * @return The pose of the turret.
@@ -297,16 +285,16 @@ public class Turret extends SubsystemBase {
 
   public Translation2d getTurretTranslationFieldSpace() {
     Pose2d currentRobotPose = Drive.getInstance().getPose();
-    Transform2d turretTransform =
-        GeomUtil.toTransform2d(
-            GeomUtil.withRotation(Constants.TurretC.TURD_CENTER.toPose2d(), new Rotation2d()));
+    Transform2d turretTransform = GeomUtil.toTransform2d(
+        GeomUtil.withRotation(Constants.TurretC.TURD_CENTER.toPose2d(), new Rotation2d()));
     Pose2d turretFieldPose = currentRobotPose.plus(turretTransform);
 
     return turretFieldPose.getTranslation();
   }
 
   /**
-   * Returns the turret's speeds in field space by putting deltas through a kalman filter
+   * Returns the turret's speeds in field space by putting deltas through a kalman
+   * filter
    *
    * @return The pose of the turret.
    */
@@ -357,7 +345,8 @@ public class Turret extends SubsystemBase {
   }
 
   /**
-   * Returns the angular velocity of the turret. This can be added onto the robot's angular velocity
+   * Returns the angular velocity of the turret. This can be added onto the
+   * robot's angular velocity
    * to figure out the turret's angular velocity in field Space.
    *
    * @return
