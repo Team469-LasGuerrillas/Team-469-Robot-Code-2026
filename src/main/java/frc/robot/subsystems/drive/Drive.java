@@ -257,7 +257,8 @@ public class Drive extends SubsystemBase {
         new ChassisSpeeds(
             (updatedSpeeds.vxMetersPerSecond - lastFieldSpeeds.vxMetersPerSecond) / deltaTime,
             (updatedSpeeds.vyMetersPerSecond - lastFieldSpeeds.vyMetersPerSecond) / deltaTime,
-            (updatedSpeeds.omegaRadiansPerSecond - lastFieldSpeeds.omegaRadiansPerSecond) / deltaTime);
+            (updatedSpeeds.omegaRadiansPerSecond - lastFieldSpeeds.omegaRadiansPerSecond)
+                / deltaTime);
 
     lastTimestamp = Clock.time();
 

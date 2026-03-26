@@ -21,19 +21,16 @@ public class AutonCommands {
         AutoBuilder.followPath(path),
         Commands.deadline(
             Commands.waitUntil(
-                () -> Drive.getInstance().getPose().getX() < Constants.Field.BLUE_TRENCH_SCORING.in(Meters)
-                    + 0.2
-                    || Drive.getInstance().getPose().getX() > Constants.Field.RED_TRENCH_SCORING.in(Meters)
-                        - 0.2),
+                () ->
+                    Drive.getInstance().getPose().getX()
+                            < Constants.Field.BLUE_TRENCH_SCORING.in(Meters) + 0.2
+                        || Drive.getInstance().getPose().getX()
+                            > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.2),
             IntakeCommands.deployAndRun()),
         Commands.sequence(
             Commands.deadline(
-                Commands.waitSeconds(2),
-                CommandFactory.scoring(),
-                IntakeCommands.deployAndRun()),
-            Commands.parallel(
-                CommandFactory.scoring(),
-                IntakeCommands.deployAndRun())));
+                Commands.waitSeconds(2), CommandFactory.scoring(), IntakeCommands.deployAndRun()),
+            Commands.parallel(CommandFactory.scoring(), IntakeCommands.deployAndRun())));
   }
 
   public static Command opStyleAuto(boolean isRed, boolean rightSide) {
@@ -59,11 +56,10 @@ public class AutonCommands {
       }
 
       return Commands.sequence(
-        sweepPath(firstSweepPath),
-        pathAndScore(firstScorePath),
-        sweepPath(secondSweepPath),
-        pathAndScore(secondScorePath)
-      );
+          sweepPath(firstSweepPath),
+          pathAndScore(firstScorePath),
+          sweepPath(secondSweepPath),
+          pathAndScore(secondScorePath));
 
     } catch (Exception e) {
       return Commands.none();
@@ -94,10 +90,11 @@ public class AutonCommands {
                       Commands.sequence(Commands.waitSeconds(0.3), IntakeCommands.deployAndRun())),
                   Commands.deadline(
                       Commands.waitUntil(
-                          () -> Drive.getInstance().getPose().getX() < Constants.Field.BLUE_TRENCH_SCORING.in(Meters)
-                              + 0.5
-                              || Drive.getInstance().getPose().getX() > Constants.Field.RED_TRENCH_SCORING.in(Meters)
-                                  - 0.5),
+                          () ->
+                              Drive.getInstance().getPose().getX()
+                                      < Constants.Field.BLUE_TRENCH_SCORING.in(Meters) + 0.5
+                                  || Drive.getInstance().getPose().getX()
+                                      > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.5),
                       IntakeCommands.deployAndRun()),
                   Commands.deadline(
                       Commands.waitSeconds(5), CommandFactory.scoring(), IntakeCommands.agitate())),
@@ -107,10 +104,11 @@ public class AutonCommands {
                   Commands.deadline(Commands.waitSeconds(3), IntakeCommands.deployAndRun()),
                   Commands.deadline(
                       Commands.waitUntil(
-                          () -> Drive.getInstance().getPose().getX() < Constants.Field.BLUE_TRENCH_SCORING.in(Meters)
-                              + 0.5
-                              || Drive.getInstance().getPose().getX() > Constants.Field.RED_TRENCH_SCORING.in(Meters)
-                                  - 0.5),
+                          () ->
+                              Drive.getInstance().getPose().getX()
+                                      < Constants.Field.BLUE_TRENCH_SCORING.in(Meters) + 0.5
+                                  || Drive.getInstance().getPose().getX()
+                                      > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.5),
                       IntakeCommands.deployAndRun()),
                   Commands.deadline(
                       Commands.waitSeconds(6), CommandFactory.scoring(), IntakeCommands.agitate())),

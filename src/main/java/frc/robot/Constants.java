@@ -106,12 +106,12 @@ public final class Constants {
     public static final double MID_FIELD_Y_METERS = MID_FIELD_Y.in(Meters);
 
     public static final Matrix<N3, N1> FIELD_SPEEDS_STDS = VecBuilder.fill(0.067, 0.067, 0.08);
-    public static final Matrix<N3, N1> FIELD_ACCELERATIONS_STDS = VecBuilder.fill(0.18, 0.18, 0.18);
+    public static final Matrix<N3, N1> FIELD_ACCELERATIONS_STDS = VecBuilder.fill(0.24, 0.24, 0.24);
     public static final Matrix<N3, N1> TURRET_SPEEDS_STDS = VecBuilder.fill(0.1, 0.1, 0.1);
     public static final Matrix<N3, N1> TURRET_MOTOR_SPEEDS_STDS =
         VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(80));
-        public static final Matrix<N3, N1> TURRET_TARGET_SPEEDS_STDS = VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(44.14));
-
+    public static final Matrix<N3, N1> TURRET_TARGET_SPEEDS_STDS =
+        VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(67));
 
     public static final Distance BLUE_TRENCH_SCORING = Inches.of(182.11);
     public static final Distance RED_TRENCH_SCORING = MAX_FIELD_X.minus(Inches.of(182.11));
@@ -248,20 +248,20 @@ public final class Constants {
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(4.5, 52.7);
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.3, 57.0);
 
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(0.5, 17.0);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(2.0, 20.0);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(5.0, 40.0);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(7.0, 55.0);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(10.0, 70.0);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(20.0, 75.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(0.5, 32.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(2.0, 38.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(5.0, 60.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(7.0, 80.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(10.0, 85.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(20.0, 90.0);
 
       TIME_OF_FLIGHT_MAP_SHOOTING.put(0.2, 0.3);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.0, 0.76);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.0, 0.74);
       TIME_OF_FLIGHT_MAP_SHOOTING.put(1.8, 1.0);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(2.5, 1.18);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(3.5, 1.3);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(5.0, 1.38);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(6.0, 1.47);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(2.5, 1.14);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(3.5, 1.27);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(5.0, 1.35);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(6.0, 1.45);
 
       TIME_OF_FLIGHT_MAP_PASSING.put(1.0, 0.8);
       TIME_OF_FLIGHT_MAP_PASSING.put(4.0, 1.1);
@@ -367,8 +367,8 @@ public final class Constants {
 
     public static final Angle TURRET_TOLERANCE = Degrees.of(6.7);
 
-    public static final Angle TURRERT_MAX = Rotations.of(0.44);
-    public static final Angle TURRERT_MIN = Rotations.of(-0.84);
+    public static final Angle TURRERT_MAX = Rotations.of(0.45);
+    public static final Angle TURRERT_MIN = Rotations.of(-0.85);
 
     public static final double WRAPAROUND_PREDICTION_FACOTR = 0.2;
 
@@ -552,7 +552,7 @@ public final class Constants {
   }
 
   public static class SpindexerC {
-    public static final double FEEDING_DC = 0.85;
+    public static final double FEEDING_DC = 1.0;
     public static final double REVERSE_DC = -1.0;
     public static final double IDLE_DC = 0.0;
     public static final double IDLE_REVERSE_DC = -0.0;

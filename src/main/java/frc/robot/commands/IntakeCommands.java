@@ -23,7 +23,7 @@ public class IntakeCommands {
             () -> intake.setTargetAngle(Constants.IntakeC.PIVOT_LOWERED),
             () -> intake.setTargetAngle(Constants.IntakeC.PIVOT_LOWERED),
             intake),
-        Commands.startRun(() -> intake.setDutyCycle(-0.8), () -> intake.setDutyCycle(-0.8)));
+        Commands.startRun(() -> intake.setDutyCycle(-1), () -> intake.setDutyCycle(-1)));
   }
 
   public static Command stow() {
