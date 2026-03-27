@@ -91,7 +91,7 @@ public final class Constants {
 
     public static final PPHolonomicDriveController PP_CONTROLLER =
         new PPHolonomicDriveController(
-            new PIDConstants(7.1, 0.0, 0.6), new PIDConstants(5.3, 0.0, 0.6));
+            new PIDConstants(8, 0.0, 0.3), new PIDConstants(5.3, 0.0, 0.6));
   }
 
   public static class Field {
@@ -133,7 +133,7 @@ public final class Constants {
     public static final double MIN_SINGLE_TAG_AREA = 0.33;
     public static final Angle MAX_YAW_ERROR_MT1 = Degrees.of(2.41);
     public static final Angle MAX_YAW_ERROR_MT2 = Degrees.of(2);
-    public static final Distance MAX_FLOATING_NOCLIP = Meters.of(0.2);
+    public static final Distance MAX_FLOATING_NOCLIP = Meters.of(1.0);
 
     public static final AngularVelocity BAD_TURRET_ANGULAR_VELOCITY = DegreesPerSecond.of(90);
 

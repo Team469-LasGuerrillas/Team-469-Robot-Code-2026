@@ -1,7 +1,7 @@
 package frc.robot;
 
 import frc.robot.util.FieldZoning;
-import frc.robot.util.HubShiftUtil;
+// import frc.robot.util.HubShiftUtil;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -15,32 +15,32 @@ public class RobotState {
             || getFlywheelState() == FlywheelState.HUBLOCKED);
   }
 
-  private static boolean overrideHubState = true;
+  // private static boolean overrideHubState = true;
 
   public static boolean weLockedHub() {
     return getTurretState() == TurretState.LOCKED
         && getHoodState() == HoodState.LOCKED
-        && getFlywheelState() == FlywheelState.HUBLOCKED
-        && (getHubState() == HubState.ACTIVE || overrideHubState);
+        && getFlywheelState() == FlywheelState.HUBLOCKED;
+    // && (getHubState() == HubState.ACTIVE || overrideHubState);
   }
 
-  public static void setOverrideHubState(boolean override) {
-    overrideHubState = override;
-  }
+  // public static void setOverrideHubState(boolean override) {
+  //   overrideHubState = override;
+  // }
 
   public enum HubState {
     ACTIVE,
     INACTIVE,
   }
 
-  public static HubState getHubState() {
-    HubState state;
-    if (HubShiftUtil.getShiftedShiftInfo().active()) state = HubState.ACTIVE;
-    else state = HubState.INACTIVE;
+  // public static HubState getHubState() {
+  //   HubState state;
+  //   if (HubShiftUtil.getShiftedShiftInfo().active()) state = HubState.ACTIVE;
+  //   else state = HubState.INACTIVE;
 
-    Logger.recordOutput("State/HubState", state);
-    return state;
-  }
+  //   Logger.recordOutput("State/HubState", state);
+  //   return state;
+  // }
 
   public enum TurretState {
     LOCKED,

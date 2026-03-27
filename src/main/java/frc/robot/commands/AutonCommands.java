@@ -17,20 +17,45 @@ public class AutonCommands {
   }
 
   private static Command pathAndScore(PathPlannerPath path) {
-    return Commands.deadline(
-        AutoBuilder.followPath(path),
+    return Commands.sequence(
         Commands.deadline(
-            Commands.waitUntil(
-                () ->
-                    Drive.getInstance().getPose().getX()
-                            < Constants.Field.BLUE_TRENCH_SCORING.in(Meters) + 0.2
-                        || Drive.getInstance().getPose().getX()
-                            > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.2),
-            IntakeCommands.deployAndRun()),
+            AutoBuilder.followPath(path),
+            Commands.sequence(
+                Commands.deadline(
+                    Commands.waitUntil(
+                        () ->
+                            Drive.getInstance().getPose().getX()
+                                    < Constants.Field.BLUE_TRENCH_SCORING.in(Meters) + 0.2
+                                || Drive.getInstance().getPose().getX()
+                                    > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.2),
+                    IntakeCommands.deployAndRun()),
+                Commands.waitSeconds(0.08),
+                Commands.deadline(
+                    Commands.waitSeconds(2),
+                    CommandFactory.scoring(),
+                    IntakeCommands.deployAndRun()),
+                Commands.deadline(
+                    Commands.waitSeconds(6), CommandFactory.scoring(), IntakeCommands.agitate()))),
+        Commands.waitSeconds(0.3));
+  }
+
+  private static Command depotPathAndScore(PathPlannerPath path) {
+    return Commands.deadline(
+        Commands.sequence(AutoBuilder.followPath(path), Commands.waitSeconds(6)),
         Commands.sequence(
             Commands.deadline(
+                Commands.waitUntil(
+                    () ->
+                        Drive.getInstance().getPose().getX()
+                                < Constants.Field.BLUE_TRENCH_SCORING.in(Meters) + 0.2
+                            || Drive.getInstance().getPose().getX()
+                                > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.2),
+                IntakeCommands.deployAndRun()),
+            Commands.waitSeconds(0.02),
+            Commands.deadline(
                 Commands.waitSeconds(2), CommandFactory.scoring(), IntakeCommands.deployAndRun()),
-            Commands.parallel(CommandFactory.scoring(), IntakeCommands.deployAndRun())));
+            Commands.deadline(
+                Commands.waitSeconds(6), CommandFactory.scoring(), IntakeCommands.agitate())));
   }
 
   public static Command opStyleAuto(boolean isRed, boolean rightSide) {
@@ -39,7 +64,7 @@ public class AutonCommands {
       PathPlannerPath firstSweepPath = PathPlannerPath.fromPathFile("O_A1");
       PathPlannerPath firstScorePath = PathPlannerPath.fromPathFile("O_A2");
       PathPlannerPath secondSweepPath = PathPlannerPath.fromPathFile("O_B1");
-      PathPlannerPath secondScorePath = PathPlannerPath.fromPathFile("O_A2");
+      PathPlannerPath secondScorePath = firstScorePath;
 
       if (rightSide) {
         firstSweepPath = firstSweepPath.mirrorPath();
@@ -59,10 +84,11 @@ public class AutonCommands {
           sweepPath(firstSweepPath),
           pathAndScore(firstScorePath),
           sweepPath(secondSweepPath),
-          pathAndScore(secondScorePath));
+          pathAndScore(secondScorePath),
+          sweepPath(secondSweepPath));
 
     } catch (Exception e) {
-      return Commands.none();
+      return Commands.run(() -> System.out.println(e.getMessage()));
     }
   }
 

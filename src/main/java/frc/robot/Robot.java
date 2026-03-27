@@ -17,10 +17,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.subsystems.implementations.MotorIOTalonFX;
-import frc.robot.commands.IntakeCommands;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.vision.FiducialVision;
-import frc.robot.util.HubShiftUtil;
+// import frc.robot.util.HubShiftUtil;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -128,8 +127,8 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput("WeLocked/Pass", RobotState.weLockedPass());
     Logger.recordOutput("WeLocked/Hub", RobotState.weLockedHub());
 
-    Logger.recordOutput("HubShift/Official", HubShiftUtil.getOfficialShiftInfo());
-    Logger.recordOutput("HubShift/Shifted", HubShiftUtil.getShiftedShiftInfo());
+    // Logger.recordOutput("HubShift/Official", HubShiftUtil.getOfficialShiftInfo());
+    // Logger.recordOutput("HubShift/Shifted", HubShiftUtil.getShiftedShiftInfo());
 
     firstLoop = false;
 
@@ -188,7 +187,7 @@ public class Robot extends LoggedRobot {
 
     Dashboard.setChangeTabToTeleop();
 
-    CommandScheduler.getInstance().schedule(IntakeCommands.deployAndRun());
+    // CommandScheduler.getInstance().schedule(IntakeCommands.deployAndRun());
   }
 
   /** This function is called periodically during operator control. */

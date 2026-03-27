@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.lib.subsystems.configs.ServoMotorSubsystemWithFollowersConfig;
 import frc.lib.subsystems.interfaces.CanCoderIO;
 import frc.lib.subsystems.interfaces.MotorIO;
@@ -44,7 +43,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.FiducialVision;
 import frc.robot.subsystems.vision.util.FiducialFilters.FiducialModifications;
-import frc.robot.util.HubShiftUtil;
+// import frc.robot.util.HubShiftUtil;
 import frc.robot.util.ShootTarget;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -191,10 +190,10 @@ public class RobotContainer {
         break;
     }
 
-    RobotModeTriggers.teleop().onTrue(Commands.runOnce(HubShiftUtil::initialize));
-    RobotModeTriggers.autonomous().onTrue(Commands.runOnce(HubShiftUtil::initialize));
-    RobotModeTriggers.disabled()
-        .onTrue(Commands.runOnce(HubShiftUtil::initialize).ignoringDisable(true));
+    // RobotModeTriggers.teleop().onTrue(Commands.runOnce(HubShiftUtil::initialize));
+    // RobotModeTriggers.autonomous().onTrue(Commands.runOnce(HubShiftUtil::initialize));
+    // RobotModeTriggers.disabled()
+    //     .onTrue(Commands.runOnce(HubShiftUtil::initialize).ignoringDisable(true));
 
     // Configure the button
     configurePPNamedCommands();
@@ -223,7 +222,7 @@ public class RobotContainer {
         Commands.defer(
             () -> TurretCommands.targetPoint(ShootTarget::getTranslationToTarget), turretList));
 
-    intake.setDefaultCommand(IntakeCommands.stow());
+    intake.setDefaultCommand(IntakeCommands.deployAndRun());
 
     spindexer.setDefaultCommand(SpindexerCommands.agitate());
 
@@ -257,7 +256,7 @@ public class RobotContainer {
     }
     marcus.b().whileTrue(Commands.deferredProxy(() -> AutonCommands.testAuto()));
 
-    marcus.leftBumper().toggleOnTrue(IntakeCommands.deployAndRun());
+    marcus.leftBumper().toggleOnTrue(IntakeCommands.stow());
 
     marcus.rightBumper().toggleOnTrue(CommandFactory.feedOrScore());
 
@@ -269,8 +268,8 @@ public class RobotContainer {
     kyle.povDown().onTrue(Commands.runOnce(() -> Hood.getInstance().resetHood()));
 
     // Set ignore hub state commands
-    marcus.rightTrigger().onTrue(ShooterCommands.ignoreHubStateCommand());
-    marcus.leftTrigger().onTrue(ShooterCommands.respectHubStateCommand());
+    // marcus.rightTrigger().onTrue(ShooterCommands.ignoreHubStateCommand());
+    // marcus.leftTrigger().onTrue(ShooterCommands.respectHubStateCommand());
   }
 
   /**

@@ -78,8 +78,8 @@ public class FiducialFilters {
     /** Is the robot flying? If so, return false. */
     public static boolean isFlying(PoseObservation toFilter) {
       if (Math.abs(toFilter.pose().getZ()) >= Constants.VisionC.MAX_FLOATING_NOCLIP.in(Meters)
-          && (toFilter.type() == PoseObservationType.MT2
-              || toFilter.tagCount() == 1 && toFilter.type() == PoseObservationType.MT1)) {
+      /*&& (toFilter.type() == PoseObservationType.MT2
+      || toFilter.tagCount() == 1 && toFilter.type() == PoseObservationType.MT1)*/ ) {
         return true;
       }
       return false;
@@ -105,8 +105,8 @@ public class FiducialFilters {
     }
 
     public FiducialModifications withMultiplyAllResults() {
-      observation.stdDevs()[0] *= 1.2;
-      observation.stdDevs()[1] *= 1.2;
+      observation.stdDevs()[0] *= 1.0;
+      observation.stdDevs()[1] *= 1.0;
 
       return this;
     }
