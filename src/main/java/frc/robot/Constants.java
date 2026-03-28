@@ -538,8 +538,8 @@ public final class Constants {
       INTAKE_PIVOT_TALON_CONFIG.Slot0.kV = 0;
       DROP_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
-      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 90;
-      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 30;
+      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 110;
+      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 50;
 
       DROP_CONFIG.talonCANID = new CANDeviceId(9);
       DROP_CONFIG.canCoderConfig = INTAKE_PIVOT_CANCODER_CONFIG;
