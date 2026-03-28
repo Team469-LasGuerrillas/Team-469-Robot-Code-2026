@@ -82,28 +82,28 @@
       "rotationDegrees": -99.0
     },
     {
-      "waypointRelativePos": 2.469769908616189,
+      "waypointRelativePos": 2.360109334203655,
       "rotationDegrees": 86.0
     },
     {
       "waypointRelativePos": 3.242819843342036,
-      "rotationDegrees": 175.0
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.3,
-    "maxAcceleration": 3.7,
-    "maxAngularVelocity": 217.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 400.0,
     "maxAngularAcceleration": 1000.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": null,

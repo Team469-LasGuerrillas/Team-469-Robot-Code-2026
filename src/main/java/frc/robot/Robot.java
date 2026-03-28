@@ -7,8 +7,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Rotations;
-
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import edu.wpi.first.wpilibj.RobotController;
@@ -17,7 +15,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.subsystems.implementations.MotorIOTalonFX;
-import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.vision.FiducialVision;
 // import frc.robot.util.HubShiftUtil;
 import org.littletonrobotics.junction.LogFileUtil;
@@ -109,11 +106,11 @@ public class Robot extends LoggedRobot {
     MotorIOTalonFX.refreshAllSignals();
 
     if (!firstLoop) {
-      robotContainer.limelightTurd.setPositionTurret(
-          (Rotations.of(
-              Turret.getInstance().getAngleForTurretLL().in(Rotations) + (0.25 - 0.0262))),
-          // Turret.getInstance().getAngleForTurretLL().plus(Rotations.of(0.25 - 0.0262)),
-          Constants.TurretC.TURD_CENTER_WITHOUT_ROTATION);
+      // robotContainer.limelightTurd.setPositionTurret(
+      //     (Rotations.of(
+      //         Turret.getInstance().getAngleForTurretLL().in(Rotations) + (0.25 - 0.0262))),
+      //     // Turret.getInstance().getAngleForTurretLL().plus(Rotations.of(0.25 - 0.0262)),
+      //     Constants.TurretC.TURD_CENTER_WITHOUT_ROTATION);
     }
 
     // Runs the Scheduler. This is responsible for polling buttons, adding

@@ -35,8 +35,12 @@ public class AutonCommands {
                     CommandFactory.scoring(),
                     IntakeCommands.deployAndRun()),
                 Commands.deadline(
-                    Commands.waitSeconds(6), CommandFactory.scoring(), IntakeCommands.agitate()))),
-        Commands.waitSeconds(0.3));
+                    Commands.waitSeconds(6),
+                    CommandFactory.scoring(),
+                    IntakeCommands.deployAndRun()))),
+        Commands.deadline(
+            Commands.waitSeconds(0.1), CommandFactory.scoring(), IntakeCommands.deployAndRun()),
+        Commands.waitSeconds(0.4));
   }
 
   private static Command depotPathAndScore(PathPlannerPath path) {
@@ -137,7 +141,7 @@ public class AutonCommands {
                                       > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.5),
                       IntakeCommands.deployAndRun()),
                   Commands.deadline(
-                      Commands.waitSeconds(6), CommandFactory.scoring(), IntakeCommands.agitate())),
+                      Commands.waitSeconds(7), CommandFactory.scoring(), IntakeCommands.agitate())),
               AutoBuilder.followPath(secondPath)));
     } catch (Exception e) {
       return Commands.none();

@@ -85,7 +85,7 @@ public class FiducialVision extends SubsystemBase {
 
     if (DriverStation.isDisabled() && !wasLastDisabled) {
       if (visionInputs.cameraName.equals("limelight-turd")) {
-        io.setThrottle(200);
+        io.setThrottle(400);
       } else {
         io.setThrottle(0);
       }

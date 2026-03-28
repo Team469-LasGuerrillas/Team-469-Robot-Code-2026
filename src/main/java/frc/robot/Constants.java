@@ -181,6 +181,15 @@ public final class Constants {
                 0.313057 - Units.inchesToMeters(0.125),
                 new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(-90))));
 
+    public static final VisionIOLimelight LIMELIGHT_B =
+        VisionIOLimelight.getInstance(
+            "limelight-turd",
+            new Pose3d(
+                -0.278003,
+                0.125724,
+                0.516943 - Units.inchesToMeters(0.125),
+                new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(180 + 15))));
+
     public static final VisionIOLimelight LIMELIGHT_LEFT =
         VisionIOLimelight.getInstance(
             "limelight-left",
@@ -201,7 +210,7 @@ public final class Constants {
 
     public static final VisionIOLimelight TURD_LIMELIGHT =
         VisionIOLimelight.getInstance(
-            "limelight-turd",
+            "limelight-turdeeeee",
             new Pose3d(
                 0.081752,
                 -0.201245 - 0.040055 - 0.040055 + 0.165100,
@@ -301,7 +310,7 @@ public final class Constants {
 
     static {
       LAUNCHER_CONFIG.name = "Launcher";
-      LAUNCHER_CONFIG.talonCANID = new CANDeviceId(13, "469CanivoreB");
+      LAUNCHER_CONFIG.talonCANID = new CANDeviceId(14, "469CanivoreB");
 
       LAUNCHER_CONFIG.unitToRotorRatio = 1 / 1.25;
 
@@ -343,7 +352,7 @@ public final class Constants {
       FOLLOWER_2_CONFIG.inverted = true;
       FOLLOWER_3_CONFIG.inverted = true;
 
-      FOLLOWER_1_CONFIG.config.talonCANID = new CANDeviceId(14, "469CanivoreB");
+      FOLLOWER_1_CONFIG.config.talonCANID = new CANDeviceId(13, "469CanivoreB");
       FOLLOWER_2_CONFIG.config.talonCANID = new CANDeviceId(15, "469CanivoreB");
       FOLLOWER_3_CONFIG.config.talonCANID = new CANDeviceId(16, "469CanivoreB");
 
@@ -367,8 +376,8 @@ public final class Constants {
 
     public static final Angle TURRET_TOLERANCE = Degrees.of(6.7);
 
-    public static final Angle TURRERT_MAX = Rotations.of(0.45);
-    public static final Angle TURRERT_MIN = Rotations.of(-0.85);
+    public static final Angle TURRERT_MAX = Rotations.of(0.35);
+    public static final Angle TURRERT_MIN = Rotations.of(-0.95);
 
     public static final double WRAPAROUND_PREDICTION_FACOTR = 0.2;
 

@@ -62,6 +62,7 @@ public class RobotContainer {
   private final FiducialVision limelightRight;
   private final FiducialVision limelightLeft;
   private final FiducialVision limelightClimb;
+  private final FiducialVision limelightB;
   public final FiducialVision limelightTurd;
   public final Turret exampe;
   public final Intake intake;
@@ -99,6 +100,12 @@ public class RobotContainer {
         limelightLeft =
             new FiducialVision(
                 Constants.VisionC.LIMELIGHT_LEFT,
+                new ArrayList<Function<PoseObservation, Boolean>>(),
+                new ArrayList<UnaryOperator<FiducialModifications>>());
+
+        limelightB =
+            new FiducialVision(
+                Constants.VisionC.LIMELIGHT_B,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 new ArrayList<UnaryOperator<FiducialModifications>>());
 
@@ -167,6 +174,8 @@ public class RobotContainer {
 
         limelightLeft = new FiducialVision(new VisionIO() {}, null, null);
 
+        limelightB = new FiducialVision(new VisionIO() {}, null, null);
+
         limelightClimb = new FiducialVision(new VisionIO() {}, null, null);
 
         limelightTurd = new FiducialVision(new VisionIO() {}, null, null);
@@ -193,7 +202,7 @@ public class RobotContainer {
     // RobotModeTriggers.teleop().onTrue(Commands.runOnce(HubShiftUtil::initialize));
     // RobotModeTriggers.autonomous().onTrue(Commands.runOnce(HubShiftUtil::initialize));
     // RobotModeTriggers.disabled()
-    //     .onTrue(Commands.runOnce(HubShiftUtil::initialize).ignoringDisable(true));
+    // .onTrue(Commands.runOnce(HubShiftUtil::initialize).ignoringDisable(true));
 
     // Configure the button
     configurePPNamedCommands();
