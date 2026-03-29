@@ -381,7 +381,7 @@ public final class Constants {
     public static final Angle TURRET_TOLERANCE = Degrees.of(6.7);
 
     public static final Angle TURRERT_MAX = Rotations.of(0.35);
-    public static final Angle TURRERT_MIN = Rotations.of(-0.95);
+    public static final Angle TURRERT_MIN = Rotations.of(-0.94);
 
     public static final double WRAPAROUND_PREDICTION_FACOTR = 0.2;
 
