@@ -40,8 +40,8 @@ public class ShooterCommands {
 
   public static Command idleCommand() {
     return Commands.startRun(
-        () -> shooter.setOpenLoopDutyCycle(Constants.LauncherC.IDLE_DC),
-        () -> shooter.setOpenLoopDutyCycle(Constants.LauncherC.IDLE_DC),
+        () -> shooter.setWatermarkTorqueCurrentFOC(RotationsPerSecond.of(0)),
+        () -> shooter.setWatermarkTorqueCurrentFOC(RotationsPerSecond.of(0)),
         shooter);
   }
 

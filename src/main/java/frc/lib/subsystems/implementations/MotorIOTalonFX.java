@@ -178,7 +178,7 @@ public class MotorIOTalonFX implements MotorIO {
 
   @Override
   public void setOpenLoopDutyCycle(double dutyCycle) {
-    talon.setControl(dutyCycleControl.withOutput(dutyCycle).withEnableFOC(true));
+    talon.setControl(dutyCycleControl.withOutput(dutyCycle).withEnableFOC(false));
   }
 
   @Override
@@ -219,8 +219,18 @@ public class MotorIOTalonFX implements MotorIO {
   @Override
   public void setVelocitySetpiont(AngularVelocity velocity) {
     if (config.outputMode == ClosedLoopOutputType.TorqueCurrentFOC) {
-      talon.setControl(
-          velocityTorqueCurrentFOC.withVelocity(unitsToRotor(velocity.in(RotationsPerSecond))));
+      if (Math.abs(velocity.in(RotationsPerSecond)) < 0.00001) {
+        talon.setControl(
+            velocityTorqueCurrentFOC
+                .withVelocity(unitsToRotor(velocity.in(RotationsPerSecond)))
+                .withSlot(1));
+      } else {
+        talon.setControl(
+            velocityTorqueCurrentFOC
+                .withVelocity(unitsToRotor(velocity.in(RotationsPerSecond)))
+                .withSlot(0));
+      }
+
     } else {
       talon.setControl(
           velocityVoltageControl

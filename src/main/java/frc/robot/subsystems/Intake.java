@@ -27,9 +27,9 @@ public class Intake extends SubsystemBase {
   private final MotorInputsAutoLogged rollerInputs = new MotorInputsAutoLogged();
   private final MotorInputsAutoLogged pivotInputs = new MotorInputsAutoLogged();
 
-  private double requestedDutycycle = 0;
+  private double requestedDutycycle = 1;
 
-  private Angle requestedAngle = Constants.IntakeC.PIVOT_RAISED;
+  private Angle requestedAngle = Constants.IntakeC.PIVOT_LOWERED;
 
   public static Intake createinstance(MotorIO rollerMotor, MotorIO pivotMotor, CanCoderIO coder) {
     instance = new Intake(rollerMotor, pivotMotor, coder);

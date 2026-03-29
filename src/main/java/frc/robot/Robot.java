@@ -9,6 +9,7 @@ package frc.robot;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.FollowPathCommand;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
@@ -101,7 +102,18 @@ public class Robot extends LoggedRobot {
     // Optionally switch the thread to high priority to improve loop
     // timing (see the template project documentation for details)
     if (!loggingMode) {}
-    Threads.setCurrentThreadPriority(true, 1);
+
+    try {
+      if (DriverStation.isAutonomousEnabled()) {
+        Threads.setCurrentThreadPriority(true, 1);
+      }
+    } catch (Exception e) {
+      // TODO: handle exception
+    }
+
+    if (DriverStation.isAutonomousEnabled()) {
+      Threads.setCurrentThreadPriority(true, 1);
+    }
 
     MotorIOTalonFX.refreshAllSignals();
 
@@ -132,7 +144,7 @@ public class Robot extends LoggedRobot {
     // Return to non-RT thread priority (do not modify the first argument)
     Threads.setCurrentThreadPriority(false, 10);
 
-    if (timer.advanceIfElapsed(60)) {
+    if (timer.advanceIfElapsed(60) && !DriverStation.isTeleopEnabled()) {
       // explicitly run java gc every 5 loops
       System.gc();
     }

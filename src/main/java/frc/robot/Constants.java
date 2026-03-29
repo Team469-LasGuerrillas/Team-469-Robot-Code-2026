@@ -255,7 +255,7 @@ public final class Constants {
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(0.1, 35.0);
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(3.5, 48.0);
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(4.5, 52.7);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.3, 57.0);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.3, 62.0);
 
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(0.5, 32.0);
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(2.0, 38.0);
@@ -321,22 +321,26 @@ public final class Constants {
       LAUNCHER_TALON_CONFIG.Slot0.kI = 0;
       LAUNCHER_TALON_CONFIG.Slot0.kD = 0;
       LAUNCHER_TALON_CONFIG.Slot0.kV = 0.267;
+
+      LAUNCHER_TALON_CONFIG.Slot1.kP = 1;
+      LAUNCHER_TALON_CONFIG.Slot1.kI = 0;
+      LAUNCHER_TALON_CONFIG.Slot1.kD = 0;
       // LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakForwardTorqueCurrent = 120;
       LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakReverseTorqueCurrent = -10;
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakForwardDutyCycle = 1;
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakReverseDutyCycle = 0;
 
       LAUNCHER_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
-      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
+      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 45;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
       FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
-      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 60;
+      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 45;
       FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
-      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 60;
+      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 45;
       FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
-      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 60;
+      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 45;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
@@ -538,8 +542,8 @@ public final class Constants {
       INTAKE_PIVOT_TALON_CONFIG.Slot0.kV = 0;
       DROP_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
-      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 110;
-      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 50;
+      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 90;
+      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 30;
 
       DROP_CONFIG.talonCANID = new CANDeviceId(9);
       DROP_CONFIG.canCoderConfig = INTAKE_PIVOT_CANCODER_CONFIG;
@@ -601,7 +605,7 @@ public final class Constants {
       FEEDER_MOTOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
       FEEDER_MOTOR_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
-      FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
+      FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 50;
 
       // FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 60;
       // FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerTime = 1;

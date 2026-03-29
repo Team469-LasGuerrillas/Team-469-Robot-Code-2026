@@ -271,6 +271,7 @@ public class RobotContainer {
 
     kyle.rightBumper().whileTrue(CommandFactory.unJam());
     marcus.y().whileTrue(CommandFactory.unJam());
+    marcus.a().onTrue(Commands.runOnce(() -> System.gc()));
     kyle.leftTrigger().whileTrue(CommandFactory.outTake());
     marcus.rightTrigger().whileTrue(CommandFactory.outTake());
     kyle.back().and(kyle.start()).onTrue(Commands.runOnce(() -> Turret.getInstance().lockAngle()));

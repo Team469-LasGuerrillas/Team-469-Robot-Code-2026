@@ -117,7 +117,11 @@ public class AutonCommands {
               Commands.sequence(
                   Commands.deadline(
                       Commands.waitSeconds(3),
-                      Commands.sequence(Commands.waitSeconds(0.1), IntakeCommands.deployAndRun())),
+                      Commands.sequence(
+                          Commands.waitSeconds(0.05),
+                          IntakeCommands.deployAndRun(),
+                          FeederCommands.idleCommand(),
+                          SpindexerCommands.idleCommand())),
                   Commands.deadline(
                       Commands.waitUntil(
                           () ->
