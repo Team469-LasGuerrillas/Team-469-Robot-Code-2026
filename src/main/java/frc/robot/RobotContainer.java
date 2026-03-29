@@ -63,6 +63,7 @@ public class RobotContainer {
   private final FiducialVision limelightLeft;
   private final FiducialVision limelightClimb;
   private final FiducialVision limelightB;
+  private final FiducialVision limelightC;
   public final FiducialVision limelightTurd;
   public final Turret exampe;
   public final Intake intake;
@@ -108,6 +109,12 @@ public class RobotContainer {
                 Constants.VisionC.LIMELIGHT_B,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 new ArrayList<UnaryOperator<FiducialModifications>>());
+
+        limelightC =
+            new FiducialVision(
+                Constants.VisionC.LIMELIGHT_C,
+                new ArrayList<Function<PoseObservation, Boolean>>(),
+                Constants.VisionC.LL3G_MODIFICATIONS);
 
         limelightClimb =
             new FiducialVision(
@@ -175,6 +182,8 @@ public class RobotContainer {
         limelightLeft = new FiducialVision(new VisionIO() {}, null, null);
 
         limelightB = new FiducialVision(new VisionIO() {}, null, null);
+        
+        limelightC = new FiducialVision(new VisionIO() {}, null, null);
 
         limelightClimb = new FiducialVision(new VisionIO() {}, null, null);
 

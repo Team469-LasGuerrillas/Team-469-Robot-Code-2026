@@ -185,10 +185,20 @@ public final class Constants {
         VisionIOLimelight.getInstance(
             "limelight-turd",
             new Pose3d(
-                -0.278003,
-                0.125724,
-                0.516943 - Units.inchesToMeters(0.125),
-                new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(180 + 15))));
+                -0.250329,
+                0.144134,
+                0.427293 - Units.inchesToMeters(0.125),
+                new Rotation3d(0, Units.degreesToRadians(18), Units.degreesToRadians(180 + 25))));
+
+    public static final VisionIOLimelight LIMELIGHT_C =
+        VisionIOLimelight.getInstance(
+            "limelight-c",
+            new Pose3d(
+                -0.268509,
+                0.134876,
+                0.274292 - Units.inchesToMeters(0.125),
+                new Rotation3d(0, Units.degreesToRadians(20), Units.degreesToRadians(180 - 25))));
+
 
     public static final VisionIOLimelight LIMELIGHT_LEFT =
         VisionIOLimelight.getInstance(
