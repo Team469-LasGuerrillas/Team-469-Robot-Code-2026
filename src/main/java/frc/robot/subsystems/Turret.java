@@ -172,7 +172,8 @@ public class Turret extends SubsystemBase {
             < wrapOffset;
 
     // boolean targetFar = Math.abs(targetAngle.minus(talonInputs.motorPosition).in(Degrees)) > 40;
-    boolean targetFar = Math.abs(targetAngle.minus(talonInputs.motorPosition).in(Degrees)) > 40;
+    boolean targetFar =
+        Math.abs(targetAngle.in(Degrees) - talonInputs.motorPosition.in(Degrees)) > 40;
 
     boolean tooFastTurret = Math.abs(talonInputs.motorVelocity.in(DegreesPerSecond)) > 100;
     boolean tooFastChassis =
@@ -210,19 +211,17 @@ public class Turret extends SubsystemBase {
 
     Angle after = angle;
 
-    // after = Rotations.of(after.in(Rotations) + Math.round(trueTurretRotation.in(Rotations)));
+    after = Rotations.of(after.in(Rotations) + Math.round(trueTurretRotation.in(Rotations)));
 
-    after = after.plus(Rotations.of(Math.round(trueTurretRotation.in(Rotations))));
-    
-    Angle afterPlus = after.plus(Rotations.of(1));
-    Angle afterMinus = after.minus(Rotations.of(1));
+    // Angle afterPlus = after.plus(Rotations.of(1));
+    // Angle afterMinus = after.minus(Rotations.of(1));
 
-    // double afterPlusDouble = after.in(Rotations) + 1;
-    // double afterMinusDouble = after.in(Rotations) - 1;
+    double afterPlusDouble = after.in(Rotations) + 1;
+    double afterMinusDouble = after.in(Rotations) - 1;
 
     double deltaAfter = Math.abs(after.in(Rotations) - trueTurretRotation.in(Rotations));
-    double deltaAfterPlus = Math.abs(afterPlus.in(Rotations) - trueTurretRotation.in(Rotations));
-    double deltaAfterMinus = Math.abs(afterMinus.in(Rotations) - trueTurretRotation.in(Rotations));
+    double deltaAfterPlus = Math.abs(afterPlusDouble - trueTurretRotation.in(Rotations));
+    double deltaAfterMinus = Math.abs(afterMinusDouble - trueTurretRotation.in(Rotations));
 
     double smallestDelta = Math.min(Math.min(deltaAfterPlus, deltaAfterMinus), deltaAfter);
 
@@ -231,37 +230,29 @@ public class Turret extends SubsystemBase {
     if (smallestDelta == deltaAfter) {
       closestAfter = after;
     } else if (smallestDelta == deltaAfterPlus) {
-      closestAfter = afterPlus;
+      closestAfter = Rotations.of(afterPlusDouble);
     } else {
-      closestAfter = afterMinus;
+      closestAfter = Rotations.of(afterMinusDouble);
     }
 
     if (closestAfter.in(Rotations) > Constants.TurretC.TURRERT_MAX.in(Rotations)) {
-      // closestAfter = Rotations.of(closestAfter.in(Rotations) - 1);
-      closestAfter = closestAfter.minus(Rotations.of(1));
+      closestAfter = Rotations.of(closestAfter.in(Rotations) - 1);
+      // closestAfter = closestAfter.minus(Rotations.of(1));
     } else if (closestAfter.in(Rotations) < Constants.TurretC.TURRERT_MIN.in(Rotations)) {
-      // closestAfter = Rotations.of(closestAfter.in(Rotations) + 1);
-      closestAfter = closestAfter.plus(Rotations.of(1));
+      closestAfter = Rotations.of(closestAfter.in(Rotations) + 1);
+      // closestAfter = closestAfter.plus(Rotations.of(1));
     }
 
     targetAngle = closestAfter;
 
     closestAfter =
-        closestAfter.plus(
-            Rotations.of(
-                0.033
+        Rotations.of(
+            closestAfter.in(Rotations)
+                + (0.033
                     * turretTargetSpeedEstimator
                         .getEstimatedPosition()
                         .getRotation()
                         .getRotations()));
-    // closestAfter =
-    //     Rotations.of(
-    //         closestAfter.in(Rotations)
-    //             + (0.033
-    //                 * turretTargetSpeedEstimator
-    //                     .getEstimatedPosition()
-    //                     .getRotation()
-    //                     .getRotations()));
 
     if (turretOverrideLock) {
       turd.setMagicalPositionSetpoint(
