@@ -135,7 +135,11 @@ public class AutonCommands {
               AutoBuilder.followPath(firstPath)),
           Commands.deadline(
               Commands.sequence(
-                  Commands.deadline(Commands.waitSeconds(3), IntakeCommands.deployAndRun()),
+                  Commands.deadline(
+                      Commands.waitSeconds(3),
+                      IntakeCommands.deployAndRun(),
+                      FeederCommands.idleCommand(),
+                      SpindexerCommands.idleCommand()),
                   Commands.deadline(
                       Commands.waitUntil(
                           () ->

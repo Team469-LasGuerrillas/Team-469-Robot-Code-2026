@@ -182,7 +182,7 @@ public class RobotContainer {
         limelightLeft = new FiducialVision(new VisionIO() {}, null, null);
 
         limelightB = new FiducialVision(new VisionIO() {}, null, null);
-        
+
         limelightC = new FiducialVision(new VisionIO() {}, null, null);
 
         limelightClimb = new FiducialVision(new VisionIO() {}, null, null);

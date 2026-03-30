@@ -178,7 +178,7 @@ public class MotorIOTalonFX implements MotorIO {
 
   @Override
   public void setOpenLoopDutyCycle(double dutyCycle) {
-    talon.setControl(dutyCycleControl.withOutput(dutyCycle).withEnableFOC(false));
+    talon.setControl(dutyCycleControl.withOutput(dutyCycle).withEnableFOC(true));
   }
 
   @Override

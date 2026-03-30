@@ -199,7 +199,6 @@ public final class Constants {
                 0.274292 - Units.inchesToMeters(0.125),
                 new Rotation3d(0, Units.degreesToRadians(20), Units.degreesToRadians(180 - 25))));
 
-
     public static final VisionIOLimelight LIMELIGHT_LEFT =
         VisionIOLimelight.getInstance(
             "limelight-left",
@@ -341,16 +340,16 @@ public final class Constants {
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakReverseDutyCycle = 0;
 
       LAUNCHER_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
-      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 45;
+      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 40;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
       FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
-      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 45;
+      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 40;
       FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
-      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 45;
+      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 40;
       FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
-      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 45;
+      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 40;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
@@ -391,7 +390,7 @@ public final class Constants {
     public static final Angle TURRET_TOLERANCE = Degrees.of(6.7);
 
     public static final Angle TURRERT_MAX = Rotations.of(0.35);
-    public static final Angle TURRERT_MIN = Rotations.of(-0.95);
+    public static final Angle TURRERT_MIN = Rotations.of(-0.9);
 
     public static final double WRAPAROUND_PREDICTION_FACOTR = 0.2;
 
@@ -507,7 +506,7 @@ public final class Constants {
     public static final double UNJAM_DC = -0.3;
     public static final double IDLE_DC = 0;
     // public static final Angle PIVOT_RAISED = Radians.of(0.33);
-    public static final Angle PIVOT_LOWERED = Radians.of(2.095);
+    public static final Angle PIVOT_LOWERED = Radians.of(2.0);
     public static final Angle PIVOT_RAISED = Degrees.of(45);
     public static final Angle PIVOT_AGITATE = Degrees.of(45);
 
@@ -552,8 +551,8 @@ public final class Constants {
       INTAKE_PIVOT_TALON_CONFIG.Slot0.kV = 0;
       DROP_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
-      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 90;
-      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 30;
+      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
+      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
 
       DROP_CONFIG.talonCANID = new CANDeviceId(9);
       DROP_CONFIG.canCoderConfig = INTAKE_PIVOT_CANCODER_CONFIG;
