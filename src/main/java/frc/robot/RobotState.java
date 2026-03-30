@@ -5,6 +5,8 @@ import frc.robot.util.FieldZoning;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.geometry.Pose2d;
+
 public class RobotState {
 
   public static boolean weLockedPass() {
@@ -22,6 +24,16 @@ public class RobotState {
         && getHoodState() == HoodState.LOCKED
         && getFlywheelState() == FlywheelState.HUBLOCKED;
     // && (getHubState() == HubState.ACTIVE || overrideHubState);
+  }
+
+  private static Pose2d trajectoryTarget = new Pose2d();
+
+  public static void setTrajectoryTarget(Pose2d pose) {
+    trajectoryTarget = pose;
+  }
+
+  public static Pose2d getTrajectoryTarget() {
+    return trajectoryTarget;
   }
 
   // public static void setOverrideHubState(boolean override) {
