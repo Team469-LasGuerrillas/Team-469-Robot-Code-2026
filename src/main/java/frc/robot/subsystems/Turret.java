@@ -220,9 +220,9 @@ public class Turret extends SubsystemBase {
     // double afterPlusDouble = after.in(Rotations) + 1;
     // double afterMinusDouble = after.in(Rotations) - 1;
 
-    double deltaAfter = Math.abs(after.in(Rotations) - trueTurretRotation.in(Rotations));
-    double deltaAfterPlus = Math.abs(afterPlus.in(Rotations) - trueTurretRotation.in(Rotations));
-    double deltaAfterMinus = Math.abs(afterMinus.in(Rotations) - trueTurretRotation.in(Rotations));
+    double deltaAfter = Math.abs(after.in(Rotations) - talonInputs.motorPosition.in(Rotations));
+    double deltaAfterPlus = Math.abs(afterPlus.in(Rotations) - talonInputs.motorPosition.in(Rotations));
+    double deltaAfterMinus = Math.abs(afterMinus.in(Rotations) - talonInputs.motorPosition.in(Rotations));
 
     double smallestDelta = Math.min(Math.min(deltaAfterPlus, deltaAfterMinus), deltaAfter);
 
