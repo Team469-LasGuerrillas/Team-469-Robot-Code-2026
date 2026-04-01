@@ -35,6 +35,8 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Shooter;
+
 import java.util.Queue;
 
 /**
@@ -83,6 +85,9 @@ public class ModuleIOTalonFX implements ModuleIO {
   private final StatusSignal<Voltage> turnAppliedVolts;
   private final StatusSignal<Current> turnCurrent;
 
+  private final TalonFXConfiguration driveConfig;
+  private double lastCurrent = 80;
+
   // Connection debouncers
   private final Debouncer driveConnectedDebounce =
       new Debouncer(0.5, Debouncer.DebounceType.kFalling);
@@ -100,7 +105,7 @@ public class ModuleIOTalonFX implements ModuleIO {
     cancoder = new CANcoder(constants.EncoderId, TunerConstants.kCANBus);
 
     // Configure drive motor
-    var driveConfig = constants.DriveMotorInitialConfigs;
+    driveConfig = constants.DriveMotorInitialConfigs;
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     driveConfig.Slot0 = constants.DriveMotorGains;
     driveConfig.Feedback.SensorToMechanismRatio = constants.DriveMotorGearRatio;
@@ -260,9 +265,18 @@ public class ModuleIOTalonFX implements ModuleIO {
   public void setDriveVelocity(double velocityRadPerSec) {
     double velocityRotPerSec = Units.radiansToRotations(velocityRadPerSec);
 
-    if (Math.abs(velocityRotPerSec) < Units.degreesToRotations(1)) {
+    if (Math.abs(velocityRotPerSec) < Units.degreesToRotations(1) && Math.abs(driveVelocity.getValueAsDouble()) < 1) {
       driveTalon.setControl(torqueCurrentRequest.withOutput(0));
     } else {
+      double updatedCurrentLimit = 80;
+      if (Shooter.getInstance().getShooterPowered()) {
+        updatedCurrentLimit = 20;
+      }
+
+      if (lastCurrent != updatedCurrentLimit) {
+        driveConfig.CurrentLimits.SupplyCurrentLimit = updatedCurrentLimit;
+        tryUntilOk(1, () -> driveTalon.getConfigurator().apply(driveConfig, 0.02));
+      }
 
       driveTalon.setControl(
           switch (constants.DriveMotorClosedLoopOutput) {
