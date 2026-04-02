@@ -4,14 +4,13 @@ import static edu.wpi.first.units.Units.Meters;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
-import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.RobotState;
+import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.drive.Drive;
 
 public class AutonCommands {
@@ -158,6 +157,42 @@ public class AutonCommands {
   public static Command testAuto() {
     try {
       return AutoBuilder.followPath(PathPlannerPath.fromPathFile("TestA").flipPath());
+    } catch (Exception e) {
+      return Commands.none();
+    }
+  }
+
+  public static Command depotAuto(boolean isRed, boolean rightSide) {
+    try {
+      PathPlannerPath thirdPath = PathPlannerPath.fromPathFile("L_B_D");
+
+      if (rightSide) {
+        thirdPath = thirdPath.mirrorPath();
+      }
+
+      if (isRed) {
+        thirdPath = thirdPath.flipPath();
+      }
+
+      return Commands.sequence(
+          Commands.sequence(
+              Commands.deadline(
+                  Commands.waitSeconds(2),
+                  Commands.sequence(
+                      Commands.waitSeconds(0.5),
+                      IntakeCommands.agitate(),
+                      SpindexerCommands.idleCommand(),
+                      FeederCommands.idleCommand())),
+              Commands.deadline(Commands.waitSeconds(2), CommandFactory.scoring()),
+              AutoBuilder.followPath(thirdPath)),
+          Commands.sequence(
+              Commands.deadline(Commands.waitSeconds(2),
+                  IntakeCommands.deployAndRun(),
+                  FeederCommands.idleCommand(),
+                  SpindexerCommands.idleCommand()),
+              Commands.deadline(Commands.waitSeconds(8),
+                  CommandFactory.scoring(), IntakeCommands.agitate())));
+
     } catch (Exception e) {
       return Commands.none();
     }
