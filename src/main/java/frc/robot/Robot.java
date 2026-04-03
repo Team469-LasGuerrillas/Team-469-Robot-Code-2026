@@ -17,7 +17,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.subsystems.implementations.MotorIOTalonFX;
 import frc.robot.subsystems.vision.FiducialVision;
-// import frc.robot.util.HubShiftUtil;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -89,11 +91,15 @@ public class Robot extends LoggedRobot {
 
     SignalLogger.enableAutoLogging(false);
 
-    RobotController.setBrownoutVoltage(6.0);
+    RobotController.setBrownoutVoltage(6.3);
 
     CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
 
     timer.start();
+
+    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    Runnable task = () -> MotorIOTalonFX.refreshAllSignals();
+    scheduler.scheduleWithFixedDelay(task, 20, 20, TimeUnit.MILLISECONDS);
   }
 
   /** This function is called periodically during all modes. */
@@ -111,7 +117,7 @@ public class Robot extends LoggedRobot {
       // TODO: handle exception
     }
 
-    MotorIOTalonFX.refreshAllSignals();
+    // MotorIOTalonFX.refreshAllSignals();
 
     if (!firstLoop) {
       // robotContainer.limelightTurd.setPositionTurret(

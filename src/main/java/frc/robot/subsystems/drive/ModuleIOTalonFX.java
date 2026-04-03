@@ -95,6 +95,8 @@ public class ModuleIOTalonFX implements ModuleIO {
   private final Debouncer turnEncoderConnectedDebounce =
       new Debouncer(0.5, Debouncer.DebounceType.kFalling);
 
+  private final TalonFXConfiguration cachedDriveConfig;
+
   public ModuleIOTalonFX(
       SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
           constants) {
@@ -116,6 +118,9 @@ public class ModuleIOTalonFX implements ModuleIO {
         constants.DriveMotorInverted
             ? InvertedValue.Clockwise_Positive
             : InvertedValue.CounterClockwise_Positive;
+
+    cachedDriveConfig = driveConfig;
+
     tryUntilOk(5, () -> driveTalon.getConfigurator().apply(driveConfig, 0.25));
     tryUntilOk(5, () -> driveTalon.setPosition(0.0, 0.25));
 
@@ -270,15 +275,15 @@ public class ModuleIOTalonFX implements ModuleIO {
     } else {
       double updatedCurrentLimit = 80;
       if (Shooter.getInstance().getShooterPowered()) {
-        updatedCurrentLimit = 20;
+        updatedCurrentLimit = 40;
       }
 
       if (lastCurrent != updatedCurrentLimit) {
-        driveConfig.CurrentLimits.SupplyCurrentLimit = updatedCurrentLimit;
-        driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-        driveConfig.CurrentLimits.StatorCurrentLimit = constants.SlipCurrent;
-        driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        tryUntilOk(1, () -> driveTalon.getConfigurator().apply(driveConfig, 0.0));
+        TalonFXConfiguration newConfig = cachedDriveConfig;
+
+        newConfig.CurrentLimits.SupplyCurrentLimit = updatedCurrentLimit;
+        newConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        tryUntilOk(1, () -> driveTalon.getConfigurator().apply(newConfig, 0.0));
         lastCurrent = updatedCurrentLimit;
       }
 

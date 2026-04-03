@@ -90,6 +90,7 @@ public class CommandFactory {
 
   private static Command feed() {
     return Commands.sequence(
+        Commands.waitSeconds(0.1),
         Commands.parallel(FeederCommands.runPositive(), SpindexerCommands.runPositive()));
   }
 
