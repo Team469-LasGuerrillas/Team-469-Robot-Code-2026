@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
@@ -63,6 +64,13 @@ public class Intake extends SubsystemBase {
         RotationsPerSecondPerSecond.of(9999),
         0,
         calcFF(requestedAngle));
+
+    if (coderInputs.absolutePosition.in(Rotations)
+        < Constants.IntakeC.PIVOT_LOWERED.in(Rotations) - 0.03) {
+      rollerMotor.setOpenLoopDutyCycle(0.0);
+    } else {
+      rollerMotor.setOpenLoopDutyCycle(requestedDutycycle);
+    }
   }
 
   @AutoLogOutput(key = "Intake/TargetAngle")
@@ -72,7 +80,6 @@ public class Intake extends SubsystemBase {
 
   public void setDutyCycle(double dutyCycle) {
     requestedDutycycle = dutyCycle;
-    rollerMotor.setOpenLoopDutyCycle(requestedDutycycle);
   }
 
   public void setTargetAngle(Angle newAngleRequest) {

@@ -6,14 +6,16 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -112,19 +114,6 @@ public class Turret extends SubsystemBase {
     canCoderB.readInputs(ccBInputs);
     // Logger.processInputs(getName() + " CanCoder B", ccBInputs);
 
-    // turretSpeedEstimator.updateWithTime(
-    // Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
-    // turretSpeedEstimator.addVisionMeasurement(
-    // GeomUtil.withRotation(
-    // GeomUtil.toPose2d(
-    // GeomUtil.toPose2d(getTurretTranslationFieldSpace())
-    // .minus(lastTurretPoseFieldSpace)
-    // .div(0.02)),
-    // Rotation2d.fromRadians(
-    // Drive.getInstance().getFieldSpeedsFiltered().omegaRadiansPerSecond)),
-    // Clock.time(),
-    // Constants.Field.TURRET_SPEEDS_STDS);
-
     turretTargetSpeedEstimator.updateWithTime(
         Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
 
@@ -133,19 +122,24 @@ public class Turret extends SubsystemBase {
     double targetAngularVelocityRadiansPerSecond =
         (targetAngle.in(Radians) - lastTargetAngle.in(Radians)) / deltaTime;
 
-    lastTimestamp = Clock.time();
+    Logger.recordOutput(
+        "Turret/TargetAngularVelocity", RadiansPerSecond.of(targetAngularVelocityRadiansPerSecond));
 
-    if (Math.abs(targetAngularVelocityRadiansPerSecond) < 180) {
+    if (Math.abs(targetAngularVelocityRadiansPerSecond) < Units.degreesToRadians(180)) {
+      Matrix<N3, N1> stds = Constants.Field.TURRET_TARGET_SPEEDS_STDS;
+
+      if (Math.abs(targetAngularVelocityRadiansPerSecond) < Units.degreesToRadians(3)) {
+        stds = Constants.Field.TURRET_TARGET_SPEEDS_STDS_FOR_ZERO;
+      }
+
       turretTargetSpeedEstimator.addVisionMeasurement(
           GeomUtil.withRotation(
               new Pose2d(), new Rotation2d(targetAngularVelocityRadiansPerSecond)),
           Clock.time(),
-          Constants.Field.TURRET_TARGET_SPEEDS_STDS);
+          stds);
     }
 
-    // Logger.recordOutput(
-    // "TurretTargetAngularVelocity",
-    // RadiansPerSecond.of(targetAngularVelocityRadiansPerSecond));
+    lastTimestamp = Clock.time();
 
     lastTargetAngle = targetAngle;
 
@@ -171,7 +165,8 @@ public class Turret extends SubsystemBase {
                     - talonInputs.motorPosition.in(Rotations))
             < wrapOffset;
 
-    // boolean targetFar = Math.abs(targetAngle.minus(talonInputs.motorPosition).in(Degrees)) > 40;
+    // boolean targetFar =
+    // Math.abs(targetAngle.minus(talonInputs.motorPosition).in(Degrees)) > 40;
     boolean targetFar = Math.abs(targetAngle.minus(talonInputs.motorPosition).in(Degrees)) > 40;
 
     boolean tooFastTurret = Math.abs(talonInputs.motorVelocity.in(DegreesPerSecond)) > 100;
@@ -210,7 +205,8 @@ public class Turret extends SubsystemBase {
 
     Angle after = angle;
 
-    // after = Rotations.of(after.in(Rotations) + Math.round(trueTurretRotation.in(Rotations)));
+    // after = Rotations.of(after.in(Rotations) +
+    // Math.round(trueTurretRotation.in(Rotations)));
 
     after = after.plus(Rotations.of(Math.round(talonInputs.motorPosition.in(Rotations))));
 
@@ -221,8 +217,10 @@ public class Turret extends SubsystemBase {
     // double afterMinusDouble = after.in(Rotations) - 1;
 
     double deltaAfter = Math.abs(after.in(Rotations) - talonInputs.motorPosition.in(Rotations));
-    double deltaAfterPlus = Math.abs(afterPlus.in(Rotations) - talonInputs.motorPosition.in(Rotations));
-    double deltaAfterMinus = Math.abs(afterMinus.in(Rotations) - talonInputs.motorPosition.in(Rotations));
+    double deltaAfterPlus =
+        Math.abs(afterPlus.in(Rotations) - talonInputs.motorPosition.in(Rotations));
+    double deltaAfterMinus =
+        Math.abs(afterMinus.in(Rotations) - talonInputs.motorPosition.in(Rotations));
 
     double smallestDelta = Math.min(Math.min(deltaAfterPlus, deltaAfterMinus), deltaAfter);
 
@@ -247,33 +245,41 @@ public class Turret extends SubsystemBase {
     targetAngle = closestAfter;
 
     closestAfter =
-        closestAfter.plus(
-            Rotations.of(
-                0.033
+        Rotations.of(
+            closestAfter.in(Rotations)
+                + (0.033
                     * turretTargetSpeedEstimator
                         .getEstimatedPosition()
                         .getRotation()
                         .getRotations()));
-    // closestAfter =
-    //     Rotations.of(
-    //         closestAfter.in(Rotations)
-    //             + (0.033
-    //                 * turretTargetSpeedEstimator
-    //                     .getEstimatedPosition()
-    //                     .getRotation()
-    //                     .getRotations()));
 
     if (turretOverrideLock) {
-      turd.setMagicalPositionSetpoint(
-          turretOverrideAngle, RotationsPerSecond.of(1), RotationsPerSecondPerSecond.of(3), 0, 0);
+      turd.setPositionSetpoint(turretOverrideAngle, RotationsPerSecond.of(0), 0);
     } else {
-      turd.setMagicalPositionSetpoint(
+      turd.setPositionSetpoint(
           closestAfter,
-          RotationsPerSecond.of(10),
-          RotationsPerSecondPerSecond.of(990),
-          0,
-          calculateFF());
+          RotationsPerSecond.of(
+              turretTargetSpeedEstimator.getEstimatedPosition().getRotation().getRotations()),
+          0);
     }
+
+    Logger.recordOutput(
+        "Turret/FilteredTargetAngularVelocity",
+        RotationsPerSecond.of(
+            turretTargetSpeedEstimator.getEstimatedPosition().getRotation().getRotations()));
+
+    // if (turretOverrideLock) {
+    // turd.setMagicalPositionSetpoint(
+    // turretOverrideAngle, RotationsPerSecond.of(1),
+    // RotationsPerSecondPerSecond.of(3), 0, 0);
+    // } else {
+    // turd.setMagicalPositionSetpoint(
+    // closestAfter,
+    // RotationsPerSecond.of(10),
+    // RotationsPerSecondPerSecond.of(990),
+    // 0,
+    // calculateFF());
+    // }
   }
 
   /**

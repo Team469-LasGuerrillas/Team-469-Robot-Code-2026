@@ -112,6 +112,8 @@ public final class Constants {
         VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(80));
     public static final Matrix<N3, N1> TURRET_TARGET_SPEEDS_STDS =
         VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(67));
+    public static final Matrix<N3, N1> TURRET_TARGET_SPEEDS_STDS_FOR_ZERO =
+        VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(3));
 
     public static final Distance BLUE_TRENCH_SCORING = Inches.of(182.11);
     public static final Distance RED_TRENCH_SCORING = MAX_FIELD_X.minus(Inches.of(182.11));
@@ -442,11 +444,11 @@ public final class Constants {
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TURRERT_MIN.in(Rotations);
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-      TURRET_TALON_CONFIG.Slot0.kP = 3310; // 3310
+      TURRET_TALON_CONFIG.Slot0.kP = 5000; // 3310
       TURRET_TALON_CONFIG.Slot0.kI = 0;
-      TURRET_TALON_CONFIG.Slot0.kD = 98.7; // 98.7
+      TURRET_TALON_CONFIG.Slot0.kD = 67.0; // 98.7
       TURRET_TALON_CONFIG.Slot0.kS = 0.5;
-      TURRET_TALON_CONFIG.Slot0.kV = (16.0 / 100.0) * 360.0 * 2;
+      TURRET_TALON_CONFIG.Slot0.kV = 0; // (16.0 / 100.0) * 360.0 * 2;
       TURRET_TALON_CONFIG.Slot0.kA = 0;
       SERVO_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
@@ -506,9 +508,9 @@ public final class Constants {
     public static final double UNJAM_DC = -0.3;
     public static final double IDLE_DC = 0;
     // public static final Angle PIVOT_RAISED = Radians.of(0.33);
-    public static final Angle PIVOT_LOWERED = Radians.of(2.0);
-    public static final Angle PIVOT_RAISED = Degrees.of(45);
-    public static final Angle PIVOT_AGITATE = Degrees.of(45);
+    public static final Angle PIVOT_LOWERED = Degrees.of(128);
+    public static final Angle PIVOT_RAISED = Degrees.of(9);
+    public static final Angle PIVOT_AGITATE = Degrees.of(70);
 
     private static final ServoMotorSubsystemWithCancoderConfig DROP_CONFIG =
         new ServoMotorSubsystemWithCancoderConfig();
@@ -524,7 +526,7 @@ public final class Constants {
     static {
       INTAKE_PIVOT_CANCODER_CONFIG.CANID = new CANDeviceId(5);
       INTAKE_PIVOT_CANCODER_CONFIG.config = new CANcoderConfiguration();
-      INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = 1.229004;
+      INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = 1.364014;
       INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.SensorDirection =
           SensorDirectionValue.Clockwise_Positive;
       INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;

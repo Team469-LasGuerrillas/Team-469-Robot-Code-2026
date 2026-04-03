@@ -51,13 +51,21 @@ public class Shooter extends SubsystemBase {
 
   public void setOpenLoopDutyCycle(double dutyCycle) {
     requestedDutycycle = dutyCycle;
-    if (Math.abs(dutyCycle) > 0.2) {shooterPowered = true;} else {shooterPowered = false;}
+    if (Math.abs(dutyCycle) > 0.2) {
+      shooterPowered = true;
+    } else {
+      shooterPowered = false;
+    }
     leadFlywheel.setOpenLoopDutyCycle(requestedDutycycle);
   }
 
   public void setWatermarkTorqueCurrentFOC(AngularVelocity velocity) {
     requestedAngularVelocity = velocity;
-    if (Math.abs(velocity.in(RotationsPerSecond)) > 2) {shooterPowered = true;} else {shooterPowered = false;}
+    if (Math.abs(velocity.in(RotationsPerSecond)) > 2) {
+      shooterPowered = true;
+    } else {
+      shooterPowered = false;
+    }
     leadFlywheel.setVelocitySetpiont(velocity);
   }
 

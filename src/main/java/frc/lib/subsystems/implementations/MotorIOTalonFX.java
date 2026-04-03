@@ -182,12 +182,20 @@ public class MotorIOTalonFX implements MotorIO {
   }
 
   @Override
-  public void setPositionSetpoint(Angle position, double ff) {
+  public void setPositionSetpoint(Angle position, AngularVelocity velocity, double ff) {
     if (config.outputMode == ClosedLoopOutputType.TorqueCurrentFOC) {
-      talon.setControl(positionTorqueCurrentFOC.withPosition(position).withFeedForward(ff));
+      talon.setControl(
+          positionTorqueCurrentFOC
+              .withPosition(position)
+              .withVelocity(velocity)
+              .withFeedForward(ff));
     } else {
       talon.setControl(
-          positionVoltageControl.withPosition(position).withFeedForward(ff).withEnableFOC(true));
+          positionVoltageControl
+              .withPosition(position)
+              .withVelocity(velocity)
+              .withFeedForward(ff)
+              .withEnableFOC(true));
     }
   }
 

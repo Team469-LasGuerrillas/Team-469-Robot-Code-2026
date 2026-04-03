@@ -104,15 +104,11 @@ public class Robot extends LoggedRobot {
     if (!loggingMode) {}
 
     try {
-      if (DriverStation.isAutonomousEnabled()) {
+      if (DriverStation.isEnabled()) {
         Threads.setCurrentThreadPriority(true, 1);
       }
     } catch (Exception e) {
       // TODO: handle exception
-    }
-
-    if (DriverStation.isAutonomousEnabled()) {
-      Threads.setCurrentThreadPriority(true, 1);
     }
 
     MotorIOTalonFX.refreshAllSignals();
