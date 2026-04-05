@@ -31,9 +31,11 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -117,6 +119,8 @@ public class Drive extends SubsystemBase {
 
   private double lastTimestamp;
 
+  public Timer hasBeenOverBumpTimer;
+
   public static Drive getInstance(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -179,6 +183,8 @@ public class Drive extends SubsystemBase {
 
           RobotState.setTrajectoryTarget(targetPose);
         });
+
+    hasBeenOverBumpTimer.start();
 
     // Configure SysId
     sysId =
@@ -271,6 +277,10 @@ public class Drive extends SubsystemBase {
         GeomUtil.toPose2d(deltaSpeeds), Clock.time(), Constants.Field.FIELD_ACCELERATIONS_STDS);
 
     lastFieldSpeeds = updatedSpeeds;
+
+    if (Math.abs(getRoll().in(Degrees)) > 5 || Math.abs(getPitch().in(Degrees)) > 5) {
+      hasBeenOverBumpTimer.restart();
+    }
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode == Mode.REAL);
@@ -427,6 +437,16 @@ public class Drive extends SubsystemBase {
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
     return getPose().getRotation();
+  }
+
+  /** Returns the pitch measured by the gyro. */
+  public Angle getPitch() {
+    return gyroInputs.pitchPosition;
+  }
+
+  /** Returns the roll measured by the gyro. */
+  public Angle getRoll() {
+    return gyroInputs.rollPosition;
   }
 
   /** Resets the current odometry pose. */

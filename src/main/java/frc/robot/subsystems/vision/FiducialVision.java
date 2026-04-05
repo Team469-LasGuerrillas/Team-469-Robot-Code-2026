@@ -202,7 +202,7 @@ public class FiducialVision extends SubsystemBase {
           robotPosesAccepted.add(observation);
 
           FiducialModifications filteredObservation =
-              new FiducialFilters.FiducialModifications(observation).withUpdateYaw();
+              new FiducialFilters.FiducialModifications(observation).withUpdateYaw().withMultiplyAllResultsBasedOnGyro();
 
           for (UnaryOperator<FiducialModifications> modification : extraModifications) {
             filteredObservation = modification.apply(filteredObservation);

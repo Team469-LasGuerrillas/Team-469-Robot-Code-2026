@@ -11,7 +11,7 @@ public class RobotState {
   public static boolean weLockedPass() {
     return !FieldZoning.notAllowedToPass()
         && getTurretState() == TurretState.LOCKED
-        && getHoodState() == HoodState.LOCKED
+        // && getHoodState() == HoodState.LOCKED
         && (getFlywheelState() == FlywheelState.PASSLOCKED
             || getFlywheelState() == FlywheelState.HUBLOCKED);
   }

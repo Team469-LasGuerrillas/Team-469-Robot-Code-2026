@@ -157,8 +157,7 @@ public class Robot extends LoggedRobot {
   public void disabledInit() {
     SignalLogger.enableAutoLogging(false);
     System.gc();
-    timer.reset();
-    timer.start();
+    timer.restart();
   }
 
   /** This function is called periodically when disabled. */
