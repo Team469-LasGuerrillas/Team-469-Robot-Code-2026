@@ -91,7 +91,11 @@ public final class Constants {
 
     public static final PPHolonomicDriveController PP_CONTROLLER =
         new PPHolonomicDriveController(
-            new PIDConstants(8, 0.0, 0.3), new PIDConstants(5.3, 0.0, 0.6));
+            new PIDConstants(8, 0.0, 0.3), new PIDConstants(7, 0.0, 0.6));
+
+    public static final PPHolonomicDriveController PP_CONTROLLER_SLOW =
+        new PPHolonomicDriveController(
+            new PIDConstants(3, 0.0, 0.2), new PIDConstants(5, 0.0, 0.4));
   }
 
   public static class Field {
@@ -208,7 +212,7 @@ public final class Constants {
                 -0.228600,
                 0.359812,
                 0.432361 - Units.inchesToMeters(0.125),
-                new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(90))));
+                new Rotation3d(0, Units.degreesToRadians(15 + 2.5), Units.degreesToRadians(90))));
 
     public static final VisionIOLimelight LIMELIGHT_CLIMB =
         VisionIOLimelight.getInstance(
@@ -342,16 +346,16 @@ public final class Constants {
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakReverseDutyCycle = 0;
 
       LAUNCHER_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
-      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 40;
+      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 30;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
       FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
-      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 40;
+      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 30;
       FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
-      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 40;
+      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 30;
       FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
-      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 40;
+      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 30;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
@@ -389,7 +393,7 @@ public final class Constants {
 
   public static class TurretC {
 
-    public static final Angle TURRET_TOLERANCE = Degrees.of(6.7);
+    public static final Angle TURRET_TOLERANCE = Degrees.of(10);
 
     public static final Angle TURRERT_MAX = Rotations.of(0.35);
     public static final Angle TURRERT_MIN = Rotations.of(-0.88);
@@ -576,7 +580,7 @@ public final class Constants {
   }
 
   public static class SpindexerC {
-    public static final double FEEDING_DC = 1.0;
+    public static final double FEEDING_DC = 0.85;
     public static final double REVERSE_DC = -1.0;
     public static final double IDLE_DC = 0.0;
     public static final double IDLE_REVERSE_DC = -0.0;

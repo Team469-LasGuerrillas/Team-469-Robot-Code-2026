@@ -12,6 +12,7 @@ import static frc.robot.util.PhoenixUtil.*;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -245,6 +246,31 @@ public class ModuleIOTalonFX implements ModuleIO {
     timestampQueue.clear();
     drivePositionQueue.clear();
     turnPositionQueue.clear();
+
+    double updatedCurrentLimit;
+    if (Shooter.getInstance().getShooterPowered()) {
+      updatedCurrentLimit = 40;
+    } else {
+      updatedCurrentLimit = 80;
+    }
+
+    if (lastCurrent != updatedCurrentLimit) {
+      var currentConfigs = new CurrentLimitsConfigs();
+
+      double currentDrivePosition = drivePosition.getValueAsDouble();
+
+      currentConfigs.SupplyCurrentLimit = updatedCurrentLimit;
+      currentConfigs.SupplyCurrentLimitEnable = true;
+      currentConfigs.StatorCurrentLimit = constants.SlipCurrent;
+      currentConfigs.StatorCurrentLimitEnable = true;
+
+      driveTalon.getConfigurator().apply(currentConfigs, 0.0);
+      driveTalon.setPosition(currentDrivePosition);
+
+      System.out.println("Changing current limits to " + updatedCurrentLimit);
+    }
+
+    lastCurrent = updatedCurrentLimit;
   }
 
   @Override
@@ -273,19 +299,6 @@ public class ModuleIOTalonFX implements ModuleIO {
         && Math.abs(driveVelocity.getValueAsDouble()) < 1) {
       driveTalon.setControl(torqueCurrentRequest.withOutput(0));
     } else {
-      double updatedCurrentLimit = 80;
-      if (Shooter.getInstance().getShooterPowered()) {
-        updatedCurrentLimit = 40;
-      }
-
-      if (lastCurrent != updatedCurrentLimit) {
-        TalonFXConfiguration newConfig = cachedDriveConfig;
-
-        newConfig.CurrentLimits.SupplyCurrentLimit = updatedCurrentLimit;
-        newConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-        tryUntilOk(1, () -> driveTalon.getConfigurator().apply(newConfig, 0.0));
-        lastCurrent = updatedCurrentLimit;
-      }
 
       driveTalon.setControl(
           switch (constants.DriveMotorClosedLoopOutput) {

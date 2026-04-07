@@ -12,16 +12,33 @@ import frc.robot.RobotState;
 import frc.robot.subsystems.drive.Drive;
 
 public class AutonCommands {
-  private static Command sweepPath(PathPlannerPath path) {
+  private static Command sweepPath(PathPlannerPath path, boolean rightSide) {
     return Commands.deadline(
         AutoBuilder.followPath(path),
-        Commands.sequence(Commands.waitSeconds(0.4414), IntakeCommands.deployAndRun()));
+        Commands.sequence(
+            Commands.waitSeconds(0.2),
+            Commands.parallel(IntakeCommands.deployAndRun() /*
+                                                * ,
+                                                * Commands.either(
+                                                * TurretCommands.targetAngle(Rotations.of(-0.8)), Commands.none(), () ->
+                                                * (rightSide))
+                                                *//*Commands.sequence(
+                Commands.waitSeconds(3),
+                Commands.waitUntil(
+                    () ->
+                        Drive.getInstance().getPose().getX()
+                                < Constants.Field.BLUE_TRENCH_SCORING.in(Meters) + 0.2
+                            || Drive.getInstance().getPose().getX()
+                                > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.2),
+                ShooterCommands.targetLaunchSpeed(() -> RotationsPerSecond.of(30)))*/ )),
+        FeederCommands.idleCommand(),
+        SpindexerCommands.idleCommand());
   }
 
   private static Command pathAndScore(PathPlannerPath path) {
     return Commands.sequence(
         Commands.deadline(
-            AutoBuilder.followPath(path),
+            Drive.getInstance().followPath(path, Constants.DriveC.PP_CONTROLLER_SLOW),
             Commands.sequence(
                 Commands.deadline(
                     Commands.waitUntil(
@@ -31,7 +48,7 @@ public class AutonCommands {
                                 || Drive.getInstance().getPose().getX()
                                     > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.2),
                     IntakeCommands.deployAndRun()),
-                Commands.waitSeconds(0.08),
+                Commands.waitSeconds(0.0),
                 Commands.deadline(
                     Commands.waitSeconds(2),
                     CommandFactory.scoring(),
@@ -87,11 +104,11 @@ public class AutonCommands {
       }
 
       return Commands.sequence(
-          sweepPath(firstSweepPath),
+          sweepPath(firstSweepPath, rightSide),
           pathAndScore(firstScorePath),
-          sweepPath(secondSweepPath),
+          sweepPath(secondSweepPath, rightSide),
           pathAndScore(secondScorePath),
-          sweepPath(secondSweepPath));
+          sweepPath(secondSweepPath, rightSide));
 
     } catch (Exception e) {
       return Commands.run(() -> System.out.println(e.getMessage()));

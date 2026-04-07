@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -70,7 +71,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean getShooterPowered() {
-    return shooterPowered;
+    return Math.abs(leadInputs.supplyCurrent.in(Amps)) > 5;
   }
 
   @Override

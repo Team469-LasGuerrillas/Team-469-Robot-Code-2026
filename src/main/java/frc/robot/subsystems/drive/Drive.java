@@ -10,10 +10,13 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
@@ -119,7 +122,7 @@ public class Drive extends SubsystemBase {
 
   private double lastTimestamp;
 
-  public Timer hasBeenOverBumpTimer;
+  public Timer hasBeenOverBumpTimer = new Timer();
 
   public static Drive getInstance(
       GyroIO gyroIO,
@@ -294,8 +297,24 @@ public class Drive extends SubsystemBase {
     return AutoBuilder.followPath(path);
   }
 
+  public Command followPath(PathPlannerPath path, PPHolonomicDriveController controller) {
+    return new FollowPathCommand(
+        path,
+        this::getPose,
+        this::getChassisSpeeds,
+        this::runVulocity,
+        controller,
+        PP_CONFIG,
+        () -> false,
+        this);
+  }
+
   public Command pathfindToPath(PathPlannerPath path) {
     return AutoBuilder.pathfindThenFollowPath(path, Constants.DriveC.defaultConstraints);
+  }
+
+  public void runVulocity(ChassisSpeeds speeds, DriveFeedforwards ff) {
+    runVelocity(speeds);
   }
 
   /**
