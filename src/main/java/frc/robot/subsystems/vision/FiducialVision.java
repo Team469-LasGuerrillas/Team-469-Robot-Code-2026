@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -25,6 +26,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.SignalLogger;
 
 public class FiducialVision extends SubsystemBase {
   private static List<PoseObservation> allObservations = new LinkedList<>();
@@ -218,6 +221,10 @@ public class FiducialVision extends SubsystemBase {
     Logger.recordOutput(
         getCameraName() + "/RobotPosesAccepted",
         robotPosesAccepted.toArray(new PoseObservation[robotPosesAccepted.size()]));
+
+    for (PoseObservation p : robotPosesAccepted) {
+      SignalLogger.writeStruct("Vision/Accepted/" + visionInputs.cameraName, Pose2d.struct, p.pose().toPose2d());
+    }
 
     Logger.recordOutput(
         getCameraName() + "/RobotPosesRejected",

@@ -86,7 +86,7 @@ public class ModuleIOTalonFX implements ModuleIO {
   private final StatusSignal<Current> turnCurrent;
 
   private final TalonFXConfiguration driveConfig;
-  private double lastCurrent = 80;
+  private double lastCurrent = 0;
 
   // Connection debouncers
   private final Debouncer driveConnectedDebounce =

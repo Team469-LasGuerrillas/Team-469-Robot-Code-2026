@@ -91,7 +91,7 @@ public final class Constants {
 
     public static final PPHolonomicDriveController PP_CONTROLLER =
         new PPHolonomicDriveController(
-            new PIDConstants(8, 0.0, 0.3), new PIDConstants(7, 0.0, 0.6));
+            new PIDConstants(9.87, 0.0, 0.383), new PIDConstants(7, 0.0, 0.6));
 
     public static final PPHolonomicDriveController PP_CONTROLLER_SLOW =
         new PPHolonomicDriveController(
@@ -115,7 +115,7 @@ public final class Constants {
     public static final Matrix<N3, N1> TURRET_MOTOR_SPEEDS_STDS =
         VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(80));
     public static final Matrix<N3, N1> TURRET_TARGET_SPEEDS_STDS =
-        VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(67));
+        VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(33));
     public static final Matrix<N3, N1> TURRET_TARGET_SPEEDS_STDS_FOR_ZERO =
         VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(3));
 
@@ -130,6 +130,8 @@ public final class Constants {
         new Translation2d(BLUE_TRENCH_SCORING.in(Meters), MID_FIELD_Y.in(Meters));
     public static final Translation2d RED_HUB =
         new Translation2d(RED_TRENCH_SCORING.in(Meters), MID_FIELD_Y.in(Meters));
+
+    public static final Translation2d FIELD_CENTER = new Translation2d(MID_FIELD_X, MID_FIELD_Y);
 
     public static final Distance PASS_WALL_DISTANCE = Meters.of(3.5);
   }
@@ -393,7 +395,7 @@ public final class Constants {
 
   public static class TurretC {
 
-    public static final Angle TURRET_TOLERANCE = Degrees.of(10);
+    public static final Angle TURRET_TOLERANCE = Degrees.of(9);
 
     public static final Angle TURRERT_MAX = Rotations.of(0.35);
     public static final Angle TURRERT_MIN = Rotations.of(-0.88);
@@ -630,7 +632,7 @@ public final class Constants {
   }
 
   public static class HoodC {
-    public static final Angle HOOD_TOLERANCE = Degrees.of(1.67);
+    public static final Angle HOOD_TOLERANCE = Degrees.of(3);
 
     public static final Angle HOOD_STOW = Radians.of(0);
     public static final Angle HOOD_MAX = Radians.of(0.436);

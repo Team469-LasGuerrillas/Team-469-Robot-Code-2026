@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -10,29 +11,21 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.util.ShootTarget;
 
 public class AutonCommands {
   private static Command sweepPath(PathPlannerPath path, boolean rightSide) {
     return Commands.deadline(
         AutoBuilder.followPath(path),
         Commands.sequence(
-            Commands.waitSeconds(0.2),
-            Commands.parallel(IntakeCommands.deployAndRun() /*
-                                                * ,
-                                                * Commands.either(
-                                                * TurretCommands.targetAngle(Rotations.of(-0.8)), Commands.none(), () ->
-                                                * (rightSide))
-                                                *//*Commands.sequence(
-                Commands.waitSeconds(3),
-                Commands.waitUntil(
-                    () ->
-                        Drive.getInstance().getPose().getX()
-                                < Constants.Field.BLUE_TRENCH_SCORING.in(Meters) + 0.2
-                            || Drive.getInstance().getPose().getX()
-                                > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.2),
-                ShooterCommands.targetLaunchSpeed(() -> RotationsPerSecond.of(30)))*/ )),
+            Commands.waitSeconds(0.2), Commands.parallel(IntakeCommands.deployAndRun())),
         FeederCommands.idleCommand(),
-        SpindexerCommands.idleCommand());
+        SpindexerCommands.idleCommand(),
+        Commands.deferredProxy(
+            () ->
+                Commands.sequence(
+                    Commands.waitSeconds(2),
+                    ShooterCommands.targetLaunchSpeed(() -> RotationsPerSecond.of(30)))));
   }
 
   private static Command pathAndScore(PathPlannerPath path) {
@@ -58,8 +51,8 @@ public class AutonCommands {
                     CommandFactory.scoring(),
                     IntakeCommands.deployAndRun()))),
         Commands.deadline(
-            Commands.waitSeconds(0.1), CommandFactory.scoring(), IntakeCommands.deployAndRun()),
-        Commands.waitSeconds(0.4));
+            Commands.waitSeconds(0.05), CommandFactory.scoring(), IntakeCommands.deployAndRun()),
+        Commands.waitSeconds(0.05));
   }
 
   private static Command depotPathAndScore(PathPlannerPath path) {
@@ -106,6 +99,7 @@ public class AutonCommands {
       return Commands.sequence(
           sweepPath(firstSweepPath, rightSide),
           pathAndScore(firstScorePath),
+          Commands.runOnce(() -> ShootTarget.updateNonDynamicGoal(Constants.Field.FIELD_CENTER)),
           sweepPath(secondSweepPath, rightSide),
           pathAndScore(secondScorePath),
           sweepPath(secondSweepPath, rightSide));

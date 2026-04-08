@@ -107,8 +107,8 @@ public class FiducialFilters {
     }
 
     public FiducialModifications withMultiplyAllResultsBasedOnGyro() {
-      if (Drive.getInstance().hasBeenOverBumpTimer.get() < 2.0) {
-        double multiplier = 0.4 / (2.6 - Drive.getInstance().hasBeenOverBumpTimer.get());
+      if (Drive.getInstance().hasBeenOverBumpTimer.get() < 1.5) {
+        double multiplier = 0.4 / (2.1 - Drive.getInstance().hasBeenOverBumpTimer.get());
 
         observation.stdDevs()[0] *= multiplier;
         observation.stdDevs()[1] *= multiplier;
@@ -122,9 +122,10 @@ public class FiducialFilters {
                   < Constants.Field.BLUE_TRENCH_SCORING.in(Meters) + 0.2
               || Drive.getInstance().getPose().getX()
                   > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.2)
-          && DriverStation.isAutonomousEnabled()) {
-        observation.stdDevs()[0] *= 3;
-        observation.stdDevs()[1] *= 3;
+          && DriverStation.isAutonomousEnabled()
+          && Drive.getInstance().hasBeenOverBumpTimer.get() > 0.8) {
+        observation.stdDevs()[0] *= 3.5;
+        observation.stdDevs()[1] *= 3.5;
       }
       return this;
     }

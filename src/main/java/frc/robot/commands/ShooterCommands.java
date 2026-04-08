@@ -20,7 +20,8 @@ public class ShooterCommands {
                     speed.get().in(RotationsPerSecond)
                             - Shooter.getInstance().getSpeed().in(RotationsPerSecond)
                         < Constants.LauncherC.RAMP_SPEED_TOLERANCE.in(RotationsPerSecond)),
-            rampSpeed()),
+            rampSpeed(),
+            Commands.run(() -> System.out.println("Skibidi skbidi"))),
         maintainSpeed(speed));
   }
 

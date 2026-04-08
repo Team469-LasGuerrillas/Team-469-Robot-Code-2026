@@ -8,6 +8,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -65,7 +66,7 @@ public class RobotContainer {
   private final FiducialVision limelightB;
   private final FiducialVision limelightC;
   public final FiducialVision limelightTurd;
-  public final Turret exampe;
+  public final Turret turret;
   public final Intake intake;
   public final Spindexer spindexer;
   public final Shooter shooter;
@@ -128,7 +129,7 @@ public class RobotContainer {
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 Constants.VisionC.TURRET_MODIFICATIONS);
 
-        exampe =
+        turret =
             Turret.createInstance(
                 Constants.TurretC.motah, Constants.TurretC.coderA, Constants.TurretC.coderB);
 
@@ -189,7 +190,7 @@ public class RobotContainer {
 
         limelightTurd = new FiducialVision(new VisionIO() {}, null, null);
 
-        exampe = Turret.createInstance(new MotorIO() {}, new CanCoderIO() {}, new CanCoderIO() {});
+        turret = Turret.createInstance(new MotorIO() {}, new CanCoderIO() {}, new CanCoderIO() {});
 
         intake = Intake.createinstance(new MotorIO() {}, new MotorIO() {}, new CanCoderIO() {});
 
@@ -223,6 +224,8 @@ public class RobotContainer {
 
   private void configurePPNamedCommands() {
     NamedCommands.registerCommand("IntakeStart", IntakeCommands.deployAndRun());
+    NamedCommands.registerCommand(
+        "ShooterStart", ShooterCommands.targetLaunchSpeed(() -> RotationsPerSecond.of(30)));
   }
 
   private void configureDefaultCommands() {
@@ -232,11 +235,11 @@ public class RobotContainer {
             drive, () -> -marcus.getLeftY(), () -> -marcus.getLeftX(), () -> -marcus.getRightX()));
 
     HashSet<Subsystem> turretList = new HashSet<Subsystem>();
-    turretList.add(exampe);
+    turretList.add(turret);
 
     // exampe.setDefaultCommand(TurretCommands.targetAngle(Rotations.of(0)));
 
-    exampe.setDefaultCommand(
+    turret.setDefaultCommand(
         Commands.defer(
             () -> TurretCommands.targetPoint(ShootTarget::getTranslationToTarget), turretList));
 

@@ -13,7 +13,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class ShootTarget {
 
-  public static Translation2d goal = Constants.Field.RED_HUB;
+  public static Translation2d goal = Constants.Field.FIELD_CENTER;
 
   public static void updateGoal(Supplier<Translation2d> target, boolean passing) {
     goal =
@@ -26,6 +26,10 @@ public class ShootTarget {
             passing);
 
     Logger.recordOutput("TargetPoint", GeomUtil.toPose2d(goal));
+  }
+
+  public static void updateNonDynamicGoal(Translation2d newGoal) {
+    goal = newGoal;
   }
 
   public static Translation2d getTranslationToTarget() {
