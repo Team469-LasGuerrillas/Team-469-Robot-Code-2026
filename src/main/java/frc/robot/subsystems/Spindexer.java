@@ -15,11 +15,8 @@ public class Spindexer extends SubsystemBase {
 
   private double requestedDutycycle = 0;
 
-  public static Spindexer createinstance(
-      ServoMotorSubsystemWithFollowersConfig leadConfig,
-      MotorIO leadMotorIo,
-      MotorIO followerMotorIo) {
-    instance = new Spindexer(leadConfig, leadMotorIo, followerMotorIo);
+  public static Spindexer createinstance(MotorIO floorMotorIo, MotorIO secondaryMotorIo) {
+    instance = new Spindexer(floorMotorIo, secondaryMotorIo);
     return instance;
   }
 
@@ -27,11 +24,9 @@ public class Spindexer extends SubsystemBase {
     return instance;
   }
 
-  private Spindexer(
-      ServoMotorSubsystemWithFollowersConfig leadConfig, MotorIO lead, MotorIO follower) {
-    this.lead = lead;
-    this.follower = follower;
-    this.follower.follow(leadConfig.talonCANID, leadConfig.followers[0].inverted);
+  private Spindexer(MotorIO floor, MotorIO secondary) {
+    this.lead = floor;
+    this.follower = secondary;
   }
 
   public void setOpenLoopDutyCycle(double dutyCycle) {

@@ -141,9 +141,8 @@ public class RobotContainer {
 
         spindexer =
             Spindexer.createinstance(
-                Constants.SpindexerC.SPINDEXER_MOTOR_WITH_FOLLOWER_CONFIG,
-                Constants.SpindexerC.SPINDEXER_LEAD_MOTOR,
-                Constants.SpindexerC.SPINDEXER_FOLLOWER_MOTOR);
+                Constants.SpindexerC.SPINDEXER_FLOOR_MOTOR,
+                Constants.SpindexerC.SPINDEXER_SECONDARY_MOTOR);
 
         shooter =
             Shooter.createinstance(
@@ -198,9 +197,7 @@ public class RobotContainer {
 
         intake = Intake.createinstance(new MotorIO() {}, new MotorIO() {}, new CanCoderIO() {});
 
-        spindexer =
-            Spindexer.createinstance(
-                new ServoMotorSubsystemWithFollowersConfig(), new MotorIO() {}, new MotorIO() {});
+        spindexer = Spindexer.createinstance(new MotorIO() {}, new MotorIO() {});
 
         shooter =
             Shooter.createinstance(
