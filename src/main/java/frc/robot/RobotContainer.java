@@ -150,7 +150,11 @@ public class RobotContainer {
                 Constants.LauncherC.LAUNCHER_MOTOR,
                 Constants.LauncherC.FOLLOWER_MOTORS);
 
-        feeder = Feeder.createinstance(Constants.FeederC.FEEDER_MOTOR);
+        feeder =
+            Feeder.createinstance(
+                Constants.FeederC.FEEDER_LEAD_CONFIG,
+                Constants.FeederC.FEEDER_LEAD_MOTOR,
+                Constants.FeederC.FEEDER_FOLLOWER_MOTOR);
 
         hood = Hood.createinstance(Constants.HoodC.PIVOT_MOTOR);
 
@@ -203,7 +207,11 @@ public class RobotContainer {
             Shooter.createinstance(
                 new ServoMotorSubsystemWithFollowersConfig() {}, new MotorIO() {}, null);
 
-        feeder = Feeder.createinstance(new MotorIO() {});
+        feeder =
+            Feeder.createinstance(
+                new ServoMotorSubsystemWithFollowersConfig() {},
+                new MotorIO() {},
+                new MotorIO() {});
 
         hood = Hood.createinstance(new MotorIO() {});
 
