@@ -600,7 +600,7 @@ public final class Constants {
       SPINDEXER_MOTOR_SUBSYSTEM_CONFIG.talonCANID = new CANDeviceId(11);
       SPINDEXER_MOTOR_SUBSYSTEM_CONFIG.fxConfig = SPINDEXER_FLOOR_FXCONFIG;
       SPINDEXER_SECONDARY_SUBSYSTEM_CONFIG.talonCANID =
-          new CANDeviceId(67); // TODO: Put in correct can ID
+          new CANDeviceId(21); // TODO: Put in correct can ID
       SPINDEXER_MOTOR_SUBSYSTEM_CONFIG.fxConfig = SPINDEXER_SECONDARY_FXCONFIG;
 
       SPINDEXER_FLOOR_FXCONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -652,7 +652,7 @@ public final class Constants {
       FEEDER_LEAD_CONFIG.followers[0].config = new ServoMotorSubsystemConfig();
       FEEDER_LEAD_CONFIG.followers[0].config.fxConfig = FEEDER_FOLLOWER_FXCONFIG;
       FEEDER_LEAD_CONFIG.followers[0].config.talonCANID =
-          new CANDeviceId(69, "469CanivoreB"); // TODO: Put in the correct can ID
+          new CANDeviceId(22, "469CanivoreB"); // TODO: Put in the correct can ID
       FEEDER_LEAD_CONFIG.followers[0].inverted = false;
     }
 
