@@ -22,29 +22,29 @@ public class SpindexerCommands {
 
   public static Command runPositive() {
     return Commands.startRun(
-        () -> spindexer.setOpenLoopDutyCycle(Constants.SpindexerC.FEEDING_DC),
-        () -> spindexer.setOpenLoopDutyCycle(Constants.SpindexerC.FEEDING_DC),
+        () -> spindexer.setOpenLoopDutyCycleBoth(Constants.SpindexerC.FEEDING_DC),
+        () -> spindexer.setOpenLoopDutyCycleBoth(Constants.SpindexerC.FEEDING_DC),
         spindexer);
   }
 
   public static Command runReverse() {
     return Commands.startRun(
-        () -> spindexer.setOpenLoopDutyCycle(Constants.SpindexerC.REVERSE_DC),
-        () -> spindexer.setOpenLoopDutyCycle(Constants.SpindexerC.REVERSE_DC),
+        () -> spindexer.setOpenLoopDutyCycleBoth(Constants.SpindexerC.REVERSE_DC),
+        () -> spindexer.setOpenLoopDutyCycleBoth(Constants.SpindexerC.REVERSE_DC),
         spindexer);
   }
 
   public static Command idleCommand() {
     return Commands.startRun(
-        () -> spindexer.setOpenLoopDutyCycle(Constants.SpindexerC.IDLE_DC),
-        () -> spindexer.setOpenLoopDutyCycle(Constants.SpindexerC.IDLE_DC),
+        () -> spindexer.setOpenLoopDutyCycleBoth(Constants.SpindexerC.IDLE_DC),
+        () -> spindexer.setOpenLoopDutyCycleBoth(Constants.SpindexerC.IDLE_DC),
         spindexer);
   }
 
   public static Command idleReverseCommand() {
     return Commands.startRun(
-        () -> spindexer.setOpenLoopDutyCycle(Constants.SpindexerC.IDLE_REVERSE_DC),
-        () -> spindexer.setOpenLoopDutyCycle(Constants.SpindexerC.IDLE_REVERSE_DC),
+        () -> spindexer.setOpenLoopDutyCycleBoth(Constants.SpindexerC.IDLE_REVERSE_DC),
+        () -> spindexer.setOpenLoopDutyCycleBoth(Constants.SpindexerC.IDLE_REVERSE_DC),
         spindexer);
   }
 

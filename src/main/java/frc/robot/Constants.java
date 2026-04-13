@@ -46,6 +46,7 @@ import frc.lib.subsystems.configs.CanCoderConfig;
 import frc.lib.subsystems.configs.ServoMotorSubsystemConfig;
 import frc.lib.subsystems.configs.ServoMotorSubsystemWithCancoderConfig;
 import frc.lib.subsystems.configs.ServoMotorSubsystemWithFollowersConfig;
+import frc.lib.subsystems.configs.ServoMotorSubsystemWithFollowersConfig.FollowerConfig;
 import frc.lib.subsystems.implementations.CanCoderIOCanCoder;
 import frc.lib.subsystems.implementations.MotorIOTalonFX;
 import frc.lib.subsystems.implementations.VisionIOLimelight;
@@ -586,21 +587,35 @@ public final class Constants {
     public static final double IDLE_DC = 0.0;
     public static final double IDLE_REVERSE_DC = -0.0;
 
-    private static final ServoMotorSubsystemWithCancoderConfig SERVO_CONFIG =
-        new ServoMotorSubsystemWithCancoderConfig();
-    private static final TalonFXConfiguration SPINDEXER_MOTOR_CONFIG = new TalonFXConfiguration();
+    public static final ServoMotorSubsystemConfig SPINDEXER_MOTOR_SUBSYSTEM_CONFIG =
+        new ServoMotorSubsystemConfig();
+    public static final ServoMotorSubsystemConfig SPINDEXER_SECONDARY_SUBSYSTEM_CONFIG =
+        new ServoMotorSubsystemConfig();
+    private static final TalonFXConfiguration SPINDEXER_FLOOR_FXCONFIG = new TalonFXConfiguration();
+    private static final TalonFXConfiguration SPINDEXER_SECONDARY_FXCONFIG =
+        new TalonFXConfiguration();
 
     static {
-      SERVO_CONFIG.talonCANID = new CANDeviceId(11);
-      SERVO_CONFIG.fxConfig = SPINDEXER_MOTOR_CONFIG;
+      SPINDEXER_MOTOR_SUBSYSTEM_CONFIG.talonCANID = new CANDeviceId(11);
+      SPINDEXER_MOTOR_SUBSYSTEM_CONFIG.fxConfig = SPINDEXER_FLOOR_FXCONFIG;
+      SPINDEXER_SECONDARY_SUBSYSTEM_CONFIG.talonCANID =
+          new CANDeviceId(21); // TODO: Put in correct can ID
+      SPINDEXER_MOTOR_SUBSYSTEM_CONFIG.fxConfig = SPINDEXER_SECONDARY_FXCONFIG;
 
-      SPINDEXER_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+      SPINDEXER_FLOOR_FXCONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-      SPINDEXER_MOTOR_CONFIG.CurrentLimits.StatorCurrentLimit = 100;
-      SPINDEXER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
+      SPINDEXER_FLOOR_FXCONFIG.CurrentLimits.StatorCurrentLimit = 100;
+      SPINDEXER_FLOOR_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 60;
+
+      SPINDEXER_SECONDARY_FXCONFIG.CurrentLimits.StatorCurrentLimit =
+          100; // TODO: Verify that these current limits make sense
+      SPINDEXER_SECONDARY_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 60;
     }
 
-    public static final MotorIO SPINDEXER_MOTOR = new MotorIOTalonFX(SERVO_CONFIG);
+    public static final MotorIO SPINDEXER_FLOOR_MOTOR =
+        new MotorIOTalonFX(SPINDEXER_MOTOR_SUBSYSTEM_CONFIG);
+    public static final MotorIO SPINDEXER_SECONDARY_MOTOR =
+        new MotorIOTalonFX(SPINDEXER_SECONDARY_SUBSYSTEM_CONFIG);
   }
 
   public static class FeederC {
@@ -609,25 +624,40 @@ public final class Constants {
     public static final double IDLE_REVERSE_DC = -0.0;
     public static final double IDLE_DC = 0;
 
-    private static final ServoMotorSubsystemWithCancoderConfig SERVO_CONFIG =
-        new ServoMotorSubsystemWithCancoderConfig();
-    private static final TalonFXConfiguration FEEDER_MOTOR_CONFIG = new TalonFXConfiguration();
+    public static final ServoMotorSubsystemWithFollowersConfig FEEDER_LEAD_CONFIG =
+        new ServoMotorSubsystemWithFollowersConfig();
+    private static final TalonFXConfiguration FEEDER_LEAD_FXCONFIG = new TalonFXConfiguration();
+    private static final TalonFXConfiguration FEEDER_FOLLOWER_FXCONFIG = new TalonFXConfiguration();
 
     static {
-      SERVO_CONFIG.talonCANID = new CANDeviceId(12, "469CanivoreB");
-      SERVO_CONFIG.fxConfig = FEEDER_MOTOR_CONFIG;
+      FEEDER_LEAD_CONFIG.talonCANID = new CANDeviceId(12, "469CanivoreB");
+      FEEDER_LEAD_CONFIG.fxConfig = FEEDER_LEAD_FXCONFIG;
 
-      FEEDER_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-      FEEDER_MOTOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+      FEEDER_LEAD_FXCONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+      FEEDER_LEAD_FXCONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-      FEEDER_MOTOR_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
-      FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 50;
+      FEEDER_LEAD_FXCONFIG.CurrentLimits.StatorCurrentLimit = 120;
+      FEEDER_LEAD_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 50;
 
       // FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 60;
       // FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerTime = 1;
+
+      FEEDER_FOLLOWER_FXCONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+      FEEDER_FOLLOWER_FXCONFIG.CurrentLimits.StatorCurrentLimit =
+          120; // TODO: Verify these make sense
+      FEEDER_FOLLOWER_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 50;
+
+      FEEDER_LEAD_CONFIG.followers = new FollowerConfig[1];
+      FEEDER_LEAD_CONFIG.followers[0].config = new ServoMotorSubsystemConfig();
+      FEEDER_LEAD_CONFIG.followers[0].config.fxConfig = FEEDER_FOLLOWER_FXCONFIG;
+      FEEDER_LEAD_CONFIG.followers[0].config.talonCANID =
+          new CANDeviceId(22, "469CanivoreB"); // TODO: Put in the correct can ID
+      FEEDER_LEAD_CONFIG.followers[0].inverted = false;
     }
 
-    public static final MotorIO FEEDER_MOTOR = new MotorIOTalonFX(SERVO_CONFIG);
+    public static final MotorIO FEEDER_LEAD_MOTOR = new MotorIOTalonFX(FEEDER_LEAD_CONFIG);
+    public static final MotorIO FEEDER_FOLLOWER_MOTOR =
+        new MotorIOTalonFX(FEEDER_LEAD_CONFIG.followers[0].config);
   }
 
   public static class HoodC {

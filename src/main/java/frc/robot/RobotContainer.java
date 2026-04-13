@@ -139,7 +139,10 @@ public class RobotContainer {
                 Constants.IntakeC.PIVOT_MOTOR,
                 Constants.IntakeC.coder);
 
-        spindexer = Spindexer.createinstance(Constants.SpindexerC.SPINDEXER_MOTOR);
+        spindexer =
+            Spindexer.createinstance(
+                Constants.SpindexerC.SPINDEXER_FLOOR_MOTOR,
+                Constants.SpindexerC.SPINDEXER_SECONDARY_MOTOR);
 
         shooter =
             Shooter.createinstance(
@@ -147,7 +150,11 @@ public class RobotContainer {
                 Constants.LauncherC.LAUNCHER_MOTOR,
                 Constants.LauncherC.FOLLOWER_MOTORS);
 
-        feeder = Feeder.createinstance(Constants.FeederC.FEEDER_MOTOR);
+        feeder =
+            Feeder.createinstance(
+                Constants.FeederC.FEEDER_LEAD_CONFIG,
+                Constants.FeederC.FEEDER_LEAD_MOTOR,
+                Constants.FeederC.FEEDER_FOLLOWER_MOTOR);
 
         hood = Hood.createinstance(Constants.HoodC.PIVOT_MOTOR);
 
@@ -194,13 +201,17 @@ public class RobotContainer {
 
         intake = Intake.createinstance(new MotorIO() {}, new MotorIO() {}, new CanCoderIO() {});
 
-        spindexer = Spindexer.createinstance(new MotorIO() {});
+        spindexer = Spindexer.createinstance(new MotorIO() {}, new MotorIO() {});
 
         shooter =
             Shooter.createinstance(
                 new ServoMotorSubsystemWithFollowersConfig() {}, new MotorIO() {}, null);
 
-        feeder = Feeder.createinstance(new MotorIO() {});
+        feeder =
+            Feeder.createinstance(
+                new ServoMotorSubsystemWithFollowersConfig() {},
+                new MotorIO() {},
+                new MotorIO() {});
 
         hood = Hood.createinstance(new MotorIO() {});
 
