@@ -165,14 +165,6 @@ public final class Constants {
         new ArrayList<UnaryOperator<FiducialModifications>>();
 
     static {
-      TURRET_REJECTIONS.add(FiducialFilters.FiducialRejections::badTurretAngularVelocity);
-
-      TURRET_MODIFICATIONS.add(
-          FiducialFilters.FiducialModifications.o_withDistrustMt2WhileTurretSpinToFast());
-      TURRET_MODIFICATIONS.add(FiducialFilters.FiducialModifications.o_withDistrustYaw());
-      TURRET_MODIFICATIONS.add(FiducialFilters.FiducialModifications.o_withMultiplyAllResults());
-      // TURRET_MODIFICATIONS.add(FiducialFilters.FiducialModifications.o_withDistrustMt1());
-
       LL3G_MODIFICATIONS.add(
           FiducialFilters.FiducialModifications.o_withDistrustMt2WhileDriveSpinToFast());
     }
@@ -180,59 +172,66 @@ public final class Constants {
     public static final Pose3d TURD_CENTER =
         new Pose3d(0.031613, 0.183773, 0.215900, new Rotation3d(0, 0, Units.degreesToRadians(0)));
 
+    // LL4
+    public static final VisionIOLimelight LIMELIGHT_LEFT =
+        VisionIOLimelight.getInstance(
+            "limelight-left",
+            new Pose3d(
+                -0.224,
+                0.361356,
+                0.414413 - Units.inchesToMeters(0.125),
+                new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(90))));
+
+    // LL3G
     public static final VisionIOLimelight LIMELIGHT_RIGHT =
         VisionIOLimelight.getInstance(
             "limelight-right",
             new Pose3d(
                 -0.139700,
-                -0.352969,
-                0.313057 - Units.inchesToMeters(0.125),
+                -0.350888,
+                0.313784 - Units.inchesToMeters(0.125),
                 new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(-90))));
 
+    // LL4, rear left facing cam doesnt exist yet
     public static final VisionIOLimelight LIMELIGHT_B =
         VisionIOLimelight.getInstance(
-            "limelight-turd",
+            "limelight-c",
             new Pose3d(
-                -0.250329,
-                0.144134,
-                0.427293 - Units.inchesToMeters(0.125),
-                new Rotation3d(0, Units.degreesToRadians(18), Units.degreesToRadians(180 + 25))));
+                -0.263023,
+                -0.312937,
+                0.536056 - Units.inchesToMeters(0.125),
+                new Rotation3d(0, Units.degreesToRadians(20), Units.degreesToRadians(38))));
 
+
+    // LL3G, right mounted starting cam
     public static final VisionIOLimelight LIMELIGHT_C =
         VisionIOLimelight.getInstance(
             "limelight-c",
             new Pose3d(
-                -0.268509,
-                0.134876,
-                0.274292 - Units.inchesToMeters(0.125),
-                new Rotation3d(0, Units.degreesToRadians(20), Units.degreesToRadians(180 - 25))));
+                -0.263023,
+                -0.312937,
+                0.536056 - Units.inchesToMeters(0.125),
+                new Rotation3d(0, Units.degreesToRadians(20), Units.degreesToRadians(38))));
 
-    public static final VisionIOLimelight LIMELIGHT_LEFT =
+    // LL4, left mounted starting cam
+    public static final VisionIOLimelight LIMELIGHT_D =
         VisionIOLimelight.getInstance(
-            "limelight-left",
+            "limelight-d",
             new Pose3d(
-                -0.228600,
-                0.359812,
-                0.432361 - Units.inchesToMeters(0.125),
-                new Rotation3d(0, Units.degreesToRadians(15 + 2.5), Units.degreesToRadians(90))));
+                -0.251966,
+                0.290833,
+                0.532736 - Units.inchesToMeters(0.125),
+                new Rotation3d(0, Units.degreesToRadians(18), Units.degreesToRadians(-30))));
 
-    public static final VisionIOLimelight LIMELIGHT_CLIMB =
+    // LL4, right rear facing cam
+    public static final VisionIOLimelight LIMELIGHT_TURD =
         VisionIOLimelight.getInstance(
-            "limelight-climb",
+            "limelight-turd",
             new Pose3d(
-                -0.215665,
-                0.289118 - Units.inchesToMeters(0.25),
-                0.522026 - Units.inchesToMeters(0.125),
-                new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(-15))));
-
-    public static final VisionIOLimelight TURD_LIMELIGHT =
-        VisionIOLimelight.getInstance(
-            "limelight-turdeeeee",
-            new Pose3d(
-                0.081752,
-                -0.201245 - 0.040055 - 0.040055 + 0.165100,
-                0.501594 - Units.inchesToMeters(0.125),
-                new Rotation3d(0, Units.degreesToRadians(13.396331), Units.rotationsToRadians(0))));
+                -0.284696,
+                0.286244,
+                0.449211 - Units.inchesToMeters(0.125),
+                new Rotation3d(0, Units.degreesToRadians(18), Units.degreesToRadians(-30))));
   }
 
   public static class LauncherC {

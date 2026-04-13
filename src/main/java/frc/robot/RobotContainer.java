@@ -60,11 +60,11 @@ import java.util.function.UnaryOperator;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final FiducialVision limelightRight;
   private final FiducialVision limelightLeft;
-  private final FiducialVision limelightClimb;
+  private final FiducialVision limelightRight;
   private final FiducialVision limelightB;
   private final FiducialVision limelightC;
+  private final FiducialVision limelightD;
   public final FiducialVision limelightTurd;
   public final Turret turret;
   public final Intake intake;
@@ -117,17 +117,17 @@ public class RobotContainer {
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 Constants.VisionC.LL3G_MODIFICATIONS);
 
-        limelightClimb =
+        limelightD =
             new FiducialVision(
-                Constants.VisionC.LIMELIGHT_CLIMB,
+                Constants.VisionC.LIMELIGHT_D,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 new ArrayList<UnaryOperator<FiducialModifications>>());
 
         limelightTurd =
             new FiducialVision(
-                Constants.VisionC.TURD_LIMELIGHT,
+                Constants.VisionC.LIMELIGHT_TURD,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
-                Constants.VisionC.TURRET_MODIFICATIONS);
+                new ArrayList<UnaryOperator<FiducialModifications>>());
 
         turret =
             Turret.createInstance(
@@ -186,7 +186,7 @@ public class RobotContainer {
 
         limelightC = new FiducialVision(new VisionIO() {}, null, null);
 
-        limelightClimb = new FiducialVision(new VisionIO() {}, null, null);
+        limelightD = new FiducialVision(new VisionIO() {}, null, null);
 
         limelightTurd = new FiducialVision(new VisionIO() {}, null, null);
 
