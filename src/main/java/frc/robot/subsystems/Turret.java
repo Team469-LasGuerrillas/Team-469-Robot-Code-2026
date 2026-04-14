@@ -100,8 +100,8 @@ public class Turret extends SubsystemBase {
             .withAbsoluteEncoder1Inverted(false)
             .withAbsoluteEncoder2Inverted(false)
             .withMatchTolerance(Degrees.of(6.7))
-            .withMechanismRange(Rotations.of(-0.99), Rotations.of(0.99))
-            .withAbsoluteEncoderOffsets(Radians.of(-1.059981), Radians.of(1.986505));
+            .withMechanismRange(Rotations.of(-0.5), Rotations.of(1.4))
+            .withAbsoluteEncoderOffsets(Radians.of(0.510816), Radians.of(2.541806));
     easyCRT = new EasyCRT(easyCRTConfig);
   }
 
@@ -110,9 +110,9 @@ public class Turret extends SubsystemBase {
     turd.readInputs(talonInputs);
     Logger.processInputs(getName() + " Motor", talonInputs);
     canCoderA.readInputs(ccAInputs);
-    // Logger.processInputs(getName() + " CanCoder A", ccAInputs);
+    Logger.processInputs(getName() + " CanCoder A", ccAInputs);
     canCoderB.readInputs(ccBInputs);
-    // Logger.processInputs(getName() + " CanCoder B", ccBInputs);
+    Logger.processInputs(getName() + " CanCoder B", ccBInputs);
 
     turretTargetSpeedEstimator.updateWithTime(
         Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);

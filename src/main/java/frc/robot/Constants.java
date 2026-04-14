@@ -203,7 +203,6 @@ public final class Constants {
                 0.536056 - Units.inchesToMeters(0.125),
                 new Rotation3d(0, Units.degreesToRadians(20), Units.degreesToRadians(38))));
 
-
     // LL3G, right mounted starting cam
     public static final VisionIOLimelight LIMELIGHT_C =
         VisionIOLimelight.getInstance(
@@ -236,7 +235,7 @@ public final class Constants {
   }
 
   public static class LauncherC {
-    public static final double RAMP_DC = 0.95;
+    public static final double RAMP_DC = 1.0;
     public static final double UNJAM_DC = -0.5;
     public static final double IDLE_DC = 0.0;
 
@@ -339,7 +338,7 @@ public final class Constants {
       LAUNCHER_TALON_CONFIG.Slot0.kD = 0;
       LAUNCHER_TALON_CONFIG.Slot0.kV = 0.267;
 
-      LAUNCHER_TALON_CONFIG.Slot1.kP = 1;
+      LAUNCHER_TALON_CONFIG.Slot1.kP = 0;
       LAUNCHER_TALON_CONFIG.Slot1.kI = 0;
       LAUNCHER_TALON_CONFIG.Slot1.kD = 0;
       // LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakForwardTorqueCurrent = 120;
@@ -348,16 +347,16 @@ public final class Constants {
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakReverseDutyCycle = 0;
 
       LAUNCHER_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
-      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 30;
+      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 44;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
       FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
-      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 30;
+      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 44;
       FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
-      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 30;
+      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 44;
       FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
-      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 30;
+      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 44;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
@@ -373,8 +372,8 @@ public final class Constants {
       FOLLOWER_2_CONFIG.inverted = true;
       FOLLOWER_3_CONFIG.inverted = true;
 
-      FOLLOWER_1_CONFIG.config.talonCANID = new CANDeviceId(13, "469CanivoreB");
-      FOLLOWER_2_CONFIG.config.talonCANID = new CANDeviceId(15, "469CanivoreB");
+      FOLLOWER_1_CONFIG.config.talonCANID = new CANDeviceId(15, "469CanivoreB");
+      FOLLOWER_2_CONFIG.config.talonCANID = new CANDeviceId(13, "469CanivoreB");
       FOLLOWER_3_CONFIG.config.talonCANID = new CANDeviceId(16, "469CanivoreB");
 
       LAUNCHER_CONFIG.followers =
@@ -397,8 +396,8 @@ public final class Constants {
 
     public static final Angle TURRET_TOLERANCE = Degrees.of(9);
 
-    public static final Angle TURRERT_MAX = Rotations.of(0.35);
-    public static final Angle TURRERT_MIN = Rotations.of(-0.88);
+    public static final Angle TURRERT_MAX = Rotations.of(1.08);
+    public static final Angle TURRERT_MIN = Rotations.of(-0.18);
 
     public static final double WRAPAROUND_PREDICTION_FACOTR = 0.2;
 
@@ -407,7 +406,7 @@ public final class Constants {
             -0.107950,
             -0.158750,
             0.414338,
-            new Rotation3d(0, 0, Units.rotationsToRadians(0.25 - 0.0262)));
+            new Rotation3d(0, 0, Units.rotationsToRadians(-0.25 - Units.degreesToRotations(0.67))));
 
     public static final Pose3d TURD_CENTER_WITHOUT_ROTATION =
         new Pose3d(-0.107950, -0.158750, 0.414338, new Rotation3d());
@@ -532,7 +531,7 @@ public final class Constants {
     static {
       INTAKE_PIVOT_CANCODER_CONFIG.CANID = new CANDeviceId(5);
       INTAKE_PIVOT_CANCODER_CONFIG.config = new CANcoderConfiguration();
-      INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = 1.364014;
+      INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = -0.128;
       INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.SensorDirection =
           SensorDirectionValue.Clockwise_Positive;
       INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
@@ -582,7 +581,7 @@ public final class Constants {
   }
 
   public static class SpindexerC {
-    public static final double FEEDING_DC = 0.85;
+    public static final double FEEDING_DC = 1.0;
     public static final double REVERSE_DC = -1.0;
     public static final double IDLE_DC = 0.0;
     public static final double IDLE_REVERSE_DC = -0.0;
@@ -600,13 +599,14 @@ public final class Constants {
       SPINDEXER_MOTOR_SUBSYSTEM_CONFIG.fxConfig = SPINDEXER_FLOOR_FXCONFIG;
       SPINDEXER_SECONDARY_SUBSYSTEM_CONFIG.talonCANID =
           new CANDeviceId(21); // TODO: Put in correct can ID
-      SPINDEXER_MOTOR_SUBSYSTEM_CONFIG.fxConfig = SPINDEXER_SECONDARY_FXCONFIG;
+      SPINDEXER_SECONDARY_SUBSYSTEM_CONFIG.fxConfig = SPINDEXER_SECONDARY_FXCONFIG;
 
-      SPINDEXER_FLOOR_FXCONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+      SPINDEXER_FLOOR_FXCONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
       SPINDEXER_FLOOR_FXCONFIG.CurrentLimits.StatorCurrentLimit = 100;
       SPINDEXER_FLOOR_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 60;
 
+      SPINDEXER_SECONDARY_FXCONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
       SPINDEXER_SECONDARY_FXCONFIG.CurrentLimits.StatorCurrentLimit =
           100; // TODO: Verify that these current limits make sense
       SPINDEXER_SECONDARY_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 60;
@@ -633,7 +633,7 @@ public final class Constants {
       FEEDER_LEAD_CONFIG.talonCANID = new CANDeviceId(12, "469CanivoreB");
       FEEDER_LEAD_CONFIG.fxConfig = FEEDER_LEAD_FXCONFIG;
 
-      FEEDER_LEAD_FXCONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+      FEEDER_LEAD_FXCONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
       FEEDER_LEAD_FXCONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
       FEEDER_LEAD_FXCONFIG.CurrentLimits.StatorCurrentLimit = 120;
@@ -648,6 +648,7 @@ public final class Constants {
       FEEDER_FOLLOWER_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 50;
 
       FEEDER_LEAD_CONFIG.followers = new FollowerConfig[1];
+      FEEDER_LEAD_CONFIG.followers[0] = new FollowerConfig();
       FEEDER_LEAD_CONFIG.followers[0].config = new ServoMotorSubsystemConfig();
       FEEDER_LEAD_CONFIG.followers[0].config.fxConfig = FEEDER_FOLLOWER_FXCONFIG;
       FEEDER_LEAD_CONFIG.followers[0].config.talonCANID =
@@ -664,24 +665,24 @@ public final class Constants {
     public static final Angle HOOD_TOLERANCE = Degrees.of(3);
 
     public static final Angle HOOD_STOW = Radians.of(0);
-    public static final Angle HOOD_MAX = Radians.of(0.436);
+    public static final Angle HOOD_MAX = Radians.of(0.49);
 
     private static final ServoMotorSubsystemConfig HOOD_CONFIG = new ServoMotorSubsystemConfig();
     private static final TalonFXConfiguration HOOD_TALON_CONFIG = new TalonFXConfiguration();
 
     static {
-      HOOD_TALON_CONFIG.Feedback.SensorToMechanismRatio = 111.4;
+      HOOD_TALON_CONFIG.Feedback.SensorToMechanismRatio = 57.04; // 111.4;
       HOOD_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
       HOOD_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       HOOD_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
       HOOD_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = HOOD_MAX.in(Rotations);
-      HOOD_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.05;
+      HOOD_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
       HOOD_TALON_CONFIG.ClosedLoopGeneral.ContinuousWrap = false;
-      HOOD_TALON_CONFIG.Slot0.kP = 3700;
+      HOOD_TALON_CONFIG.Slot0.kP = 6000;
       HOOD_TALON_CONFIG.Slot0.kI = 0;
-      HOOD_TALON_CONFIG.Slot0.kD = 80;
+      HOOD_TALON_CONFIG.Slot0.kD = 130;
       HOOD_TALON_CONFIG.Slot0.kS = 3;
       HOOD_TALON_CONFIG.Slot0.kV = 0;
       HOOD_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;

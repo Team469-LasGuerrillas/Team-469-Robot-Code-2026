@@ -12,6 +12,7 @@ import frc.lib.utilities.math.ToleranceUtil;
 import frc.robot.Constants;
 import frc.robot.RobotState;
 import frc.robot.RobotState.FlywheelState;
+import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
 
@@ -52,21 +53,11 @@ public class Shooter extends SubsystemBase {
 
   public void setOpenLoopDutyCycle(double dutyCycle) {
     requestedDutycycle = dutyCycle;
-    if (Math.abs(dutyCycle) > 0.2) {
-      shooterPowered = true;
-    } else {
-      shooterPowered = false;
-    }
     leadFlywheel.setOpenLoopDutyCycle(requestedDutycycle);
   }
 
   public void setWatermarkTorqueCurrentFOC(AngularVelocity velocity) {
     requestedAngularVelocity = velocity;
-    if (Math.abs(velocity.in(RotationsPerSecond)) > 2) {
-      shooterPowered = true;
-    } else {
-      shooterPowered = false;
-    }
     leadFlywheel.setVelocitySetpiont(velocity);
   }
 
@@ -77,7 +68,9 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     leadFlywheel.readInputs(leadInputs);
-    // Logger.processInputs(getName() + "flywheelLead", leadInputs);
+    Logger.processInputs(getName() + "flywheelLead", leadInputs);
+
+    Logger.recordOutput("ShooterRequest", requestedAngularVelocity);
 
     boolean onTargetHub =
         ToleranceUtil.epsilonEquals(

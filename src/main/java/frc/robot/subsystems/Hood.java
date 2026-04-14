@@ -54,7 +54,7 @@ public class Hood extends SubsystemBase {
   @Override
   public void periodic() {
     hoodMotor.readInputs(pivotInputs);
-    // Logger.processInputs(getName() + " Motor", pivotInputs);
+    Logger.processInputs(getName() + " Motor", pivotInputs);
 
     Angle updatedRequestedAngle = requestedAngle;
 
@@ -89,7 +89,7 @@ public class Hood extends SubsystemBase {
 
     if (!zeroed
         && Math.abs(pivotInputs.motorVelocity.in(DegreesPerSecond)) < 2
-        && pivotInputs.statorCurrent.in(Amps) > 8) {
+        && pivotInputs.statorCurrent.in(Amps) > 14) {
       hoodMotor.setZero();
       zeroed = true;
       hoodMotor.setEnableSoftLimits(true, true);

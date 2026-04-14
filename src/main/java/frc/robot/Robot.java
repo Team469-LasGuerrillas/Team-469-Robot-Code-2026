@@ -39,7 +39,7 @@ public class Robot extends LoggedRobot {
 
   private boolean firstLoop = true;
 
-  private boolean loggingMode = false;
+  private boolean loggingMode = true;
 
   private Timer timer = new Timer();
 
