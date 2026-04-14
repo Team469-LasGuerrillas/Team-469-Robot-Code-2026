@@ -66,7 +66,7 @@ public class Intake extends SubsystemBase {
         calcFF(requestedAngle));
 
     if (coderInputs.absolutePosition.in(Rotations)
-        < Constants.IntakeC.PIVOT_LOWERED.in(Rotations) - 0.03) {
+        < Constants.IntakeC.PIVOT_LOWERED.in(Rotations) - 0.02) {
       rollerMotor.setOpenLoopDutyCycle(0.0);
     } else {
       rollerMotor.setOpenLoopDutyCycle(requestedDutycycle);

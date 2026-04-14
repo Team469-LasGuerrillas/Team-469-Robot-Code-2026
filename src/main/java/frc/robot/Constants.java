@@ -194,14 +194,14 @@ public final class Constants {
                 new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(-90))));
 
     // LL4, rear left facing cam doesnt exist yet
-    public static final VisionIOLimelight LIMELIGHT_B =
+    public static final VisionIOLimelight LIMELIGHT_D =
         VisionIOLimelight.getInstance(
-            "limelight-c",
+            "limelight-d",
             new Pose3d(
-                -0.263023,
-                -0.312937,
-                0.536056 - Units.inchesToMeters(0.125),
-                new Rotation3d(0, Units.degreesToRadians(20), Units.degreesToRadians(38))));
+                -0.281789,
+                0.111784,
+                0.423056 - Units.inchesToMeters(0.125),
+                new Rotation3d(0, Units.degreesToRadians(20), Units.degreesToRadians(180 - 30))));
 
     // LL3G, right mounted starting cam
     public static final VisionIOLimelight LIMELIGHT_C =
@@ -214,9 +214,9 @@ public final class Constants {
                 new Rotation3d(0, Units.degreesToRadians(20), Units.degreesToRadians(38))));
 
     // LL4, left mounted starting cam
-    public static final VisionIOLimelight LIMELIGHT_D =
+    public static final VisionIOLimelight LIMELIGHT_B =
         VisionIOLimelight.getInstance(
-            "limelight-d",
+            "limelight-b",
             new Pose3d(
                 -0.251966,
                 0.290833,
@@ -231,7 +231,7 @@ public final class Constants {
                 -0.284696,
                 0.286244,
                 0.449211 - Units.inchesToMeters(0.125),
-                new Rotation3d(0, Units.degreesToRadians(18), Units.degreesToRadians(-30))));
+                new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(-180 + 30))));
   }
 
   public static class LauncherC {
@@ -268,10 +268,10 @@ public final class Constants {
     static {
       phaseDelay = 67;
 
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(0.1, 35.0);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(3.5, 48.0);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(4.5, 52.7);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.3, 62.0);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(0.1, 30.0);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(3.5, 36.0);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(4.5, 41.7);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.3, 48.0);
 
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(0.5, 32.0);
       FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(2.0, 38.0);
@@ -286,7 +286,7 @@ public final class Constants {
       TIME_OF_FLIGHT_MAP_SHOOTING.put(2.5, 1.14);
       TIME_OF_FLIGHT_MAP_SHOOTING.put(3.5, 1.27);
       TIME_OF_FLIGHT_MAP_SHOOTING.put(5.0, 1.35);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(6.0, 1.45);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(6.0, 1.39);
 
       TIME_OF_FLIGHT_MAP_PASSING.put(1.0, 0.8);
       TIME_OF_FLIGHT_MAP_PASSING.put(4.0, 1.1);
@@ -295,10 +295,10 @@ public final class Constants {
 
       SHOOTER_HOOD_MAP_SHOOTING.put(0.2, 0.0);
       SHOOTER_HOOD_MAP_SHOOTING.put(0.8, 0.1);
-      SHOOTER_HOOD_MAP_SHOOTING.put(1.7, 0.5);
-      SHOOTER_HOOD_MAP_SHOOTING.put(2.2, 3.0);
-      SHOOTER_HOOD_MAP_SHOOTING.put(3.75, 8.0);
-      SHOOTER_HOOD_MAP_SHOOTING.put(5.0, 13.0);
+      SHOOTER_HOOD_MAP_SHOOTING.put(1.7, 3.0);
+      SHOOTER_HOOD_MAP_SHOOTING.put(2.2, 7.0);
+      SHOOTER_HOOD_MAP_SHOOTING.put(3.75, 9.0);
+      SHOOTER_HOOD_MAP_SHOOTING.put(5.0, 11.0);
 
       SHOOTER_HOOD_MAP_PASSING.put(0.5, 0.0);
       SHOOTER_HOOD_MAP_PASSING.put(2.0, 10.0);
@@ -513,8 +513,8 @@ public final class Constants {
     public static final double UNJAM_DC = -0.3;
     public static final double IDLE_DC = 0;
     // public static final Angle PIVOT_RAISED = Radians.of(0.33);
-    public static final Angle PIVOT_LOWERED = Degrees.of(128);
-    public static final Angle PIVOT_RAISED = Degrees.of(9);
+    public static final Angle PIVOT_LOWERED = Degrees.of(130);
+    public static final Angle PIVOT_RAISED = Degrees.of(20);
     public static final Angle PIVOT_AGITATE = Degrees.of(70);
 
     private static final ServoMotorSubsystemWithCancoderConfig DROP_CONFIG =
@@ -604,12 +604,12 @@ public final class Constants {
       SPINDEXER_FLOOR_FXCONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
       SPINDEXER_FLOOR_FXCONFIG.CurrentLimits.StatorCurrentLimit = 100;
-      SPINDEXER_FLOOR_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 60;
+      SPINDEXER_FLOOR_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 20;
 
       SPINDEXER_SECONDARY_FXCONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
       SPINDEXER_SECONDARY_FXCONFIG.CurrentLimits.StatorCurrentLimit =
           100; // TODO: Verify that these current limits make sense
-      SPINDEXER_SECONDARY_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 60;
+      SPINDEXER_SECONDARY_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 20;
     }
 
     public static final MotorIO SPINDEXER_FLOOR_MOTOR =
@@ -636,16 +636,16 @@ public final class Constants {
       FEEDER_LEAD_FXCONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
       FEEDER_LEAD_FXCONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-      FEEDER_LEAD_FXCONFIG.CurrentLimits.StatorCurrentLimit = 120;
-      FEEDER_LEAD_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 50;
+      FEEDER_LEAD_FXCONFIG.CurrentLimits.StatorCurrentLimit = 140;
+      FEEDER_LEAD_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 70;
 
       // FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 60;
       // FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerTime = 1;
 
       FEEDER_FOLLOWER_FXCONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
       FEEDER_FOLLOWER_FXCONFIG.CurrentLimits.StatorCurrentLimit =
-          120; // TODO: Verify these make sense
-      FEEDER_FOLLOWER_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 50;
+          140; // TODO: Verify these make sense
+      FEEDER_FOLLOWER_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 70;
 
       FEEDER_LEAD_CONFIG.followers = new FollowerConfig[1];
       FEEDER_LEAD_CONFIG.followers[0] = new FollowerConfig();

@@ -39,7 +39,7 @@ public class Robot extends LoggedRobot {
 
   private boolean firstLoop = true;
 
-  private boolean loggingMode = true;
+  private boolean loggingMode = false;
 
   private Timer timer = new Timer();
 
@@ -91,7 +91,7 @@ public class Robot extends LoggedRobot {
 
     SignalLogger.enableAutoLogging(false);
 
-    RobotController.setBrownoutVoltage(6.3);
+    RobotController.setBrownoutVoltage(6.5);
 
     CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
 

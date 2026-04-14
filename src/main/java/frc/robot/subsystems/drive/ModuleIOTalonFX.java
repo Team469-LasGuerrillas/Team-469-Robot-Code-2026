@@ -36,6 +36,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Shooter;
 import java.util.Queue;
 
@@ -248,7 +249,7 @@ public class ModuleIOTalonFX implements ModuleIO {
     turnPositionQueue.clear();
 
     double updatedCurrentLimit;
-    if (Shooter.getInstance().getShooterPowered()) {
+    if (Shooter.getInstance().getShooterPowered() || Feeder.getInstance().isRunning()) {
       updatedCurrentLimit = 40;
     } else {
       updatedCurrentLimit = 80;

@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Amps;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.subsystems.configs.ServoMotorSubsystemWithFollowersConfig;
 import frc.lib.subsystems.interfaces.MotorIO;
@@ -35,6 +37,10 @@ public class Feeder extends SubsystemBase {
   public void setOpenLoopDutyCycle(double dutyCycle) {
     requestedDutycycle = dutyCycle;
     feeder.setOpenLoopDutyCycle(requestedDutycycle);
+  }
+
+  public boolean isRunning() {
+    return Math.abs(talonInputs.supplyCurrent.in(Amps)) > 5;
   }
 
   @Override
