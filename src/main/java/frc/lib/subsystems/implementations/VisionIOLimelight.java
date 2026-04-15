@@ -52,6 +52,9 @@ public class VisionIOLimelight implements VisionIO {
   private double lastTimestampMt1 = 0;
   private double lastTimestampMt2 = 0;
 
+  private double lastPoseXMt1 = 0;
+  private double lastPoseXMt2 = 0;
+
   private VisionIOLimelight(String limelightName, Pose3d cameraPose) {
     this.limelightName = limelightName;
 
@@ -196,32 +199,40 @@ public class VisionIOLimelight implements VisionIO {
     LimelightHelpers.PoseEstimate mt2Estimate =
         LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
 
-    boolean isUpdatedMt1 = mt1Estimate.latency != lastTimestampMt1;
-    boolean isUpdatedMt2 = mt2Estimate.latency != lastTimestampMt2;
+    Pose3d mt1Pose = LimelightHelpers.getBotPose3d_wpiBlue(limelightName);
+    Pose3d mt2Pose = new Pose3d(mt2Estimate.pose);
+
+    boolean isUpdatedMt1 =
+        (mt1Estimate.timestampSeconds != lastTimestampMt1) && (mt1Pose.getX() != lastPoseXMt1);
+    boolean isUpdatedMt2 =
+        (mt2Estimate.timestampSeconds != lastTimestampMt2) && (mt2Pose.getX() != lastPoseXMt2);
+
+    lastPoseXMt1 = mt1Pose.getX();
+    lastPoseXMt2 = mt2Pose.getX();
 
     PoseObservation[] poses = {
       new PoseObservation(
-          Clock.time() - Units.millisecondsToSeconds(mt1Estimate.latency),
+          mt1Estimate.timestampSeconds,
           rawFiducials[0].ambiguity,
           mt1Estimate.avgTagArea,
           mt1Estimate.tagCount,
-          LimelightHelpers.getBotPose3d_wpiBlue(limelightName),
+          mt1Pose,
           stddevsMt1,
           PoseObservationType.MT1,
           isUpdatedMt1),
       new PoseObservation(
-          Clock.time() - Units.millisecondsToSeconds(mt2Estimate.latency),
+          mt2Estimate.timestampSeconds,
           rawFiducials[0].ambiguity,
           mt2Estimate.avgTagArea,
           mt2Estimate.tagCount,
-          new Pose3d(mt2Estimate.pose),
+          mt2Pose,
           stddevsMt2,
           PoseObservationType.MT2,
           isUpdatedMt2)
     };
 
-    lastTimestampMt1 = mt1Estimate.latency;
-    lastTimestampMt2 = mt2Estimate.latency;
+    lastTimestampMt1 = mt1Estimate.timestampSeconds;
+    lastTimestampMt2 = mt2Estimate.timestampSeconds;
 
     return poses;
   }

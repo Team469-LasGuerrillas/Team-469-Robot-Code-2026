@@ -19,8 +19,12 @@ public class AutonCommands {
         AutoBuilder.followPath(path),
         Commands.sequence(
             Commands.waitSeconds(0.2), Commands.parallel(IntakeCommands.deployAndRun())),
-        FeederCommands.idleCommand(),
-        SpindexerCommands.idleCommand(),
+        Commands.sequence(
+            Commands.deadline(
+                Commands.waitSeconds(3),
+                FeederCommands.idleCommand(),
+                SpindexerCommands.idleCommand()),
+            CommandFactory.unJam()),
         Commands.deferredProxy(
             () ->
                 Commands.sequence(

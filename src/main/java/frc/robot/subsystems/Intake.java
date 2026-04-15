@@ -32,6 +32,8 @@ public class Intake extends SubsystemBase {
 
   private Angle requestedAngle = Constants.IntakeC.PIVOT_LOWERED;
 
+  private boolean slow = false;
+
   public static Intake createinstance(MotorIO rollerMotor, MotorIO pivotMotor, CanCoderIO coder) {
     instance = new Intake(rollerMotor, pivotMotor, coder);
     return instance;
@@ -58,15 +60,20 @@ public class Intake extends SubsystemBase {
     coder.readInputs(coderInputs);
     Logger.processInputs(getName() + "Cancoder", coderInputs);
 
+    double requestedVelocity = 9999;
+    if (slow) {
+      requestedVelocity = 0.4;
+    }
+
     pivotMotor.setMagicalPositionSetpoint(
         requestedAngle,
-        RotationsPerSecond.of(9999),
+        RotationsPerSecond.of(requestedVelocity),
         RotationsPerSecondPerSecond.of(9999),
         0,
         calcFF(requestedAngle));
 
     if (coderInputs.absolutePosition.in(Rotations)
-        < Constants.IntakeC.PIVOT_LOWERED.in(Rotations) - 0.02) {
+        < Constants.IntakeC.PIVOT_LOWERED.in(Rotations) - 0.04) {
       rollerMotor.setOpenLoopDutyCycle(0.0);
     } else {
       rollerMotor.setOpenLoopDutyCycle(requestedDutycycle);
@@ -82,8 +89,14 @@ public class Intake extends SubsystemBase {
     requestedDutycycle = dutyCycle;
   }
 
-  public void setTargetAngle(Angle newAngleRequest) {
+  public void setTargetAngleFast(Angle newAngleRequest) {
     requestedAngle = newAngleRequest;
+    slow = false;
+  }
+
+  public void setTargetAngleSlow(Angle newAngleRequest) {
+    requestedAngle = newAngleRequest;
+    slow = true;
   }
 
   private double calcFF(Angle pivotAngle) {

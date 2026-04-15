@@ -88,21 +88,19 @@ public class FiducialVision extends SubsystemBase {
     if (DriverStation.isDisabled() && !wasLastDisabled) {
       if (visionInputs.cameraName.equals("limelight-turd")) {
         io.setThrottle(400);
-      } else {
-        io.setThrottle(0);
       }
       LimelightHelpers.SetIMUMode(visionInputs.cameraName, 1);
 
       wasLastDisabled = true;
       wasLastEnabled = false;
     } else if (DriverStation.isEnabled() && !wasLastEnabled) {
-      io.setThrottle(0);
       if (visionInputs.cameraName.equals("limelight-turd")) {
-        LimelightHelpers.SetIMUMode(visionInputs.cameraName, 3);
-        LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.02);
-      } else {
+        io.setThrottle(0);
+      }
+      if (!visionInputs.cameraName.equals("limelight-c")
+          && !visionInputs.cameraName.equals("limelight-right")) {
         LimelightHelpers.SetIMUMode(visionInputs.cameraName, 4);
-        LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.01);
+        LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.003);
       }
 
       wasLastEnabled = true;
@@ -147,6 +145,7 @@ public class FiducialVision extends SubsystemBase {
                 || FiducialFilters.FiducialRejections.tooSmall(observation)
                 || LimelightHelpers.getCameraPose3d_RobotSpace(visionInputs.cameraName).getX() == 0
                 || !observation.isUpdated()
+                || Clock.time() - observation.timestamp() > 0.8
                 || (mt2Difference > 0.8
                     && observation.type() == PoseObservationType.MT2
                     && observation.tagCount() > 1)
@@ -223,7 +222,17 @@ public class FiducialVision extends SubsystemBase {
 
     for (PoseObservation p : robotPosesAccepted) {
       SignalLogger.writeStruct(
-          "Vision/Accepted/" + visionInputs.cameraName, Pose2d.struct, p.pose().toPose2d());
+          "Vision/Accepted/" + visionInputs.cameraName + "/" + p.type().toString(),
+          Pose2d.struct,
+          p.pose().toPose2d(),
+          Clock.time() - p.timestamp());
+    }
+    for (PoseObservation p : robotPosesRejected) {
+      SignalLogger.writeStruct(
+          "Vision/Rejected/" + visionInputs.cameraName + "/" + p.type().toString(),
+          Pose2d.struct,
+          p.pose().toPose2d(),
+          Clock.time() - p.timestamp());
     }
 
     Logger.recordOutput(

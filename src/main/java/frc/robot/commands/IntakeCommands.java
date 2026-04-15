@@ -11,8 +11,8 @@ public class IntakeCommands {
   public static Command deployAndRun() {
     return Commands.parallel(
         Commands.startRun(
-            () -> intake.setTargetAngle(Constants.IntakeC.PIVOT_LOWERED),
-            () -> intake.setTargetAngle(Constants.IntakeC.PIVOT_LOWERED),
+            () -> intake.setTargetAngleFast(Constants.IntakeC.PIVOT_LOWERED),
+            () -> intake.setTargetAngleFast(Constants.IntakeC.PIVOT_LOWERED),
             intake),
         Commands.startRun(() -> intake.setDutyCycle(1), () -> intake.setDutyCycle(1)));
   }
@@ -20,8 +20,8 @@ public class IntakeCommands {
   public static Command deployAndRunReverse() {
     return Commands.parallel(
         Commands.startRun(
-            () -> intake.setTargetAngle(Constants.IntakeC.PIVOT_LOWERED),
-            () -> intake.setTargetAngle(Constants.IntakeC.PIVOT_LOWERED),
+            () -> intake.setTargetAngleFast(Constants.IntakeC.PIVOT_LOWERED),
+            () -> intake.setTargetAngleFast(Constants.IntakeC.PIVOT_LOWERED),
             intake),
         Commands.startRun(() -> intake.setDutyCycle(-1), () -> intake.setDutyCycle(-1)));
   }
@@ -29,8 +29,8 @@ public class IntakeCommands {
   public static Command stow() {
     return Commands.parallel(
         Commands.startRun(
-            () -> intake.setTargetAngle(Constants.IntakeC.PIVOT_RAISED),
-            () -> intake.setTargetAngle(Constants.IntakeC.PIVOT_RAISED),
+            () -> intake.setTargetAngleSlow(Constants.IntakeC.PIVOT_RAISED),
+            () -> intake.setTargetAngleSlow(Constants.IntakeC.PIVOT_RAISED),
             intake),
         Commands.startRun(() -> intake.setDutyCycle(0), () -> intake.setDutyCycle(0)));
   }
@@ -38,8 +38,8 @@ public class IntakeCommands {
   public static Command pivotToAgitate() {
     return Commands.parallel(
         Commands.startRun(
-            () -> intake.setTargetAngle(Constants.IntakeC.PIVOT_AGITATE),
-            () -> intake.setTargetAngle(Constants.IntakeC.PIVOT_AGITATE),
+            () -> intake.setTargetAngleFast(Constants.IntakeC.PIVOT_AGITATE),
+            () -> intake.setTargetAngleFast(Constants.IntakeC.PIVOT_AGITATE),
             intake),
         Commands.startRun(() -> intake.setDutyCycle(0), () -> intake.setDutyCycle(0.2)));
   }

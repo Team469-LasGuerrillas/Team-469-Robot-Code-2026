@@ -9,6 +9,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservationType;
+import frc.lib.utilities.math.ToleranceUtil;
 import frc.robot.Constants;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.drive.Drive;
@@ -102,31 +103,43 @@ public class FiducialFilters {
         if (DriverStation.isEnabled()) {
           observation.stdDevs()[2] *= 6.7;
         }
+        if (!ToleranceUtil.epsilonEqualsRadialDegrees(
+                observation.pose().getRotation().toRotation2d().getDegrees(),
+                Drive.getInstance()
+                    .getPose(observation.timestamp())
+                    .get()
+                    .getRotation()
+                    .getDegrees(),
+                4.414)
+            && DriverStation.isEnabled()) {
+          observation.stdDevs()[2] = Double.MAX_VALUE - 10.0;
+        }
       }
       return this;
     }
 
     public FiducialModifications withMultiplyAllResultsBasedOnGyro() {
       if (Drive.getInstance().hasBeenOverBumpTimer.get() < 1.5) {
-        double multiplier = 0.4 / (2.1 - Drive.getInstance().hasBeenOverBumpTimer.get());
+        double multiplier = 0.3 / (2 - Drive.getInstance().hasBeenOverBumpTimer.get());
 
         observation.stdDevs()[0] *= multiplier;
         observation.stdDevs()[1] *= multiplier;
       }
 
-      if ((Drive.getInstance().getPose().getTranslation().getDistance(Constants.Field.BLUE_HUB)
-                  < 3.3
-              || Drive.getInstance().getPose().getTranslation().getDistance(Constants.Field.RED_HUB)
-                  < 3.3)
-          && (Drive.getInstance().getPose().getX()
-                  < Constants.Field.BLUE_TRENCH_SCORING.in(Meters) + 0.2
-              || Drive.getInstance().getPose().getX()
-                  > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.2)
-          && DriverStation.isAutonomousEnabled()
-          && Drive.getInstance().hasBeenOverBumpTimer.get() > 0.8) {
-        observation.stdDevs()[0] *= 3.5;
-        observation.stdDevs()[1] *= 3.5;
-      }
+      // if ((Drive.getInstance().getPose().getTranslation().getDistance(Constants.Field.BLUE_HUB)
+      //             < 3.5
+      //         ||
+      // Drive.getInstance().getPose().getTranslation().getDistance(Constants.Field.RED_HUB)
+      //             < 3.5)
+      //     && (Drive.getInstance().getPose().getX()
+      //             < Constants.Field.BLUE_TRENCH_SCORING.in(Meters) + 0.2
+      //         || Drive.getInstance().getPose().getX()
+      //             > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.2)
+      //     && DriverStation.isAutonomousEnabled()
+      //     && Drive.getInstance().hasBeenOverBumpTimer.get() > 1.4) {
+      //   observation.stdDevs()[0] *= 3.3;
+      //   observation.stdDevs()[1] *= 3.3;
+      // }
       return this;
     }
 

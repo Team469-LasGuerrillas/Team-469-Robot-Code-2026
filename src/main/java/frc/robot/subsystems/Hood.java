@@ -88,7 +88,7 @@ public class Hood extends SubsystemBase {
     }
 
     if (!zeroed
-        && Math.abs(pivotInputs.motorVelocity.in(DegreesPerSecond)) < 2
+        && Math.abs(pivotInputs.motorVelocity.in(DegreesPerSecond)) < 5
         && pivotInputs.statorCurrent.in(Amps) > 14) {
       hoodMotor.setZero();
       zeroed = true;

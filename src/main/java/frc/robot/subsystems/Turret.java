@@ -247,7 +247,7 @@ public class Turret extends SubsystemBase {
     closestAfter =
         Rotations.of(
             closestAfter.in(Rotations)
-                + (0.04
+                + (0.053
                     * turretTargetSpeedEstimator
                         .getEstimatedPosition()
                         .getRotation()
