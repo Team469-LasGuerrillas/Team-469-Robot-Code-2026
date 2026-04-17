@@ -6,7 +6,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.lib.utilities.field.Station;
+import frc.lib.utilities.math.ToleranceUtil;
 import frc.robot.Constants;
+import frc.robot.Constants.Field;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.drive.Drive;
 
@@ -18,6 +20,16 @@ public class FieldZoning {
     if (turretCurrentPoseX > Constants.Field.BLUE_TRENCH_SCORING.in(Meters) && !isRed) {
       return true;
     } else if (turretCurrentPoseX < Constants.Field.RED_TRENCH_SCORING.in(Meters) && isRed) {
+      return true;
+    }
+    return false;
+  }
+
+  public static boolean isTowerZone() {
+    Pose2d turret = Turret.getInstance().getTurretPoseFieldSpace();
+
+    if (ToleranceUtil.epsilonEquals(turret.getY(), Constants.Field.MID_FIELD_Y_METERS, 0.6)
+        && (turret.getX() > Field.MAX_FIELD_X.in(Meters) - 1 || turret.getX() < 1)) {
       return true;
     }
     return false;

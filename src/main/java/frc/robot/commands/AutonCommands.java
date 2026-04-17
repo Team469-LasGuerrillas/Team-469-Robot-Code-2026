@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.RobotState;
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Spindexer;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.ShootTarget;
 
@@ -21,21 +23,24 @@ public class AutonCommands {
             Commands.waitSeconds(0.2), Commands.parallel(IntakeCommands.deployAndRun())),
         Commands.sequence(
             Commands.deadline(
-                Commands.waitSeconds(3),
+                Commands.waitSeconds(0.5),
                 FeederCommands.idleCommand(),
-                SpindexerCommands.idleCommand()),
-            CommandFactory.unJam()),
+                SpindexerCommands.idleCommand())),
         Commands.deferredProxy(
             () ->
                 Commands.sequence(
                     Commands.waitSeconds(2),
-                    ShooterCommands.targetLaunchSpeed(() -> RotationsPerSecond.of(30)))));
+                    Commands.runOnce(() -> Spindexer.getInstance().setUnjam(true)),
+                    Commands.runOnce(() -> Feeder.getInstance().setUnjam(true)),
+                    ShooterCommands.targetLaunchSpeed(() -> RotationsPerSecond.of(32)))));
   }
 
   private static Command pathAndScore(PathPlannerPath path) {
     return Commands.sequence(
         Commands.deadline(
             Drive.getInstance().followPath(path, Constants.DriveC.PP_CONTROLLER_SLOW),
+            Commands.runOnce(() -> Spindexer.getInstance().setUnjam(false)),
+            Commands.runOnce(() -> Feeder.getInstance().setUnjam(false)),
             Commands.sequence(
                 Commands.deadline(
                     Commands.waitUntil(
@@ -45,18 +50,14 @@ public class AutonCommands {
                                 || Drive.getInstance().getPose().getX()
                                     > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.2),
                     IntakeCommands.deployAndRun()),
-                Commands.waitSeconds(0.0),
-                Commands.deadline(
-                    Commands.waitSeconds(2),
-                    CommandFactory.scoring(),
-                    IntakeCommands.deployAndRun()),
                 Commands.deadline(
                     Commands.waitSeconds(6),
                     CommandFactory.scoring(),
-                    IntakeCommands.deployAndRun()))),
+                    IntakeCommands.deployAndRun()),
+                Commands.deadline(
+                    Commands.waitSeconds(6), CommandFactory.scoring(), IntakeCommands.agitate()))),
         Commands.deadline(
-            Commands.waitSeconds(0.05), CommandFactory.scoring(), IntakeCommands.deployAndRun()),
-        Commands.waitSeconds(0.05));
+            Commands.waitSeconds(0.03), CommandFactory.scoring(), IntakeCommands.deployAndRun()));
   }
 
   private static Command depotPathAndScore(PathPlannerPath path) {

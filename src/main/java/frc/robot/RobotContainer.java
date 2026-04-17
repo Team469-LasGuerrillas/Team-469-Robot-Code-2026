@@ -292,8 +292,12 @@ public class RobotContainer {
 
     marcus.rightBumper().toggleOnTrue(CommandFactory.feedOrScore());
 
-    kyle.rightBumper().whileTrue(CommandFactory.unJam());
-    marcus.y().whileTrue(CommandFactory.unJam());
+    kyle.rightBumper()
+        .whileTrue(Commands.repeatingSequence(Commands.runOnce(() -> spindexer.setUnjam(true))));
+    kyle.rightBumper()
+        .onFalse(Commands.sequence(Commands.runOnce(() -> spindexer.setUnjam(false))));
+    marcus.y().onTrue(Commands.sequence(Commands.runOnce(() -> spindexer.setUnjam(true))));
+    marcus.y().onFalse(Commands.sequence(Commands.runOnce(() -> spindexer.setUnjam(false))));
     marcus.a().onTrue(Commands.runOnce(() -> System.gc()));
     kyle.leftTrigger().whileTrue(CommandFactory.outTake());
     marcus.rightTrigger().whileTrue(CommandFactory.outTake());

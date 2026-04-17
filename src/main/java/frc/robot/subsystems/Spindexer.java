@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.subsystems.configs.ServoMotorSubsystemWithFollowersConfig;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.MotorInputsAutoLogged;
+import frc.robot.Constants;
 
 public class Spindexer extends SubsystemBase {
   private static Spindexer instance;
@@ -15,6 +16,8 @@ public class Spindexer extends SubsystemBase {
 
   private double requestedDutycycleFloor = 0;
   private double requestedDutycycleSecondary = 0;
+
+  private boolean unjam = false;
 
   public static Spindexer createinstance(MotorIO floorMotorIo, MotorIO secondaryMotorIo) {
     instance = new Spindexer(floorMotorIo, secondaryMotorIo);
@@ -30,6 +33,10 @@ public class Spindexer extends SubsystemBase {
     this.secondary = secondary;
   }
 
+  public void setUnjam(boolean unjam) {
+    this.unjam = unjam;
+  }
+
   public void setOpenLoopDutyCycleFloor(double dutyCycle) {
     requestedDutycycleFloor = dutyCycle;
     floor.setOpenLoopDutyCycle(requestedDutycycleFloor);
@@ -41,6 +48,9 @@ public class Spindexer extends SubsystemBase {
   }
 
   public void setOpenLoopDutyCycleBoth(double dutyCycle) {
+    if (Feeder.getInstance().unjam) {
+      dutyCycle = Constants.SpindexerC.REVERSE_DC;
+    }
     setOpenLoopDutyCycleFloor(dutyCycle);
     setOpenLoopDutyCycleSecondary(dutyCycle);
   }

@@ -100,7 +100,7 @@ public class FiducialVision extends SubsystemBase {
       if (!visionInputs.cameraName.equals("limelight-c")
           && !visionInputs.cameraName.equals("limelight-right")) {
         LimelightHelpers.SetIMUMode(visionInputs.cameraName, 4);
-        LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.003);
+        LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.01);
       }
 
       wasLastEnabled = true;

@@ -250,7 +250,7 @@ public class ModuleIOTalonFX implements ModuleIO {
 
     double updatedCurrentLimit;
     if (Shooter.getInstance().getShooterPowered() || Feeder.getInstance().isRunning()) {
-      updatedCurrentLimit = 40;
+      updatedCurrentLimit = 30;
     } else {
       updatedCurrentLimit = 80;
     }
@@ -258,15 +258,12 @@ public class ModuleIOTalonFX implements ModuleIO {
     if (lastCurrent != updatedCurrentLimit) {
       var currentConfigs = new CurrentLimitsConfigs();
 
-      double currentDrivePosition = drivePosition.getValueAsDouble();
-
       currentConfigs.SupplyCurrentLimit = updatedCurrentLimit;
       currentConfigs.SupplyCurrentLimitEnable = true;
       currentConfigs.StatorCurrentLimit = constants.SlipCurrent;
       currentConfigs.StatorCurrentLimitEnable = true;
 
       driveTalon.getConfigurator().apply(currentConfigs, 0.0);
-      driveTalon.setPosition(currentDrivePosition);
 
       System.out.println("Changing current limits to " + updatedCurrentLimit);
     }

@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.subsystems.interfaces.CanCoderIO;
 import frc.lib.subsystems.interfaces.CancoderInputsAutoLogged;
@@ -33,6 +34,9 @@ public class Intake extends SubsystemBase {
   private Angle requestedAngle = Constants.IntakeC.PIVOT_LOWERED;
 
   private boolean slow = false;
+
+  private Timer jamTimer = new Timer();
+  int jamLoops = 0;
 
   public static Intake createinstance(MotorIO rollerMotor, MotorIO pivotMotor, CanCoderIO coder) {
     instance = new Intake(rollerMotor, pivotMotor, coder);

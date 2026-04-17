@@ -99,7 +99,7 @@ public class Hood extends SubsystemBase {
         ToleranceUtil.epsilonEquals(
             getCurrentAngle().in(Rotations),
             Constants.HoodC.HOOD_STOW.in(Rotations),
-            Units.degreesToRotations(0.2));
+            Units.degreesToRotations(0.05));
     boolean highHood =
         ToleranceUtil.epsilonEquals(
             getCurrentAngle().in(Rotations),

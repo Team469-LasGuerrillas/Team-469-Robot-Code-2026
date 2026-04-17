@@ -73,6 +73,8 @@ public class MotorIOTalonFX implements MotorIO {
   private static final ArrayList<BaseStatusSignal> canivoreASignals = new ArrayList<>();
   private static final ArrayList<BaseStatusSignal> canivoreBSignals = new ArrayList<>();
 
+  boolean autoLimit = false;
+
   public MotorIOTalonFX(ServoMotorSubsystemConfig config) {
     this.config = config;
     talon = new TalonFX(config.talonCANID.getDeviceNumber(), config.talonCANID.getBus());
@@ -104,7 +106,7 @@ public class MotorIOTalonFX implements MotorIO {
 
     CANStatusLogger.getInstance().registerTalonFX(config.name, talon, config.talonCANID);
 
-    if (talon.getDeviceID() == 14) {
+    if (talon.getDeviceID() == 14 || talon.getDeviceID() == 12) {
       CTREUtil.tryUntilOK(
           () -> BaseStatusSignal.setUpdateFrequencyForAll(1000, torqueCurrentSignal),
           talon.getDeviceID());
@@ -174,6 +176,35 @@ public class MotorIOTalonFX implements MotorIO {
     inputs.supplyCurrent = Amps.of(currentSupplySignal.getValueAsDouble());
     inputs.statorCurrent = Amps.of(currentStatorSignal.getValueAsDouble());
     inputs.rawMotorPosition = Revolutions.of(rawRotorPositionSignal.getValueAsDouble());
+
+    // if (talon.getDeviceID() == 10 && DriverStation.isAutonomous()) {
+    //   // This is auto
+    //   if (autoLimit == false) {
+    //     CurrentLimitsConfigs newConfig =
+    //         new CurrentLimitsConfigs()
+    //             .withStatorCurrentLimit(150)
+    //             .withStatorCurrentLimitEnable(true)
+    //             .withSupplyCurrentLimit(45)
+    //             .withSupplyCurrentLimitEnable(true)
+    //             .withSupplyCurrentLowerLimit(30)
+    //             .withSupplyCurrentLowerTime(3);
+    //     talon.getConfigurator().apply(newConfig, 0);
+    //     autoLimit = true;
+    //   }
+    // } else if (talon.getDeviceID() == 10) {
+    //   if (autoLimit = true) {
+    //     CurrentLimitsConfigs newConfig =
+    //         new CurrentLimitsConfigs()
+    //             .withStatorCurrentLimit(150)
+    //             .withStatorCurrentLimitEnable(true)
+    //             .withSupplyCurrentLimit(45)
+    //             .withSupplyCurrentLimitEnable(true)
+    //             .withSupplyCurrentLowerLimit(30)
+    //             .withSupplyCurrentLowerTime(0.5);
+    //     talon.getConfigurator().apply(newConfig, 0);
+    //     autoLimit = false;
+    //   }
+    // }
   }
 
   @Override

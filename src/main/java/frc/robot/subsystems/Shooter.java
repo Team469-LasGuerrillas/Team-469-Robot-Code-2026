@@ -62,7 +62,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean getShooterPowered() {
-    return Math.abs(leadInputs.supplyCurrent.in(Amps)) > 5;
+    return leadInputs.supplyCurrent.in(Amps) > 3.3
+        || leadInputs.motorVelocity.in(RotationsPerSecond) > 15;
   }
 
   @Override
