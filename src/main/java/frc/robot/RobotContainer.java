@@ -304,6 +304,11 @@ public class RobotContainer {
     kyle.back().and(kyle.start()).onTrue(Commands.runOnce(() -> Turret.getInstance().lockAngle()));
     kyle.povDown().onTrue(Commands.runOnce(() -> Hood.getInstance().resetHood()));
 
+    // Force override shooter commands
+    // Uncomment me to run!
+    // kyle.a().onTrue(Commands.runOnce(() -> RobotState.setForceOverrideShooterConditions(true)));
+    // kyle.b().onTrue(Commands.runOnce(() -> RobotState.setForceOverrideShooterConditions(false)));
+
     // Set ignore hub state commands
     // marcus.rightTrigger().onTrue(ShooterCommands.ignoreHubStateCommand());
     // marcus.leftTrigger().onTrue(ShooterCommands.respectHubStateCommand());

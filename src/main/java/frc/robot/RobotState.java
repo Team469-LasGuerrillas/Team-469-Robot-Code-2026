@@ -10,21 +10,23 @@ import org.littletonrobotics.junction.Logger;
 public class RobotState {
 
   public static boolean weLockedPass() {
-    return !FieldZoning.notAllowedToPass()
-        && getTurretState() == TurretState.LOCKED
-        && getHoodState() == HoodState.LOCKED
-        && (getFlywheelState() == FlywheelState.PASSLOCKED
-            || getFlywheelState() == FlywheelState.HUBLOCKED)
-        && !FieldZoning.isTowerZone();
+    return forceOverrideShooterConditions
+        || (!FieldZoning.notAllowedToPass()
+            && getTurretState() == TurretState.LOCKED
+            && getHoodState() == HoodState.LOCKED
+            && (getFlywheelState() == FlywheelState.PASSLOCKED
+                || getFlywheelState() == FlywheelState.HUBLOCKED)
+            && !FieldZoning.isTowerZone());
   }
 
   // private static boolean overrideHubState = true;
 
   public static boolean weLockedHub() {
-    return getTurretState() == TurretState.LOCKED
-        && getHoodState() == HoodState.LOCKED
-        && getFlywheelState() == FlywheelState.HUBLOCKED
-        && !FieldZoning.isTowerZone();
+    return forceOverrideShooterConditions
+        || (getTurretState() == TurretState.LOCKED
+            && getHoodState() == HoodState.LOCKED
+            && getFlywheelState() == FlywheelState.HUBLOCKED
+            && !FieldZoning.isTowerZone());
     // && (getHubState() == HubState.ACTIVE || overrideHubState);
   }
 
@@ -199,5 +201,18 @@ public class RobotState {
 
   public static DriveState getDriveState() {
     return driveState;
+  }
+
+  private static boolean forceOverrideShooterConditions = false;
+
+  static {
+    SignalLogger.writeBoolean(
+        "State/ForceOverrideShooterConditions", forceOverrideShooterConditions);
+  }
+
+  public static void setForceOverrideShooterConditions(boolean override) {
+    forceOverrideShooterConditions = override;
+    SignalLogger.writeBoolean(
+        "State/ForceOverrideShooterConditions", forceOverrideShooterConditions);
   }
 }
