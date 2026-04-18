@@ -1,10 +1,11 @@
 package frc.lib.subsystems.interfaces;
 
+import java.lang.Cloneable;
+import java.lang.Override;
 import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
 
-public class MotorInputsAutoLogged extends MotorIO.MotorInputs
-    implements LoggableInputs, Cloneable {
+public class MotorInputsAutoLogged extends MotorIO.MotorInputs implements LoggableInputs, Cloneable {
   @Override
   public void toLog(LogTable table) {
     table.put("MotorPosition", motorPosition);

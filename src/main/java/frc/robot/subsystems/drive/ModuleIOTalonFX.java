@@ -35,6 +35,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Shooter;
@@ -255,17 +256,25 @@ public class ModuleIOTalonFX implements ModuleIO {
       updatedCurrentLimit = 80;
     }
 
-    if (lastCurrent != updatedCurrentLimit) {
-      var currentConfigs = new CurrentLimitsConfigs();
+    try {
+      if ((lastCurrent != updatedCurrentLimit) && !DriverStation.isAutonomousEnabled()) {
+        var currentConfigs = new CurrentLimitsConfigs();
 
-      currentConfigs.SupplyCurrentLimit = updatedCurrentLimit;
-      currentConfigs.SupplyCurrentLimitEnable = true;
-      currentConfigs.StatorCurrentLimit = constants.SlipCurrent;
-      currentConfigs.StatorCurrentLimitEnable = true;
+        double currentDrivePosition = drivePosition.getValueAsDouble();
 
-      driveTalon.getConfigurator().apply(currentConfigs, 0.0);
+        currentConfigs.SupplyCurrentLimit = updatedCurrentLimit;
+        currentConfigs.SupplyCurrentLimitEnable = true;
+        currentConfigs.StatorCurrentLimit = constants.SlipCurrent;
+        currentConfigs.StatorCurrentLimitEnable = true;
 
-      System.out.println("Changing current limits to " + updatedCurrentLimit);
+        driveTalon.getConfigurator().apply(currentConfigs, 0.0);
+        driveTalon.setPosition(currentDrivePosition);
+
+        System.out.println("Changing current limits to " + updatedCurrentLimit);
+      }
+
+    } catch (Exception e) {
+      // TODO: handle exception
     }
 
     lastCurrent = updatedCurrentLimit;

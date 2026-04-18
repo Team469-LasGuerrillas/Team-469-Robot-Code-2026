@@ -29,7 +29,7 @@ public class AutonCommands {
         Commands.deferredProxy(
             () ->
                 Commands.sequence(
-                    Commands.waitSeconds(2),
+                    Commands.waitSeconds(2.67),
                     Commands.runOnce(() -> Spindexer.getInstance().setUnjam(true)),
                     Commands.runOnce(() -> Feeder.getInstance().setUnjam(true)),
                     ShooterCommands.targetLaunchSpeed(() -> RotationsPerSecond.of(32)))));

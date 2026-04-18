@@ -91,7 +91,7 @@ public class Robot extends LoggedRobot {
 
     SignalLogger.enableAutoLogging(false);
 
-    RobotController.setBrownoutVoltage(6.1);
+    RobotController.setBrownoutVoltage(6.3);
 
     CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
 

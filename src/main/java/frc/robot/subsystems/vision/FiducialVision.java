@@ -54,11 +54,16 @@ public class FiducialVision extends SubsystemBase {
 
       Logger.recordOutput("Data into pose estimator delay", Clock.time() - o.timestamp());
 
+      double updatedYawStd = o.stdDevs()[2];
+      if (o.type() == PoseObservationType.MT2) {
+        updatedYawStd = Double.MAX_VALUE - 10;
+      }
+
       Drive.getInstance()
           .addVisionMeasurement(
               o.pose().toPose2d(),
               o.timestamp(),
-              VecBuilder.fill(o.stdDevs()[0], o.stdDevs()[1], o.stdDevs()[2]));
+              VecBuilder.fill(o.stdDevs()[0], o.stdDevs()[1], updatedYawStd));
 
       Drive.getInstance().getCameraField().setRobotPose(o.pose().toPose2d());
     }
@@ -113,7 +118,7 @@ public class FiducialVision extends SubsystemBase {
     }
 
     // if (!visionInputs.cameraName.equals("limelight_turd")) {
-    //   io.setPoseRobotSpace(originalCameraPose);
+    // io.setPoseRobotSpace(originalCameraPose);
     // }
 
     List<PoseObservation> robotPosesAccepted = new LinkedList<>();
@@ -146,10 +151,12 @@ public class FiducialVision extends SubsystemBase {
                 || LimelightHelpers.getCameraPose3d_RobotSpace(visionInputs.cameraName).getX() == 0
                 || !observation.isUpdated()
                 || Clock.time() - observation.timestamp() > 0.8
-                || (mt2Difference > 0.8
+                || (mt2Difference > 0.5
                     && observation.type() == PoseObservationType.MT2
                     && observation.tagCount() > 1)
-                || (distrustTurret && visionInputs.cameraName.equals("limelight-turd"));
+                || (mt2Difference > 1
+                    && observation.type() == PoseObservationType.MT2
+                    && observation.tagCount() == 1);
 
         if (observation.type() == PoseObservationType.MT1) {
           Logger.recordOutput(

@@ -97,10 +97,10 @@ public class FiducialFilters {
 
     public FiducialModifications withUpdateYaw() {
       if (observation.type() == PoseObservationType.MT2) {
-        observation.stdDevs()[2] = Double.MAX_VALUE;
+        observation.stdDevs()[2] = Double.MAX_VALUE / 2.0;
       } else {
         if (DriverStation.isEnabled()) {
-          observation.stdDevs()[2] *= 6.7;
+          observation.stdDevs()[2] *= 1.67;
         }
         // if (!ToleranceUtil.epsilonEqualsRadialDegrees(
         //         observation.pose().getRotation().toRotation2d().getDegrees(),

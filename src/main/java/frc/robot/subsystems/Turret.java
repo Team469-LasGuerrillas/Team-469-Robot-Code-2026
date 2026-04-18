@@ -7,6 +7,7 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -62,6 +63,8 @@ public class Turret extends SubsystemBase {
   private int loopCount = 0;
 
   private double lastTimestamp = Clock.time();
+
+  private int offTargetLoop = 0;
 
   private Pose2d lastTurretPoseFieldSpace = new Pose2d();
   private SwerveDrivePoseEstimator turretSpeedEstimator =
@@ -186,10 +189,18 @@ public class Turret extends SubsystemBase {
                     Constants.TurretC.TURRET_TOLERANCE.in(Rotations)))
             || turretOverrideLock;
 
-    if (onTarget) {
-      RobotState.setTurretState(TurretState.LOCKED);
+    if (!onTarget) {
+      offTargetLoop++;
     } else {
+      offTargetLoop = 0;
+    }
+
+    SignalLogger.writeInteger("TurretOffTargetLoopCounter", offTargetLoop);
+
+    if (offTargetLoop >= 4) {
       RobotState.setTurretState(TurretState.UNLOCKED);
+    } else {
+      RobotState.setTurretState(TurretState.LOCKED);
     }
 
     loopCount++;
