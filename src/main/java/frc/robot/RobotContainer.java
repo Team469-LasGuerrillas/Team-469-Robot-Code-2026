@@ -12,6 +12,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -303,6 +304,17 @@ public class RobotContainer {
     marcus.rightTrigger().whileTrue(CommandFactory.outTake());
     kyle.back().and(kyle.start()).onTrue(Commands.runOnce(() -> Turret.getInstance().lockAngle()));
     kyle.povDown().onTrue(Commands.runOnce(() -> Hood.getInstance().resetHood()));
+
+    kyle.y()
+        .onTrue(
+            Commands.sequence(
+                Commands.runOnce(() -> RobotController.setBrownoutVoltage(6.3)),
+                Commands.runOnce(() -> RobotState.setOverrideFlywheelState(false))));
+    kyle.x()
+        .onTrue(
+            Commands.sequence(
+                Commands.runOnce(() -> RobotController.setBrownoutVoltage(6.1)),
+                Commands.runOnce(() -> RobotState.setOverrideFlywheelState(true))));
 
     // Set ignore hub state commands
     // marcus.rightTrigger().onTrue(ShooterCommands.ignoreHubStateCommand());

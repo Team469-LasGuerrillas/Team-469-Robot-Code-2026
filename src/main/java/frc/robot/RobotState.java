@@ -9,12 +9,19 @@ import org.littletonrobotics.junction.Logger;
 
 public class RobotState {
 
+  private static boolean overrideFlywheelstate = false;
+
+  public static void setOverrideFlywheelState(boolean override) {
+    overrideFlywheelstate = override;
+  }
+
   public static boolean weLockedPass() {
     return !FieldZoning.notAllowedToPass()
         && getTurretState() == TurretState.LOCKED
         && getHoodState() == HoodState.LOCKED
         && (getFlywheelState() == FlywheelState.PASSLOCKED
-            || getFlywheelState() == FlywheelState.HUBLOCKED)
+            || getFlywheelState() == FlywheelState.HUBLOCKED
+            || overrideFlywheelstate)
         && !FieldZoning.isTowerZone();
   }
 

@@ -63,7 +63,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1.1210526315789477,
-      "rotationDegrees": -81.0
+      "rotationDegrees": -78.0
     },
     {
       "waypointRelativePos": 2.088157894736842,
@@ -86,7 +86,7 @@
     },
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.8421926910298996,
+      "minWaypointRelativePos": 0.8071065989847714,
       "maxWaypointRelativePos": 1.4551495016611296,
       "constraints": {
         "maxVelocity": 2.3,
