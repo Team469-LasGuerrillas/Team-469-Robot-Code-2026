@@ -122,6 +122,7 @@ public class Drive extends SubsystemBase {
   private ChassisSpeeds lastFieldSpeeds = new ChassisSpeeds();
 
   private double lastTimestamp;
+  private double[] odometryFrameTimestamps;
 
   public Timer hasBeenOverBumpTimer = new Timer();
 
@@ -252,6 +253,7 @@ public class Drive extends SubsystemBase {
         Twist2d twist = kinematics.toTwist2d(moduleDeltas);
         rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
       }
+      odometryFrameTimestamps = sampleTimestamps;
 
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
@@ -292,6 +294,10 @@ public class Drive extends SubsystemBase {
     // Update dashboard display
     localizationField.setRobotPose(getPose());
     SmartDashboard.putData(localizationField);
+  }
+
+  public double[] getCurrentLoopOdometryUpdateTimestamps() {
+    return odometryFrameTimestamps;
   }
 
   public Command followPath(PathPlannerPath path) {
