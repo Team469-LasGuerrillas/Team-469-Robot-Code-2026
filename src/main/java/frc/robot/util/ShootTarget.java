@@ -41,20 +41,22 @@ public class ShootTarget {
     return cachedIsPassing;
   }
 
-  public static Translation2d[] timestampedGoals(Supplier<Translation2d> target, boolean passing, double[] timestamps) {
-    Translation2d[] result = new Translation2d[timestamps.length - 1];
+  public static Translation2d[] timestampedGoals(
+      Supplier<Translation2d> target, boolean passing, double[] timestamps) {
+    Translation2d[] result = new Translation2d[timestamps.length];
 
     for (int i = 0; i < timestamps.length; i++) {
-      Translation2d timstampGoal = ShootAndMove.getTransformed(
-            Drive.getInstance().getFieldSpeedsFiltered(),
-            Drive.getInstance().getFieldAccelerationsFiltered(),
-            Drive.getInstance().getPose(timestamps[i]).get(),
-            target.get(),
-            Constants.TurretC.TURD_CENTER,
-            passing);
+      Translation2d timstampGoal =
+          ShootAndMove.getTransformed(
+              Drive.getInstance().getFieldSpeedsFiltered(),
+              Drive.getInstance().getFieldAccelerationsFiltered(),
+              Drive.getInstance().getPose(timestamps[i]).get(),
+              target.get(),
+              Constants.TurretC.TURD_CENTER,
+              passing);
       result[i] = new Translation2d(timstampGoal.getX(), timstampGoal.getY());
     }
-    
+
     return result;
   }
 
