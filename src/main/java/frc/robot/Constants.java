@@ -116,7 +116,7 @@ public final class Constants {
     public static final Matrix<N3, N1> TURRET_MOTOR_SPEEDS_STDS =
         VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(80));
     public static final Matrix<N3, N1> TURRET_TARGET_SPEEDS_STDS =
-        VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(28));
+        VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(67));
     public static final Matrix<N3, N1> TURRET_TARGET_SPEEDS_STDS_FOR_ZERO =
         VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(3));
 
@@ -240,7 +240,7 @@ public final class Constants {
     public static final double IDLE_DC = 0.0;
 
     public static final AngularVelocity HUB_SPEED_TOLERANCE = RotationsPerSecond.of(6.7);
-    public static final AngularVelocity PASS_SPEED_TOLERANCE = RotationsPerSecond.of(16);
+    public static final AngularVelocity PASS_SPEED_TOLERANCE = RotationsPerSecond.of(26);
     public static final AngularVelocity RAMP_SPEED_TOLERANCE = RotationsPerSecond.of(8);
 
     public static final double FEEDER_LEAD_TIME_SECONDS = 0.07;
@@ -271,27 +271,31 @@ public final class Constants {
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(0.1, 28.0);
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(3.3, 36.0);
       FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(4.5, 42.0);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.3, 47.0);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.3, 48.0);
+      // FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(0.1, 27.5);
+      // FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(3.3, 34.7);
+      // FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(4.5, 41.0);
+      // FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.3, 47.2);
 
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(0.5, 20.0);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(2.0, 23.0);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(5.0, 32.0);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(7.0, 51.0);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(10.0, 70.0);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(20.0, 73.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(0.5, 25.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(2.0, 28.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(5.0, 30.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(8.3, 55.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(10.3, 86.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(20.0, 88.0);
 
       TIME_OF_FLIGHT_MAP_SHOOTING.put(0.2, 0.3);
       TIME_OF_FLIGHT_MAP_SHOOTING.put(1.0, 0.7);
       TIME_OF_FLIGHT_MAP_SHOOTING.put(1.8, 1.0);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(2.5, 1.12);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(3.5, 1.22);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(5.0, 1.3);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(6.0, 1.33);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(2.5, 1.1);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(3.5, 1.14);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(5.0, 1.28);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(6.0, 1.3);
 
       TIME_OF_FLIGHT_MAP_PASSING.put(1.0, 0.2);
-      TIME_OF_FLIGHT_MAP_PASSING.put(4.0, 1.1);
-      TIME_OF_FLIGHT_MAP_PASSING.put(7.0, 1.4);
-      TIME_OF_FLIGHT_MAP_PASSING.put(20.0, 1.8);
+      TIME_OF_FLIGHT_MAP_PASSING.put(4.0, 0.7);
+      TIME_OF_FLIGHT_MAP_PASSING.put(7.0, 1.2);
+      TIME_OF_FLIGHT_MAP_PASSING.put(20.0, 1.4);
 
       SHOOTER_HOOD_MAP_SHOOTING.put(0.2, 0.0);
       SHOOTER_HOOD_MAP_SHOOTING.put(0.8, 0.1);
@@ -300,12 +304,18 @@ public final class Constants {
       SHOOTER_HOOD_MAP_SHOOTING.put(3.75, 10.5);
       SHOOTER_HOOD_MAP_SHOOTING.put(5.0, 13.0);
       SHOOTER_HOOD_MAP_SHOOTING.put(6.0, 13.0);
+      // SHOOTER_HOOD_MAP_SHOOTING.put(0.2, 0.0);
+      // SHOOTER_HOOD_MAP_SHOOTING.put(1.2, 0.1);
+      // SHOOTER_HOOD_MAP_SHOOTING.put(2.2, 6.0);
+      // SHOOTER_HOOD_MAP_SHOOTING.put(3.75, 13.5);
+      // SHOOTER_HOOD_MAP_SHOOTING.put(5.0, 14.5);
+      // SHOOTER_HOOD_MAP_SHOOTING.put(6.0, 15.0);
 
       SHOOTER_HOOD_MAP_PASSING.put(0.5, 8.0);
       SHOOTER_HOOD_MAP_PASSING.put(2.0, 15.0);
       SHOOTER_HOOD_MAP_PASSING.put(3.5, 25.0);
-      SHOOTER_HOOD_MAP_PASSING.put(7.0, 24.0);
-      SHOOTER_HOOD_MAP_PASSING.put(20.0, 24.0);
+      SHOOTER_HOOD_MAP_PASSING.put(7.0, 27.9);
+      SHOOTER_HOOD_MAP_PASSING.put(20.0, 27.9);
     }
 
     public static final ServoMotorSubsystemWithFollowersConfig LAUNCHER_CONFIG =
@@ -453,8 +463,8 @@ public final class Constants {
       TURRET_TALON_CONFIG.Slot0.kI = 0;
       TURRET_TALON_CONFIG.Slot0.kD = 67.0; // 98.7
       TURRET_TALON_CONFIG.Slot0.kS = 0.5;
-      TURRET_TALON_CONFIG.Slot0.kV = 0; // (16.0 / 100.0) * 360.0 * 2;
-      TURRET_TALON_CONFIG.Slot0.kA = 0;
+      TURRET_TALON_CONFIG.Slot0.kV = // (16.0 / 100.0) * 360.0 * 2;
+          TURRET_TALON_CONFIG.Slot0.kA = 0;
       SERVO_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
       TURRET_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 140;
@@ -514,7 +524,7 @@ public final class Constants {
     public static final double IDLE_DC = 0;
     // public static final Angle PIVOT_RAISED = Radians.of(0.33);
     public static final Angle PIVOT_LOWERED = Degrees.of(130);
-    public static final Angle PIVOT_RAISED = Degrees.of(7);
+    public static final Angle PIVOT_RAISED = Degrees.of(11);
     public static final Angle PIVOT_AGITATE = Degrees.of(30);
 
     private static final ServoMotorSubsystemWithCancoderConfig DROP_CONFIG =
@@ -569,7 +579,7 @@ public final class Constants {
       INTAKE_ROLLER_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 150;
       INTAKE_ROLLER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 45;
       INTAKE_ROLLER_TALON_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 30;
-      INTAKE_ROLLER_TALON_CONFIG.CurrentLimits.SupplyCurrentLowerTime = 0.5;
+      INTAKE_ROLLER_TALON_CONFIG.CurrentLimits.SupplyCurrentLowerTime = 1;
 
       ROLLER_CONFIG.talonCANID = new CANDeviceId(10);
       ROLLER_CONFIG.fxConfig = INTAKE_ROLLER_TALON_CONFIG;

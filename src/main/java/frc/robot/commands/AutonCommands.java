@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Spindexer;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.ShootTarget;
@@ -220,67 +219,38 @@ public class AutonCommands {
     }
   }
 
-  public static Command thirdSweepAuto(boolean isRed, boolean rightSide) { 
+  public static Command thirdSweepAuto(boolean isRed) {
 
     try {
 
-     PathPlannerPath thirdPathOne = PathPlannerPath.fromPathFile("3_S_P");
-     PathPlannerPath thirdPathTwo = PathPlannerPath.fromPathFile("3_S_P2");
-
-    
-      if (rightSide) {
-        thirdPathOne = thirdPathOne.mirrorPath();
-      }
+      PathPlannerPath thirdPathOne = PathPlannerPath.fromPathFile("3_S_P");
+      PathPlannerPath thirdPathTwo = PathPlannerPath.fromPathFile("3_S_P2");
 
       if (isRed) {
         thirdPathOne = thirdPathOne.flipPath();
-      }
-
-      if (rightSide) {
-        thirdPathTwo = thirdPathTwo.mirrorPath();
       }
 
       if (isRed) {
         thirdPathTwo = thirdPathTwo.flipPath();
       }
 
-      return Commands.sequence
-      (Commands.sequence(
-        Commands.deadline(
-          Commands.waitSeconds(0.5),
-           Commands.sequence(
-            Commands.waitSeconds(0.5),
-            IntakeCommands.agitate(),
-            SpindexerCommands.idleCommand(),
-            FeederCommands.idleCommand())),
-          Commands.deadline(Commands.waitSeconds(0.5), CommandFactory.scoring()),
-          AutoBuilder.followPath(thirdPathOne)),
-          Commands.sequence(
-            Commands.waitSeconds(3),
-            Commands.sequence(
-              SpindexerCommands.idleCommand(),
-              IntakeCommands.deployAndRun(),
-              FeederCommands.idleCommand()),
-              Commands.deadline(Commands.waitSeconds(0.5),
-              Commands.deadline(Commands.waitSeconds(0.5),
-              Commands.sequence(),
+      return Commands.sequence(
+          Commands.deadline(
+              Commands.waitSeconds(3.3), CommandFactory.scoring(), IntakeCommands.stow()),
+          Commands.deadline(AutoBuilder.followPath(thirdPathOne), IntakeCommands.deployAndRun()),
+          Commands.deadline(
+              Drive.getInstance().followPath(thirdPathTwo, Constants.DriveC.PP_CONTROLLER_SLOW),
+              CommandFactory.scoring(),
               IntakeCommands.deployAndRun()),
-              FeederCommands.idleCommand(),
-              SpindexerCommands.idleCommand()),
-              Commands.waitSeconds(0.5),
-              AutoBuilder.followPath(thirdPathTwo)),
+          Commands.deadline(
+              Commands.waitSeconds(10),
+              CommandFactory.scoring(),
               Commands.sequence(
-                Commands.waitSeconds(0.5),
-                Commands.sequence(
-                  SpindexerCommands.idleCommand(),
-                  IntakeCommands.deployAndRun(),
-                  FeederCommands.idleCommand()),
-                  Commands.deadline(Commands.waitSeconds(0.5),
-                  CommandFactory.scoring(), IntakeCommands.agitate()))
-                );
+                  Commands.deadline(Commands.waitSeconds(3), IntakeCommands.deployAndRun()),
+                  IntakeCommands.agitate())));
 
     } catch (Exception e) {
-     return Commands.none();
+      return Commands.none();
     }
   }
 

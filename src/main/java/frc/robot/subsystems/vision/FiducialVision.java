@@ -212,6 +212,7 @@ public class FiducialVision extends SubsystemBase {
           FiducialModifications filteredObservation =
               new FiducialFilters.FiducialModifications(observation)
                   .withUpdateYaw()
+                  .withMultiplyResultsBasedOnOneOrTwo()
                   .withMultiplyAllResultsBasedOnGyro();
 
           for (UnaryOperator<FiducialModifications> modification : extraModifications) {

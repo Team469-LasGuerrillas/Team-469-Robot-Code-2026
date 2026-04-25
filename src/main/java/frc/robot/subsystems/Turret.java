@@ -127,6 +127,19 @@ public class Turret extends SubsystemBase {
             () -> ShootTarget.getTarget(), ShootTarget.getIsPassing(), odometryFrameTimestamps);
 
     for (int i = 1; i < odometryFrameTimestamps.length; i++) {
+      boolean yawSame =
+          Drive.getInstance()
+                  .getPose(odometryFrameTimestamps[i])
+                  .get()
+                  .getRotation()
+                  .minus(
+                      Drive.getInstance()
+                          .getPose(odometryFrameTimestamps[i - 1])
+                          .get()
+                          .getRotation())
+                  .getRotations()
+              == 0;
+
       double deltaTime;
       if (i == odometryFrameTimestamps.length) {
         deltaTime = Clock.time() - odometryFrameTimestamps[i - 1];
@@ -153,12 +166,18 @@ public class Turret extends SubsystemBase {
 
       double targetAngularVelocityRadiansPerSecond = deltaRadians / deltaTime;
 
-      if (Math.abs(targetAngularVelocityRadiansPerSecond) < Units.degreesToRadians(180)) {
-        Matrix<N3, N1> stds = Constants.Field.TURRET_TARGET_SPEEDS_STDS;
+      boolean smallValueBug =
+          (Math.abs(targetAngularVelocityRadiansPerSecond) < Units.degreesToRadians(1.5)
+              && Math.hypot(
+                      Drive.getInstance().getFieldSpeeds().vxMetersPerSecond,
+                      Drive.getInstance().getFieldSpeeds().vyMetersPerSecond)
+                  < 0.04414);
 
-        if (Math.abs(targetAngularVelocityRadiansPerSecond) < Units.degreesToRadians(3)) {
-          stds = Constants.Field.TURRET_TARGET_SPEEDS_STDS_FOR_ZERO;
-        }
+      if (Math.abs(targetAngularVelocityRadiansPerSecond) < Units.degreesToRadians(180)
+          && !smallValueBug
+          && deltaTime < 0.03
+          && !yawSame) {
+        Matrix<N3, N1> stds = Constants.Field.TURRET_TARGET_SPEEDS_STDS;
 
         turretTargetSpeedEstimator.addVisionMeasurement(
             GeomUtil.withRotation(
@@ -166,13 +185,16 @@ public class Turret extends SubsystemBase {
             odometryFrameTimestamps[i],
             stds);
       }
+
+      Logger.recordOutput(
+          "Turret/TargetAngularVelocity",
+          RadiansPerSecond.of(targetAngularVelocityRadiansPerSecond));
     }
 
-    double targetAngularVelocityRadiansPerSecond =
-        (targetAngle.in(Radians) - lastTargetAngle.in(Radians)) / 1;
-
     Logger.recordOutput(
-        "Turret/TargetAngularVelocity", RadiansPerSecond.of(targetAngularVelocityRadiansPerSecond));
+        "Turret/FilteredTargetAngularVelocity",
+        RadiansPerSecond.of(
+            turretTargetSpeedEstimator.getEstimatedPosition().getRotation().getRadians()));
 
     lastTimestamp = Clock.time();
 
@@ -300,7 +322,7 @@ public class Turret extends SubsystemBase {
     closestAfter =
         Rotations.of(
             closestAfter.in(Rotations)
-                + (0.053
+                + (0.051
                     * turretTargetSpeedEstimator
                         .getEstimatedPosition()
                         .getRotation()

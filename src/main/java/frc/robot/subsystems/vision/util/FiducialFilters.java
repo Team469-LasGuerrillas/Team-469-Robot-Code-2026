@@ -6,7 +6,6 @@ import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservationType;
 import frc.robot.Constants;
@@ -98,21 +97,6 @@ public class FiducialFilters {
     public FiducialModifications withUpdateYaw() {
       if (observation.type() == PoseObservationType.MT2) {
         observation.stdDevs()[2] = Double.MAX_VALUE / 2.0;
-      } else {
-        if (DriverStation.isEnabled()) {
-          observation.stdDevs()[2] *= 1.67;
-        }
-        // if (!ToleranceUtil.epsilonEqualsRadialDegrees(
-        //         observation.pose().getRotation().toRotation2d().getDegrees(),
-        //         Drive.getInstance()
-        //             .getPose(observation.timestamp())
-        //             .get()
-        //             .getRotation()
-        //             .getDegrees(),
-        //         4.414)
-        //     && DriverStation.isEnabled()) {
-        //   observation.stdDevs()[2] = Double.MAX_VALUE - 10.0;
-        // }
       }
       return this;
     }
@@ -158,6 +142,18 @@ public class FiducialFilters {
         observation.stdDevs()[0] *= Constants.VisionC.REASONABLE_DRIVE_ANGULAR_VELOCITY_MT2_MULT;
         observation.stdDevs()[1] *= Constants.VisionC.REASONABLE_DRIVE_ANGULAR_VELOCITY_MT2_MULT;
       }
+      return this;
+    }
+
+    public FiducialModifications withMultiplyResultsBasedOnOneOrTwo() {
+      if (observation.type() == PoseObservationType.MT1) {
+        observation.stdDevs()[0] *= 2;
+        observation.stdDevs()[1] *= 2;
+      } else if (observation.type() == PoseObservationType.MT2) {
+        observation.stdDevs()[0] *= 0.8;
+        observation.stdDevs()[1] *= 0.8;
+      }
+
       return this;
     }
 
