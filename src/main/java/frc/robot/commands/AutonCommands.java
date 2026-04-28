@@ -254,6 +254,31 @@ public class AutonCommands {
     }
   }
 
+  public static Command feedAuto(boolean isRed, boolean rightSide) {
+
+    try {
+
+    PathPlannerPath ahh67 = PathPlannerPath.fromPathFile("F_P");
+
+      if (isRed) {
+        ahh67 = ahh67.flipPath();
+      }
+
+      if (rightSide) {
+        ahh67 = ahh67.mirrorPath();
+      }
+
+      return Commands.sequence(
+        Commands.deadline(
+          Commands.waitSeconds(3.3),CommandFactory.feedOrScore(), IntakeCommands.stow()),
+          Commands.deadline(AutoBuilder.followPath(ahh67), Commands.parallel(IntakeCommands.deployAndRun(), CommandFactory.feedOrScore())),
+          Commands.deadline(Commands.waitSeconds(8), CommandFactory.feedOrScore(), IntakeCommands.agitate())
+        );
+    } catch (Exception e) {
+      return Commands.none();
+  }
+}
+
   private static Command faultResistantPathFollow(PathPlannerPath path) {
     Pose2d endPoint = path.getPathPoses().get(path.getPathPoses().size() - 1);
 
