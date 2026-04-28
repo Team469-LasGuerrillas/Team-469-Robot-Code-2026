@@ -27,12 +27,11 @@ public class AutonCommands {
                 FeederCommands.idleCommand(),
                 SpindexerCommands.idleCommand())),
         Commands.deferredProxy(
-            () ->
-                Commands.sequence(
-                    Commands.waitSeconds(2.67),
-                    Commands.runOnce(() -> Spindexer.getInstance().setUnjam(true)),
-                    Commands.runOnce(() -> Feeder.getInstance().setUnjam(true)),
-                    ShooterCommands.targetLaunchSpeed(() -> RotationsPerSecond.of(32)))));
+            () -> Commands.sequence(
+                Commands.waitSeconds(2.67),
+                Commands.runOnce(() -> Spindexer.getInstance().setUnjam(true)),
+                Commands.runOnce(() -> Feeder.getInstance().setUnjam(true)),
+                ShooterCommands.targetLaunchSpeed(() -> RotationsPerSecond.of(32)))));
   }
 
   private static Command pathAndScore(PathPlannerPath path) {
@@ -44,20 +43,17 @@ public class AutonCommands {
             Commands.sequence(
                 Commands.deadline(
                     Commands.waitUntil(
-                        () ->
-                            Drive.getInstance().getPose().getX()
-                                    < Constants.Field.BLUE_TRENCH_SCORING.in(Meters) + 0.2
-                                || Drive.getInstance().getPose().getX()
-                                    > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.2),
+                        () -> Drive.getInstance().getPose().getX() < Constants.Field.BLUE_TRENCH_SCORING.in(Meters)
+                            + 0.2
+                            || Drive.getInstance().getPose().getX() > Constants.Field.RED_TRENCH_SCORING.in(Meters)
+                                - 0.2),
                     IntakeCommands.deployAndRun()),
                 Commands.deadline(
                     Commands.waitSeconds(6),
                     CommandFactory.scoring(),
                     IntakeCommands.deployAndRun()),
                 Commands.deadline(
-                    Commands.waitSeconds(6), CommandFactory.scoring(), IntakeCommands.agitate()))),
-        Commands.deadline(
-            Commands.waitSeconds(0.03), CommandFactory.scoring(), IntakeCommands.deployAndRun()));
+                    Commands.waitSeconds(6), CommandFactory.scoring(), IntakeCommands.agitate()))));
   }
 
   private static Command depotPathAndScore(PathPlannerPath path) {
@@ -66,11 +62,8 @@ public class AutonCommands {
         Commands.sequence(
             Commands.deadline(
                 Commands.waitUntil(
-                    () ->
-                        Drive.getInstance().getPose().getX()
-                                < Constants.Field.BLUE_TRENCH_SCORING.in(Meters) + 0.2
-                            || Drive.getInstance().getPose().getX()
-                                > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.2),
+                    () -> Drive.getInstance().getPose().getX() < Constants.Field.BLUE_TRENCH_SCORING.in(Meters) + 0.2
+                        || Drive.getInstance().getPose().getX() > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.2),
                 IntakeCommands.deployAndRun()),
             Commands.waitSeconds(0.02),
             Commands.deadline(
@@ -142,11 +135,10 @@ public class AutonCommands {
                           SpindexerCommands.idleCommand())),
                   Commands.deadline(
                       Commands.waitUntil(
-                          () ->
-                              Drive.getInstance().getPose().getX()
-                                      < Constants.Field.BLUE_TRENCH_SCORING.in(Meters) + 0.5
-                                  || Drive.getInstance().getPose().getX()
-                                      > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.5),
+                          () -> Drive.getInstance().getPose().getX() < Constants.Field.BLUE_TRENCH_SCORING.in(Meters)
+                              + 0.5
+                              || Drive.getInstance().getPose().getX() > Constants.Field.RED_TRENCH_SCORING.in(Meters)
+                                  - 0.5),
                       IntakeCommands.deployAndRun()),
                   Commands.deadline(
                       Commands.waitSeconds(5), CommandFactory.scoring(), IntakeCommands.agitate())),
@@ -160,11 +152,10 @@ public class AutonCommands {
                       SpindexerCommands.idleCommand()),
                   Commands.deadline(
                       Commands.waitUntil(
-                          () ->
-                              Drive.getInstance().getPose().getX()
-                                      < Constants.Field.BLUE_TRENCH_SCORING.in(Meters) + 0.5
-                                  || Drive.getInstance().getPose().getX()
-                                      > Constants.Field.RED_TRENCH_SCORING.in(Meters) - 0.5),
+                          () -> Drive.getInstance().getPose().getX() < Constants.Field.BLUE_TRENCH_SCORING.in(Meters)
+                              + 0.5
+                              || Drive.getInstance().getPose().getX() > Constants.Field.RED_TRENCH_SCORING.in(Meters)
+                                  - 0.5),
                       IntakeCommands.deployAndRun()),
                   Commands.deadline(
                       Commands.waitSeconds(7), CommandFactory.scoring(), IntakeCommands.agitate())),
@@ -236,7 +227,7 @@ public class AutonCommands {
 
       return Commands.sequence(
           Commands.deadline(
-              Commands.waitSeconds(3.3), CommandFactory.scoring(), IntakeCommands.stow()),
+              Commands.waitSeconds(2.3), CommandFactory.scoring(), IntakeCommands.stow()),
           Commands.deadline(AutoBuilder.followPath(thirdPathOne), IntakeCommands.deployAndRun()),
           Commands.deadline(
               Drive.getInstance().followPath(thirdPathTwo, Constants.DriveC.PP_CONTROLLER_SLOW),
@@ -258,7 +249,7 @@ public class AutonCommands {
 
     try {
 
-    PathPlannerPath ahh67 = PathPlannerPath.fromPathFile("F_P");
+      PathPlannerPath ahh67 = PathPlannerPath.fromPathFile("F_P");
 
       if (isRed) {
         ahh67 = ahh67.flipPath();
@@ -269,15 +260,15 @@ public class AutonCommands {
       }
 
       return Commands.sequence(
-        Commands.deadline(
-          Commands.waitSeconds(3.3),CommandFactory.feedOrScore(), IntakeCommands.stow()),
-          Commands.deadline(AutoBuilder.followPath(ahh67), Commands.parallel(IntakeCommands.deployAndRun(), CommandFactory.feedOrScore())),
-          Commands.deadline(Commands.waitSeconds(8), CommandFactory.feedOrScore(), IntakeCommands.agitate())
-        );
+          Commands.deadline(
+              Commands.waitSeconds(3.3), CommandFactory.feedOrScore(), IntakeCommands.stow()),
+          Commands.deadline(AutoBuilder.followPath(ahh67),
+              Commands.parallel(IntakeCommands.deployAndRun(), CommandFactory.feedOrScore())),
+          Commands.deadline(Commands.waitSeconds(8), CommandFactory.feedOrScore(), IntakeCommands.agitate()));
     } catch (Exception e) {
       return Commands.none();
+    }
   }
-}
 
   private static Command faultResistantPathFollow(PathPlannerPath path) {
     Pose2d endPoint = path.getPathPoses().get(path.getPathPoses().size() - 1);
@@ -286,20 +277,16 @@ public class AutonCommands {
         Commands.race(
             Commands.sequence(
                 Commands.waitUntil(
-                    () ->
-                        (RobotState.getTrajectoryTarget()
-                                .getTranslation()
-                                .getDistance(Drive.getInstance().getPose().getTranslation()))
-                            > 1),
+                    () -> (RobotState.getTrajectoryTarget()
+                        .getTranslation()
+                        .getDistance(Drive.getInstance().getPose().getTranslation())) > 1),
                 Commands.waitSeconds(4.414)),
             AutoBuilder.followPath(path)),
         Commands.sequence(
             Commands.waitUntil(
-                () ->
-                    (RobotState.getTrajectoryTarget()
-                            .getTranslation()
-                            .getDistance(Drive.getInstance().getPose().getTranslation()))
-                        > 1),
+                () -> (RobotState.getTrajectoryTarget()
+                    .getTranslation()
+                    .getDistance(Drive.getInstance().getPose().getTranslation())) > 1),
             AutoBuilder.pathfindToPose(endPoint, Constants.DriveC.defaultConstraints)));
   }
 }

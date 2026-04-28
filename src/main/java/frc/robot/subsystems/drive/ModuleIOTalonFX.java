@@ -260,7 +260,7 @@ public class ModuleIOTalonFX implements ModuleIO {
       if ((lastCurrent != updatedCurrentLimit) && !DriverStation.isAutonomousEnabled()) {
         var currentConfigs = new CurrentLimitsConfigs();
 
-        double currentDrivePosition = drivePosition.getValueAsDouble();
+        // double currentDrivePosition = drivePosition.getValueAsDouble();
 
         currentConfigs.SupplyCurrentLimit = updatedCurrentLimit;
         currentConfigs.SupplyCurrentLimitEnable = true;
@@ -268,7 +268,7 @@ public class ModuleIOTalonFX implements ModuleIO {
         currentConfigs.StatorCurrentLimitEnable = true;
 
         driveTalon.getConfigurator().apply(currentConfigs, 0.0);
-        driveTalon.setPosition(currentDrivePosition);
+        // driveTalon.setPosition(currentDrivePosition);
 
         System.out.println("Changing current limits to " + updatedCurrentLimit);
       }

@@ -141,7 +141,7 @@ public final class Constants {
     public static final double MAX_SINGLE_TAG_AMBIGUITY = 0.55;
     public static final double MIN_SINGLE_TAG_AREA = 0.33;
     public static final Angle MAX_YAW_ERROR_MT1 = Degrees.of(2.41);
-    public static final Angle MAX_YAW_ERROR_MT2 = Degrees.of(2);
+    public static final Angle MAX_YAW_ERROR_MT2 = Degrees.of(3); // 2
     public static final Distance MAX_FLOATING_NOCLIP = Meters.of(1.0);
 
     public static final AngularVelocity BAD_TURRET_ANGULAR_VELOCITY = DegreesPerSecond.of(90);
@@ -343,9 +343,9 @@ public final class Constants {
 
       LAUNCHER_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
-      LAUNCHER_TALON_CONFIG.Slot0.kP = 13.23; // 4.69
+      LAUNCHER_TALON_CONFIG.Slot0.kP = 11.14; // 13.23
       LAUNCHER_TALON_CONFIG.Slot0.kI = 0;
-      LAUNCHER_TALON_CONFIG.Slot0.kD = 0.167;
+      LAUNCHER_TALON_CONFIG.Slot0.kD = 0; // 0.167
       LAUNCHER_TALON_CONFIG.Slot0.kV = 0.267;
       LAUNCHER_TALON_CONFIG.ClosedLoopRamps.TorqueClosedLoopRampPeriod =
           LAUNCHER_TALON_CONFIG.Slot1.kP = 0.987;
@@ -357,16 +357,16 @@ public final class Constants {
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakReverseDutyCycle = 0;
 
       LAUNCHER_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 140;
-      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 41;
+      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 40;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
       FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 140;
-      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 41;
+      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 40;
       FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 140;
-      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 41;
+      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 40;
       FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 140;
-      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 41;
+      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 40;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 

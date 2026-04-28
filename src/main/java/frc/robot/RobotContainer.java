@@ -278,7 +278,7 @@ public class RobotContainer {
     marcus.povUp().onTrue(TurretCommands.targetAngle(Rotations.of(-0.23)));
 
     // Switch to X pattern when X button is pressed
-    marcus.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // marcus.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
     PathPlannerPath testA;
@@ -297,7 +297,8 @@ public class RobotContainer {
         .whileTrue(Commands.repeatingSequence(Commands.runOnce(() -> spindexer.setUnjam(true))));
     kyle.rightBumper()
         .onFalse(Commands.sequence(Commands.runOnce(() -> spindexer.setUnjam(false))));
-    marcus.y().onTrue(Commands.sequence(Commands.runOnce(() -> spindexer.setUnjam(true))));
+    // marcus.y().onTrue(Commands.sequence(Commands.runOnce(() -> spindexer.setUnjam(true))));
+    marcus.y().onTrue(DriveCommands.stopWithX());
     marcus.y().onFalse(Commands.sequence(Commands.runOnce(() -> spindexer.setUnjam(false))));
     marcus.a().onTrue(Commands.runOnce(() -> System.gc()));
     kyle.leftTrigger().whileTrue(CommandFactory.outTake());
