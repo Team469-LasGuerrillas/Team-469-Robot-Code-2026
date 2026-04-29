@@ -227,7 +227,7 @@ public class AutonCommands {
 
       return Commands.sequence(
           Commands.deadline(
-              Commands.waitSeconds(2.3), CommandFactory.scoring(), IntakeCommands.stow()),
+              Commands.waitSeconds(2.5), CommandFactory.scoring(), IntakeCommands.stow()),
           Commands.deadline(AutoBuilder.followPath(thirdPathOne), IntakeCommands.deployAndRun()),
           Commands.deadline(
               Drive.getInstance().followPath(thirdPathTwo, Constants.DriveC.PP_CONTROLLER_SLOW),
@@ -237,8 +237,8 @@ public class AutonCommands {
               Commands.waitSeconds(10),
               CommandFactory.scoring(),
               Commands.sequence(
-                  Commands.deadline(Commands.waitSeconds(3), IntakeCommands.deployAndRun()),
-                  IntakeCommands.agitate())));
+                  Commands.deadline(Commands.waitSeconds(2), IntakeCommands.deployAndRun()),
+                  IntakeCommands.stow())));
 
     } catch (Exception e) {
       return Commands.none();
