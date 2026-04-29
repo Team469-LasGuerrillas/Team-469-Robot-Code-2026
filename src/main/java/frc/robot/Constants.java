@@ -343,10 +343,10 @@ public final class Constants {
 
       LAUNCHER_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
-      LAUNCHER_TALON_CONFIG.Slot0.kP = 11.14; // 13.23
+      LAUNCHER_TALON_CONFIG.Slot0.kP = 15.0; // 13.23
       LAUNCHER_TALON_CONFIG.Slot0.kI = 0;
       LAUNCHER_TALON_CONFIG.Slot0.kD = 0; // 0.167
-      LAUNCHER_TALON_CONFIG.Slot0.kV = 0.19; // 0.267
+      LAUNCHER_TALON_CONFIG.Slot0.kV = 0.267; // 0.267
       LAUNCHER_TALON_CONFIG.ClosedLoopRamps.TorqueClosedLoopRampPeriod =
           LAUNCHER_TALON_CONFIG.Slot1.kP = 0.987;
       LAUNCHER_TALON_CONFIG.Slot1.kI = 0;
