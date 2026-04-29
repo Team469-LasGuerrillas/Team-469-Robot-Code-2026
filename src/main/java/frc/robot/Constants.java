@@ -239,8 +239,8 @@ public final class Constants {
     public static final double UNJAM_DC = -0.5;
     public static final double IDLE_DC = 0.0;
 
-    public static final AngularVelocity HUB_SPEED_TOLERANCE = RotationsPerSecond.of(6.7);
-    public static final AngularVelocity PASS_SPEED_TOLERANCE = RotationsPerSecond.of(999);
+    public static final AngularVelocity HUB_SPEED_TOLERANCE = RotationsPerSecond.of(10.0);
+    public static final AngularVelocity PASS_SPEED_TOLERANCE = RotationsPerSecond.of(999.0);
     public static final AngularVelocity RAMP_SPEED_TOLERANCE = RotationsPerSecond.of(8);
 
     public static final double FEEDER_LEAD_TIME_SECONDS = 0.07;
