@@ -217,6 +217,44 @@ public class AutonCommands {
     }
   }
 
+  public static Command highAuto(boolean isRed) {
+
+    try {
+
+      PathPlannerPath thirdPathR = PathPlannerPath.fromPathFile("R_M_H");
+      PathPlannerPath thirdPathOne = PathPlannerPath.fromPathFile("3_M_H");
+      PathPlannerPath thirdPathTwo = PathPlannerPath.fromPathFile("3_M_H2");
+      PathPlannerPath thirdPathThree = PathPlannerPath.fromPathFile("3_M_H3");
+
+      if (isRed) {
+        thirdPathR = thirdPathR.flipPath();
+        thirdPathOne = thirdPathOne.flipPath();
+        thirdPathTwo = thirdPathTwo.flipPath();
+        thirdPathThree = thirdPathThree.flipPath();
+      }
+
+      return Commands.sequence(
+          Commands.deadline(
+              Commands.waitSeconds(3),
+              Drive.getInstance().followPath(thirdPathR, Constants.DriveC.PP_CONTROLLER_SLOW),
+              CommandFactory.scoring(),
+              IntakeCommands.stow()),
+          Commands.deadline(AutoBuilder.followPath(thirdPathOne), IntakeCommands.deployAndRun()),
+          Commands.deadline(
+              Drive.getInstance().followPath(thirdPathTwo, Constants.DriveC.PP_CONTROLLER_SLOW),
+              CommandFactory.scoring(),
+              IntakeCommands.agitate()),
+          Commands.deadline(
+              Commands.waitSeconds(10),
+              AutoBuilder.followPath(thirdPathThree),
+              IntakeCommands.deployAndRun()));
+
+    } catch (Exception e) {
+      return Commands.none();
+    }
+  }
+
+
   public static Command thirdSweepAuto(boolean isRed) {
 
     try {
