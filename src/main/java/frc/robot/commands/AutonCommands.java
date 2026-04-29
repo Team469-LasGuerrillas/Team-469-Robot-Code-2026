@@ -254,7 +254,6 @@ public class AutonCommands {
     }
   }
 
-
   public static Command thirdSweepAuto(boolean isRed) {
 
     try {

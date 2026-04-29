@@ -146,8 +146,8 @@ public class Robot extends LoggedRobot {
     // Return to non-RT thread priority (do not modify the first argument)
     Threads.setCurrentThreadPriority(false, 10);
 
-    if (timer.advanceIfElapsed(60) && !DriverStation.isAutonomousEnabled()) {
-      // explicitly run java gc every 5 loops
+    if (timer.advanceIfElapsed(60) && DriverStation.isTeleopEnabled()) {
+      // explicitly run java gc every 60s during teleop enabled
       System.gc();
     }
   }
@@ -197,7 +197,8 @@ public class Robot extends LoggedRobot {
     }
 
     Dashboard.setChangeTabToTeleop();
-
+    timer.reset();
+    timer.start();
     // CommandScheduler.getInstance().schedule(IntakeCommands.deployAndRun());
   }
 
