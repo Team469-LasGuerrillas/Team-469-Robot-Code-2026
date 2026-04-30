@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.Spindexer;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.ShootTarget;
 
@@ -30,7 +29,7 @@ public class AutonCommands {
             () ->
                 Commands.sequence(
                     Commands.waitSeconds(2.67),
-                    Commands.runOnce(() -> Spindexer.getInstance().setUnjam(true)),
+                    // Commands.runOnce(() -> Spindexer.getInstance().setUnjam(true)),
                     Commands.runOnce(() -> Feeder.getInstance().setUnjam(true)),
                     ShooterCommands.targetLaunchSpeed(() -> RotationsPerSecond.of(32)))));
   }
@@ -39,7 +38,7 @@ public class AutonCommands {
     return Commands.sequence(
         Commands.deadline(
             Drive.getInstance().followPath(path, Constants.DriveC.PP_CONTROLLER_SLOW),
-            Commands.runOnce(() -> Spindexer.getInstance().setUnjam(false)),
+            // Commands.runOnce(() -> Spindexer.getInstance().setUnjam(false)),
             Commands.runOnce(() -> Feeder.getInstance().setUnjam(false)),
             Commands.sequence(
                 Commands.deadline(

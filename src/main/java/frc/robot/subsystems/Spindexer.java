@@ -33,9 +33,10 @@ public class Spindexer extends SubsystemBase {
     this.secondary = secondary;
   }
 
+  /* do not use this function, use the feeder's setUnjam
   public void setUnjam(boolean unjam) {
     this.unjam = unjam;
-  }
+  } */
 
   public void setOpenLoopDutyCycleFloor(double dutyCycle) {
     requestedDutycycleFloor = dutyCycle;
