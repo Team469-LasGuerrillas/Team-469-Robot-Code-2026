@@ -674,7 +674,7 @@ public final class Constants {
   }
 
   public static class HoodC {
-    public static final Angle HOOD_TOLERANCE = Degrees.of(3);
+    public static final Angle HOOD_TOLERANCE = Degrees.of(6.7);
 
     public static final Angle HOOD_STOW = Radians.of(0);
     public static final Angle HOOD_MAX = Radians.of(0.49); // 28 degees

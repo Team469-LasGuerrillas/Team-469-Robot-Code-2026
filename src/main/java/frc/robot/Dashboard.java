@@ -33,6 +33,8 @@ public class Dashboard {
     autonChooser.addOption("RedLongSweep", AutonCommands.thirdSweepAuto(true));
     autonChooser.addOption("BlueHigh", AutonCommands.highAuto(false));
     autonChooser.addOption("RedHigh", AutonCommands.highAuto(true));
+    autonChooser.addOption("Blue3RD", AutonCommands.marcusDepotAuto(false));
+    autonChooser.addOption("Red3RD", AutonCommands.marcusDepotAuto(true));
 
     SmartDashboard.putData("selected auton", autonChooser);
   }

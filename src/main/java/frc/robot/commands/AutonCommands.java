@@ -179,6 +179,23 @@ public class AutonCommands {
     }
   }
 
+  public static Command marcusDepotAuto(boolean isRed) {
+    try {
+      PathPlannerPath thirdPath = PathPlannerPath.fromPathFile("C_D");
+
+      if (isRed) {
+        thirdPath = thirdPath.flipPath();
+      }
+
+      return Commands.sequence(
+          Commands.deadline(AutoBuilder.followPath(thirdPath), IntakeCommands.deployAndRun()),
+          Commands.parallel(IntakeCommands.agitate(), CommandFactory.scoring()));
+
+    } catch (Exception e) {
+      return Commands.none();
+    }
+  }
+
   public static Command depotAuto(boolean isRed, boolean rightSide) {
     try {
       PathPlannerPath thirdPath = PathPlannerPath.fromPathFile("L_B_D");
