@@ -270,7 +270,47 @@ public class AutonCommands {
     }
   }
 
-  public static Command thirdSweepAuto(boolean isRed) {
+  public static Command thirdHairpinAuto(double delaySeconds, boolean isRed) {
+
+    try {
+
+      PathPlannerPath thirdPathOne = PathPlannerPath.fromPathFile("3_H_P");
+      PathPlannerPath thirdPathTwo = PathPlannerPath.fromPathFile("3_H_P2");
+
+      if (isRed) {
+        thirdPathOne = thirdPathOne.flipPath();
+        thirdPathTwo = thirdPathTwo.flipPath();
+      }
+
+      return Commands.sequence(
+          Commands.deadline(
+              Commands.waitSeconds(delaySeconds), CommandFactory.scoring(), IntakeCommands.stow()),
+          Commands.deadline(
+              AutoBuilder.followPath(thirdPathOne),
+              IntakeCommands.deployAndRun(),
+              Commands.sequence(
+                  Commands.deadline(
+                      Commands.waitSeconds(0.5),
+                      FeederCommands.idleCommand(),
+                      SpindexerCommands.idleCommand()))),
+          Commands.deadline(
+              Drive.getInstance().followPath(thirdPathTwo, Constants.DriveC.PP_CONTROLLER_SLOW),
+              Commands.runOnce(() -> Feeder.getInstance().setUnjam(false)),
+              CommandFactory.scoring(),
+              IntakeCommands.deployAndRun()),
+          Commands.deadline(
+              Commands.waitSeconds(10),
+              CommandFactory.scoring(),
+              Commands.sequence(
+                  Commands.deadline(Commands.waitSeconds(2), IntakeCommands.deployAndRun()),
+                  IntakeCommands.agitate())));
+
+    } catch (Exception e) {
+      return Commands.none();
+    }
+  }
+
+  public static Command thirdSweepAuto(double delaySeconds, boolean isRed) {
 
     try {
 
@@ -279,18 +319,23 @@ public class AutonCommands {
 
       if (isRed) {
         thirdPathOne = thirdPathOne.flipPath();
-      }
-
-      if (isRed) {
         thirdPathTwo = thirdPathTwo.flipPath();
       }
 
       return Commands.sequence(
           Commands.deadline(
-              Commands.waitSeconds(2.5), CommandFactory.scoring(), IntakeCommands.stow()),
-          Commands.deadline(AutoBuilder.followPath(thirdPathOne), IntakeCommands.deployAndRun()),
+              Commands.waitSeconds(delaySeconds), CommandFactory.scoring(), IntakeCommands.stow()),
+          Commands.deadline(
+              AutoBuilder.followPath(thirdPathOne),
+              IntakeCommands.deployAndRun(),
+              Commands.sequence(
+                  Commands.deadline(
+                      Commands.waitSeconds(0.5),
+                      FeederCommands.idleCommand(),
+                      SpindexerCommands.idleCommand()))),
           Commands.deadline(
               Drive.getInstance().followPath(thirdPathTwo, Constants.DriveC.PP_CONTROLLER_SLOW),
+              Commands.runOnce(() -> Feeder.getInstance().setUnjam(false)),
               CommandFactory.scoring(),
               IntakeCommands.deployAndRun()),
           Commands.deadline(

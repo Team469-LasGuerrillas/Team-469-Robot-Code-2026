@@ -7,7 +7,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
@@ -89,7 +88,7 @@ public class Robot extends LoggedRobot {
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
 
-    SignalLogger.enableAutoLogging(false);
+    // SignalLogger.enableAutoLogging(false);
 
     RobotController.setBrownoutVoltage(7.01);
 
@@ -155,7 +154,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
-    SignalLogger.enableAutoLogging(false);
+    // SignalLogger.enableAutoLogging(false);
     System.gc();
     timer.restart();
     CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
