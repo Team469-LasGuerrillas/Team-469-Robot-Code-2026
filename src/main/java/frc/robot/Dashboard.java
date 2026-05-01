@@ -53,6 +53,7 @@ public class Dashboard {
     autonChooser.addOption("RedHigh", AutonCommands.highAuto(true));
     autonChooser.addOption("Blue3RD", AutonCommands.marcusDepotAuto(false));
     autonChooser.addOption("Red3RD", AutonCommands.marcusDepotAuto(true));
+    autonChooser.addOption("316style", AutonCommands.lunatecStyleAuto(true, false));
 
     SmartDashboard.putData("selected auton", autonChooser);
   }

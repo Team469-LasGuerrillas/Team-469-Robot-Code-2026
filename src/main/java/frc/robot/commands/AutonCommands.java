@@ -111,6 +111,41 @@ public class AutonCommands {
     }
   }
 
+  public static Command lunatecStyleAuto(boolean isRed, boolean rightSide) {
+    try {
+
+      PathPlannerPath firstSweepPath = PathPlannerPath.fromPathFile("O_A1");
+      PathPlannerPath firstScorePath = PathPlannerPath.fromPathFile("O_A2");
+      PathPlannerPath secondSweepPath = PathPlannerPath.fromPathFile("L_B1");
+      PathPlannerPath secondScorePath = firstScorePath;
+
+      if (rightSide) {
+        firstSweepPath = firstSweepPath.mirrorPath();
+        firstScorePath = firstScorePath.mirrorPath();
+        secondSweepPath = secondSweepPath.mirrorPath();
+        secondScorePath = secondScorePath.mirrorPath();
+      }
+
+      if (isRed) {
+        firstSweepPath = firstSweepPath.flipPath();
+        firstScorePath = firstScorePath.flipPath();
+        secondSweepPath = secondSweepPath.flipPath();
+        secondScorePath = secondScorePath.flipPath();
+      }
+
+      return Commands.sequence(
+          sweepPath(firstSweepPath, rightSide),
+          pathAndScore(firstScorePath),
+          Commands.runOnce(() -> ShootTarget.updateNonDynamicGoal(Constants.Field.FIELD_CENTER)),
+          sweepPath(secondSweepPath, rightSide),
+          pathAndScore(secondScorePath),
+          sweepPath(secondSweepPath, rightSide));
+
+    } catch (Exception e) {
+      return Commands.run(() -> System.out.println(e.getMessage()));
+    }
+  }
+
   public static Command leftPassRed(boolean isRed, boolean rightSide) {
     try {
 
