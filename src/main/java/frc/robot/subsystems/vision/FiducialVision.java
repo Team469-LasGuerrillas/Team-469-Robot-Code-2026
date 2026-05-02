@@ -43,6 +43,10 @@ public class FiducialVision extends SubsystemBase {
   private boolean distrustTurret = false;
   private Pose3d lastGoodPose = new Pose3d();
 
+  private final int skipCount;
+
+  private int loopCount = 0;
+
   ArrayList<Function<PoseObservation, Boolean>> extraRejections;
   ArrayList<UnaryOperator<FiducialModifications>> extraModifications;
 
@@ -74,15 +78,31 @@ public class FiducialVision extends SubsystemBase {
   public FiducialVision(
       VisionIO io,
       ArrayList<Function<PoseObservation, Boolean>> extraRejections,
-      ArrayList<UnaryOperator<FiducialModifications>> extraModifications) {
+      ArrayList<UnaryOperator<FiducialModifications>> extraModifications,
+      int skipCount,
+      int skipOffset) {
     this.io = io;
     this.extraRejections = extraRejections;
     this.extraModifications = extraModifications;
+    this.skipCount = skipCount;
+    loopCount = skipOffset;
     // Set tag filter override
   }
 
   @Override
   public void periodic() {
+
+    loopCount++;
+
+    if (visionInputs.cameraName.equals("limelight-right") || visionInputs.cameraName.equals("limelight-c")) {
+      io.setRobotRotationUpdate(
+          Drive.getInstance().getRotation(),
+          RadiansPerSecond.of(Drive.getInstance().getFieldSpeeds().omegaRadiansPerSecond));
+    }
+
+    if (!(loopCount % skipCount == 0)) {
+      return;
+    }
 
     io.readInputs(visionInputs);
     io.setRobotRotationUpdate(
@@ -132,31 +152,28 @@ public class FiducialVision extends SubsystemBase {
       double mt2Difference = 0;
 
       if (visionInputs.poseObservations.length == 2) {
-        mt2Difference =
-            visionInputs
-                .poseObservations[0]
-                .pose()
-                .getTranslation()
-                .getDistance(visionInputs.poseObservations[1].pose().getTranslation());
+        mt2Difference = visionInputs.poseObservations[0]
+            .pose()
+            .getTranslation()
+            .getDistance(visionInputs.poseObservations[1].pose().getTranslation());
       }
 
       for (PoseObservation observation : visionInputs.poseObservations) {
-        boolean reject =
-            FiducialFilters.FiducialRejections.badAmbiguity(observation)
-                || FiducialFilters.FiducialRejections.badYaw(observation)
-                || FiducialFilters.FiducialRejections.hasNoTags(observation)
-                || FiducialFilters.FiducialRejections.isOffField(observation)
-                || FiducialFilters.FiducialRejections.isFlying(observation)
-                || FiducialFilters.FiducialRejections.tooSmall(observation)
-                || LimelightHelpers.getCameraPose3d_RobotSpace(visionInputs.cameraName).getX() == 0
-                || !observation.isUpdated()
-                || Clock.time() - observation.timestamp() > 0.8
-                || (mt2Difference > 0.5
-                    && observation.type() == PoseObservationType.MT2
-                    && observation.tagCount() > 1)
-                || (mt2Difference > 1
-                    && observation.type() == PoseObservationType.MT2
-                    && observation.tagCount() == 1);
+        boolean reject = FiducialFilters.FiducialRejections.badAmbiguity(observation)
+            || FiducialFilters.FiducialRejections.badYaw(observation)
+            || FiducialFilters.FiducialRejections.hasNoTags(observation)
+            || FiducialFilters.FiducialRejections.isOffField(observation)
+            || FiducialFilters.FiducialRejections.isFlying(observation)
+            || FiducialFilters.FiducialRejections.tooSmall(observation)
+            || LimelightHelpers.getCameraPose3d_RobotSpace(visionInputs.cameraName).getX() == 0
+            || !observation.isUpdated()
+            || Clock.time() - observation.timestamp() > 0.8
+            || (mt2Difference > 0.5
+                && observation.type() == PoseObservationType.MT2
+                && observation.tagCount() > 1)
+            || (mt2Difference > 1
+                && observation.type() == PoseObservationType.MT2
+                && observation.tagCount() == 1);
 
         if (observation.type() == PoseObservationType.MT1) {
           Logger.recordOutput(
@@ -209,11 +226,10 @@ public class FiducialVision extends SubsystemBase {
         } else {
           robotPosesAccepted.add(observation);
 
-          FiducialModifications filteredObservation =
-              new FiducialFilters.FiducialModifications(observation)
-                  .withUpdateYaw()
-                  .withMultiplyResultsBasedOnOneOrTwo()
-                  .withMultiplyAllResultsBasedOnGyro();
+          FiducialModifications filteredObservation = new FiducialFilters.FiducialModifications(observation)
+              .withUpdateYaw()
+              .withMultiplyResultsBasedOnOneOrTwo()
+              .withMultiplyAllResultsBasedOnGyro();
 
           for (UnaryOperator<FiducialModifications> modification : extraModifications) {
             filteredObservation = modification.apply(filteredObservation);
