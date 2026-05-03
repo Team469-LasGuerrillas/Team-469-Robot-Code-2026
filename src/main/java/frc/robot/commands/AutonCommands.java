@@ -331,7 +331,7 @@ public class AutonCommands {
           Commands.deadline(
               Drive.getInstance().followPath(thirdPathTwo, Constants.DriveC.PP_CONTROLLER_SLOW),
               Commands.runOnce(() -> Feeder.getInstance().setUnjam(false)),
-              CommandFactory.scoring(),
+              Commands.sequence(Commands.waitSeconds(2), CommandFactory.scoring()),
               IntakeCommands.deployAndRun()),
           Commands.deadline(
               Commands.waitSeconds(10),
