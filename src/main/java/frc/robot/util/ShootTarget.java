@@ -7,6 +7,7 @@ import edu.wpi.first.units.measure.Distance;
 import frc.lib.utilities.math.GeomUtil;
 import frc.lib.utilities.math.ShootAndMove;
 import frc.robot.Constants;
+import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -71,6 +72,6 @@ public class ShootTarget {
   public static Distance getDistanceToTarget() {
     return Meters.of(
         getTranslationToTarget()
-            .getDistance(GeomUtil.toTranslation2d(Drive.getInstance().getPose())));
+            .getDistance(GeomUtil.toTranslation2d(Turret.getInstance().getTurretPoseFieldSpace())));
   }
 }

@@ -7,6 +7,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.utilities.field.Station;
+import frc.lib.utilities.math.AngledShotSetpointHelper;
 import frc.robot.Constants;
 import frc.robot.RobotState;
 import frc.robot.util.FieldZoning;
@@ -16,57 +17,51 @@ public class CommandFactory {
   public static Command passing() {
     return Commands.parallel(
         Commands.deferredProxy(
-            () ->
-                Commands.startRun(
-                    () -> ShootTarget.updateGoal(FieldZoning::dynamicPassLocation, true),
-                    () -> ShootTarget.updateGoal(FieldZoning::dynamicPassLocation, true))),
+            () -> Commands.startRun(
+                () -> ShootTarget.updateGoal(FieldZoning::dynamicPassLocation, true),
+                () -> ShootTarget.updateGoal(FieldZoning::dynamicPassLocation, true))),
         Commands.deferredProxy(
             () -> TurretCommands.targetPoint(ShootTarget::getTranslationToTarget)),
         Commands.deferredProxy(
-            () ->
-                HoodCommands.setHoodSetpoint(
-                    () ->
-                        Degrees.of(
-                            Constants.LauncherC.SHOOTER_HOOD_MAP_PASSING.get(
-                                ShootTarget.getDistanceToTarget().in(Meters))))),
+            () -> HoodCommands.setHoodSetpoint(
+                () -> Degrees.of(
+                    AngledShotSetpointHelper
+                        .compensateHoodForRobotAngle(Constants.LauncherC.SHOOTER_HOOD_MAP_PASSING.get(
+                            ShootTarget.getDistanceToTarget().in(Meters)))))),
         Commands.deferredProxy(
-            () ->
-                ShooterCommands.targetLaunchSpeed(
-                    () ->
-                        RotationsPerSecond.of(
-                            Constants.LauncherC.FLYWHEEL_SHOT_SPEEDMAP_PASSING.get(
-                                ShootTarget.getDistanceToTarget().in(Meters))))),
+            () -> ShooterCommands.targetLaunchSpeed(
+                () -> RotationsPerSecond.of(
+                    AngledShotSetpointHelper
+                        .compensateFlywheelForRobotAngle(Constants.LauncherC.FLYWHEEL_SHOT_SPEEDMAP_PASSING.get(
+                            ShootTarget.getDistanceToTarget().in(Meters)))))),
         feedWhenReadyPass());
   }
 
   public static Command scoring() {
     return Commands.parallel(
         Commands.deferredProxy(
-            () ->
-                Commands.either(
-                    Commands.startRun(
-                        () -> ShootTarget.updateGoal(() -> Constants.Field.RED_HUB, false),
-                        () -> ShootTarget.updateGoal(() -> Constants.Field.RED_HUB, false)),
-                    Commands.startRun(
-                        () -> ShootTarget.updateGoal(() -> Constants.Field.BLUE_HUB, false),
-                        () -> ShootTarget.updateGoal(() -> Constants.Field.BLUE_HUB, false)),
-                    () -> Station.isRed())),
+            () -> Commands.either(
+                Commands.startRun(
+                    () -> ShootTarget.updateGoal(() -> Constants.Field.RED_HUB, false),
+                    () -> ShootTarget.updateGoal(() -> Constants.Field.RED_HUB, false)),
+                Commands.startRun(
+                    () -> ShootTarget.updateGoal(() -> Constants.Field.BLUE_HUB, false),
+                    () -> ShootTarget.updateGoal(() -> Constants.Field.BLUE_HUB, false)),
+                () -> Station.isRed())),
         Commands.deferredProxy(
             () -> TurretCommands.targetPoint(ShootTarget::getTranslationToTarget)),
         Commands.deferredProxy(
-            () ->
-                HoodCommands.setHoodSetpoint(
-                    () ->
-                        Degrees.of(
-                            Constants.LauncherC.SHOOTER_HOOD_MAP_SHOOTING.get(
-                                ShootTarget.getDistanceToTarget().in(Meters))))),
+            () -> HoodCommands.setHoodSetpoint(
+                () -> Degrees.of(
+                    AngledShotSetpointHelper
+                        .compensateHoodForRobotAngle(Constants.LauncherC.SHOOTER_HOOD_MAP_SHOOTING.get(
+                            ShootTarget.getDistanceToTarget().in(Meters)))))),
         Commands.deferredProxy(
-            () ->
-                ShooterCommands.targetLaunchSpeed(
-                    () ->
-                        RotationsPerSecond.of(
-                            Constants.LauncherC.FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.get(
-                                ShootTarget.getDistanceToTarget().in(Meters))))),
+            () -> ShooterCommands.targetLaunchSpeed(
+                () -> RotationsPerSecond.of(
+                    AngledShotSetpointHelper
+                        .compensateFlywheelForRobotAngle(Constants.LauncherC.FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.get(
+                            ShootTarget.getDistanceToTarget().in(Meters)))))),
         feedWhenReadyHub());
   }
 

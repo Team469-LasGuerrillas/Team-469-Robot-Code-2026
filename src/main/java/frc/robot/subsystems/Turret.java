@@ -26,6 +26,7 @@ import frc.lib.subsystems.interfaces.CancoderInputsAutoLogged;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.MotorInputsAutoLogged;
 import frc.lib.utilities.field.Clock;
+import frc.lib.utilities.math.AngledShotSetpointHelper;
 import frc.lib.utilities.math.GeomUtil;
 import frc.lib.utilities.math.ToleranceUtil;
 import frc.robot.Constants;
@@ -354,7 +355,7 @@ public class Turret extends SubsystemBase {
                 turretFieldPose.getRotation().plus(new Rotation2d(getAngle())))
             .transformBy(new Transform2d(1, 0, new Rotation2d())));
 
-    return computeTurretSetpointAngle(Radians.of(deltaRotation.getRadians()));
+    return computeTurretSetpointAngle(Radians.of(AngledShotSetpointHelper.compensateTurretForRobotAngle(deltaRotation).getRadians()));
   }
 
   @AutoLogOutput(key = "Turret/FieldPose")
