@@ -116,16 +116,6 @@ public class Robot extends LoggedRobot {
       // TODO: handle exception
     }
 
-    // MotorIOTalonFX.refreshAllSignals();
-
-    if (!firstLoop) {
-      // robotContainer.limelightTurd.setPositionTurret(
-      //     (Rotations.of(
-      //         Turret.getInstance().getAngleForTurretLL().in(Rotations) + (0.25 - 0.0262))),
-      //     // Turret.getInstance().getAngleForTurretLL().plus(Rotations.of(0.25 - 0.0262)),
-      //     Constants.TurretC.TURD_CENTER_WITHOUT_ROTATION);
-    }
-
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled commands, running already-scheduled commands, removing
     // finished or interrupted commands, and running subsystem periodic() methods.
@@ -133,7 +123,6 @@ public class Robot extends LoggedRobot {
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    FiducialVision.applyUpdates();
     Logger.recordOutput("WeLocked/Pass", RobotState.weLockedPass());
     Logger.recordOutput("WeLocked/Hub", RobotState.weLockedHub());
 
@@ -144,6 +133,8 @@ public class Robot extends LoggedRobot {
 
     // Return to non-RT thread priority (do not modify the first argument)
     Threads.setCurrentThreadPriority(false, 10);
+
+    FiducialVision.applyUpdates();
 
     if (timer.advanceIfElapsed(60) && DriverStation.isTeleopEnabled()) {
       // explicitly run java gc every 60s during teleop enabled

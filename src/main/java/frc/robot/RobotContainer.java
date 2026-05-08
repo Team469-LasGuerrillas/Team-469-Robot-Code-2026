@@ -98,37 +98,49 @@ public class RobotContainer {
             new FiducialVision(
                 Constants.VisionC.LIMELIGHT_RIGHT,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
-                Constants.VisionC.LL3G_MODIFICATIONS);
+                Constants.VisionC.LL3G_MODIFICATIONS,
+                3,
+                0);
 
         limelightLeft =
             new FiducialVision(
                 Constants.VisionC.LIMELIGHT_LEFT,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
-                new ArrayList<UnaryOperator<FiducialModifications>>());
+                new ArrayList<UnaryOperator<FiducialModifications>>(),
+                2,
+                1);
 
         limelightB =
             new FiducialVision(
                 Constants.VisionC.LIMELIGHT_B,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
-                new ArrayList<UnaryOperator<FiducialModifications>>());
+                new ArrayList<UnaryOperator<FiducialModifications>>(),
+                2,
+                0);
 
         limelightC =
             new FiducialVision(
                 Constants.VisionC.LIMELIGHT_C,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
-                Constants.VisionC.LL3G_MODIFICATIONS);
+                Constants.VisionC.LL3G_MODIFICATIONS,
+                3,
+                1);
 
         limelightD =
             new FiducialVision(
                 Constants.VisionC.LIMELIGHT_D,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
-                new ArrayList<UnaryOperator<FiducialModifications>>());
+                new ArrayList<UnaryOperator<FiducialModifications>>(),
+                2,
+                0);
 
         limelightTurd =
             new FiducialVision(
                 Constants.VisionC.LIMELIGHT_TURD,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
-                new ArrayList<UnaryOperator<FiducialModifications>>());
+                new ArrayList<UnaryOperator<FiducialModifications>>(),
+                2,
+                1);
 
         turret =
             Turret.createInstance(
@@ -186,17 +198,17 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
 
-        limelightRight = new FiducialVision(new VisionIO() {}, null, null);
+        limelightRight = new FiducialVision(new VisionIO() {}, null, null, 0, 0);
 
-        limelightLeft = new FiducialVision(new VisionIO() {}, null, null);
+        limelightLeft = new FiducialVision(new VisionIO() {}, null, null, 0, 0);
 
-        limelightB = new FiducialVision(new VisionIO() {}, null, null);
+        limelightB = new FiducialVision(new VisionIO() {}, null, null, 0, 0);
 
-        limelightC = new FiducialVision(new VisionIO() {}, null, null);
+        limelightC = new FiducialVision(new VisionIO() {}, null, null, 0, 0);
 
-        limelightD = new FiducialVision(new VisionIO() {}, null, null);
+        limelightD = new FiducialVision(new VisionIO() {}, null, null, 0, 0);
 
-        limelightTurd = new FiducialVision(new VisionIO() {}, null, null);
+        limelightTurd = new FiducialVision(new VisionIO() {}, null, null, 0, 0);
 
         turret = Turret.createInstance(new MotorIO() {}, new CanCoderIO() {}, new CanCoderIO() {});
 

@@ -43,6 +43,10 @@ public class FiducialVision extends SubsystemBase {
   private boolean distrustTurret = false;
   private Pose3d lastGoodPose = new Pose3d();
 
+  private final int skipCount;
+
+  private int loopCount = 0;
+
   ArrayList<Function<PoseObservation, Boolean>> extraRejections;
   ArrayList<UnaryOperator<FiducialModifications>> extraModifications;
 
@@ -74,15 +78,32 @@ public class FiducialVision extends SubsystemBase {
   public FiducialVision(
       VisionIO io,
       ArrayList<Function<PoseObservation, Boolean>> extraRejections,
-      ArrayList<UnaryOperator<FiducialModifications>> extraModifications) {
+      ArrayList<UnaryOperator<FiducialModifications>> extraModifications,
+      int skipCount,
+      int skipOffset) {
     this.io = io;
     this.extraRejections = extraRejections;
     this.extraModifications = extraModifications;
+    this.skipCount = skipCount;
+    loopCount = skipOffset;
     // Set tag filter override
   }
 
   @Override
   public void periodic() {
+
+    loopCount++;
+
+    if (visionInputs.cameraName.equals("limelight-right")
+        || visionInputs.cameraName.equals("limelight-c")) {
+      io.setRobotRotationUpdate(
+          Drive.getInstance().getRotation(),
+          RadiansPerSecond.of(Drive.getInstance().getFieldSpeeds().omegaRadiansPerSecond));
+    }
+
+    if (!(loopCount % skipCount == 0)) {
+      return;
+    }
 
     io.readInputs(visionInputs);
     io.setRobotRotationUpdate(
