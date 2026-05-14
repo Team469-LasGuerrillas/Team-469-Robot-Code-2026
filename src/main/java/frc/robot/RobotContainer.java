@@ -77,7 +77,7 @@ public class RobotContainer {
 
   // Controller
   private final CommandXboxController marcus = new CommandXboxController(0);
-  private final CommandXboxController kyle = new CommandXboxController(1);
+//  private final CommandXboxController kyle = new CommandXboxController(1);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -299,34 +299,34 @@ public class RobotContainer {
     } catch (Exception e) {
       // TODO: handle exception
     }
-    marcus.b().whileTrue(Commands.deferredProxy(() -> AutonCommands.testAuto()));
+   // marcus.b().whileTrue(Commands.deferredProxy(() -> AutonCommands.testAuto()));
 
     marcus.leftBumper().toggleOnTrue(IntakeCommands.stow());
 
     marcus.rightBumper().toggleOnTrue(CommandFactory.feedOrScore());
 
-    kyle.rightBumper()
-        .whileTrue(Commands.repeatingSequence(Commands.runOnce(() -> feeder.setUnjam(true))));
-    kyle.rightBumper().onFalse(Commands.sequence(Commands.runOnce(() -> feeder.setUnjam(false))));
+    // kyle.rightBumper()
+    //     .whileTrue(Commands.repeatingSequence(Commands.runOnce(() -> feeder.setUnjam(true))));
+    // kyle.rightBumper().onFalse(Commands.sequence(Commands.runOnce(() -> feeder.setUnjam(false))));
     // marcus.y().onTrue(Commands.sequence(Commands.runOnce(() -> spindexer.setUnjam(true))));
-    marcus.y().onTrue(DriveCommands.stopWithX());
-    marcus.y().onFalse(Commands.sequence(Commands.runOnce(() -> feeder.setUnjam(false))));
+    // marcus.y().onTrue(DriveCommands.stopWithX());
+    // marcus.y().onFalse(Commands.sequence(Commands.runOnce(() -> feeder.setUnjam(false))));
     marcus.a().onTrue(Commands.runOnce(() -> System.gc()));
-    kyle.leftTrigger().whileTrue(CommandFactory.outTake());
+    // kyle.leftTrigger().whileTrue(CommandFactory.outTake());
     marcus.rightTrigger().whileTrue(CommandFactory.outTake());
-    kyle.back().and(kyle.start()).onTrue(Commands.runOnce(() -> Turret.getInstance().lockAngle()));
-    kyle.povDown().onTrue(Commands.runOnce(() -> Hood.getInstance().resetHood()));
+    // kyle.back().and(kyle.start()).onTrue(Commands.runOnce(() -> Turret.getInstance().lockAngle()));
+    // kyle.povDown().onTrue(Commands.runOnce(() -> Hood.getInstance().resetHood()));
 
-    kyle.y()
-        .onTrue(
-            Commands.sequence(
-                Commands.runOnce(() -> RobotController.setBrownoutVoltage(6.3)),
-                Commands.runOnce(() -> RobotState.setOverrideFlywheelState(false))));
-    kyle.x()
-        .onTrue(
-            Commands.sequence(
-                Commands.runOnce(() -> RobotController.setBrownoutVoltage(6.1)),
-                Commands.runOnce(() -> RobotState.setOverrideFlywheelState(true))));
+    // kyle.y()
+    //     .onTrue(
+    //         Commands.sequence(
+    //             Commands.runOnce(() -> RobotController.setBrownoutVoltage(6.3)),
+    //             Commands.runOnce(() -> RobotState.setOverrideFlywheelState(false))));
+    // kyle.x()
+    //     .onTrue(
+    //         Commands.sequence(
+    //             Commands.runOnce(() -> RobotController.setBrownoutVoltage(6.1)),
+    //             Commands.runOnce(() -> RobotState.setOverrideFlywheelState(true))));
 
     // Set ignore hub state commands
     // marcus.rightTrigger().onTrue(ShooterCommands.ignoreHubStateCommand());

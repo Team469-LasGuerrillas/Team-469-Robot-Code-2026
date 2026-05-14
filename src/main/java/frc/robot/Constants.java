@@ -92,7 +92,7 @@ public final class Constants {
 
     public static final PPHolonomicDriveController PP_CONTROLLER =
         new PPHolonomicDriveController(
-            new PIDConstants(9.87, 0.0, 0.383), new PIDConstants(7, 0.0, 0.6));
+            new PIDConstants(5, 0.0, 0), new PIDConstants(5, 0.0, 0));
 
     public static final PPHolonomicDriveController PP_CONTROLLER_SLOW =
         new PPHolonomicDriveController(
@@ -134,7 +134,7 @@ public final class Constants {
 
     public static final Translation2d FIELD_CENTER = new Translation2d(MID_FIELD_X, MID_FIELD_Y);
 
-    public static final Distance PASS_WALL_DISTANCE = Meters.of(2.7);
+    public static final Distance PASS_WALL_DISTANCE = Meters.of(0.5);
   }
 
   public static class VisionC {
@@ -356,17 +356,17 @@ public final class Constants {
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakForwardDutyCycle = 1;
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakReverseDutyCycle = 0;
 
-      LAUNCHER_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 140;
-      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 40;
+      LAUNCHER_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 100;
+      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 20;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 140;
-      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 40;
-      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 140;
-      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 40;
-      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 140;
-      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 40;
+      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 100;
+      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 20;
+      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 100;
+      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 20;
+      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 100;
+      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 20;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
@@ -649,7 +649,7 @@ public final class Constants {
       FEEDER_LEAD_FXCONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
       FEEDER_LEAD_FXCONFIG.CurrentLimits.StatorCurrentLimit = 140;
-      FEEDER_LEAD_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 55;
+      FEEDER_LEAD_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 50;
 
       // FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 60;
       // FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerTime = 1;
@@ -657,7 +657,7 @@ public final class Constants {
       FEEDER_FOLLOWER_FXCONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
       FEEDER_FOLLOWER_FXCONFIG.CurrentLimits.StatorCurrentLimit =
           140; // TODO: Verify these make sense
-      FEEDER_FOLLOWER_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 55;
+      FEEDER_FOLLOWER_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 50;
 
       FEEDER_LEAD_CONFIG.followers = new FollowerConfig[1];
       FEEDER_LEAD_CONFIG.followers[0] = new FollowerConfig();
@@ -700,7 +700,7 @@ public final class Constants {
       HOOD_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
       HOOD_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 60;
-      HOOD_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 30;
+      HOOD_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 28;
 
       HOOD_CONFIG.talonCANID = new CANDeviceId(17, "469CanivoreB");
       HOOD_CONFIG.fxConfig = HOOD_TALON_CONFIG;
