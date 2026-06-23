@@ -618,7 +618,7 @@ public final class Constants {
       SPINDEXER_FLOOR_FXCONFIG.CurrentLimits.StatorCurrentLimit = 100;
       SPINDEXER_FLOOR_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 20;
 
-      SPINDEXER_SECONDARY_FXCONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+      SPINDEXER_SECONDARY_FXCONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
       SPINDEXER_SECONDARY_FXCONFIG.CurrentLimits.StatorCurrentLimit =
           130; // TODO: Verify that these current limits make sense
       SPINDEXER_SECONDARY_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 45;
