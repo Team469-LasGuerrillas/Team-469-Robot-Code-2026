@@ -99,7 +99,7 @@ public class RobotContainer {
                 Constants.VisionC.LIMELIGHT_RIGHT,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 Constants.VisionC.LL3G_MODIFICATIONS,
-                3,
+                5,
                 0);
 
         limelightLeft =
@@ -107,7 +107,7 @@ public class RobotContainer {
                 Constants.VisionC.LIMELIGHT_LEFT,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 new ArrayList<UnaryOperator<FiducialModifications>>(),
-                2,
+                3,
                 1);
 
         limelightB =
@@ -115,32 +115,32 @@ public class RobotContainer {
                 Constants.VisionC.LIMELIGHT_B,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 new ArrayList<UnaryOperator<FiducialModifications>>(),
-                2,
-                0);
+                3,
+                2);
 
         limelightC =
             new FiducialVision(
                 Constants.VisionC.LIMELIGHT_C,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 Constants.VisionC.LL3G_MODIFICATIONS,
-                3,
-                1);
+                5,
+                3);
 
         limelightD =
             new FiducialVision(
                 Constants.VisionC.LIMELIGHT_D,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 new ArrayList<UnaryOperator<FiducialModifications>>(),
-                2,
-                0);
+                3,
+                4);
 
         limelightTurd =
             new FiducialVision(
                 Constants.VisionC.LIMELIGHT_TURD,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
                 new ArrayList<UnaryOperator<FiducialModifications>>(),
-                2,
-                1);
+                3,
+                5);
 
         turret =
             Turret.createInstance(

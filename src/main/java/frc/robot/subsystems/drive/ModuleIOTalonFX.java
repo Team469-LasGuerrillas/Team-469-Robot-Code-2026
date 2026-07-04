@@ -251,7 +251,7 @@ public class ModuleIOTalonFX implements ModuleIO {
 
     double updatedCurrentLimit;
     if (Shooter.getInstance().getShooterPowered() || Feeder.getInstance().isRunning()) {
-      updatedCurrentLimit = 30;
+      updatedCurrentLimit = 25;
     } else {
       updatedCurrentLimit = 80;
     }

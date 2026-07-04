@@ -357,16 +357,20 @@ public final class Constants {
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakReverseDutyCycle = 0;
 
       LAUNCHER_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 140;
-      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 40;
+      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 33;
+      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLowerTime = 0;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
       FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 140;
-      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 40;
+      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 33;
+      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLowerTime = 0;
       FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 140;
-      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 40;
+      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 33;
+      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLowerTime = 0;
       FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 140;
-      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 40;
+      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 33;
+      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLowerTime = 0;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
@@ -468,7 +472,7 @@ public final class Constants {
       SERVO_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
       TURRET_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 140;
-      TURRET_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 70;
+      TURRET_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 40;
 
       SERVO_CONFIG.talonCANID = new CANDeviceId(20, "469CanivoreB");
       // SERVO_CONFIG.canCoderConfig = TURRETA_CANCODER_CONFIG;
