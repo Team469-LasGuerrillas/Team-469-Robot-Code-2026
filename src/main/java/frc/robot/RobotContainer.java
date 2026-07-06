@@ -267,7 +267,7 @@ public class RobotContainer {
         Commands.defer(
             () -> TurretCommands.targetPoint(ShootTarget::getTranslationToTarget), turretList));
 
-    intake.setDefaultCommand(IntakeCommands.deployAndRun());
+    intake.setDefaultCommand(IntakeCommands.deployAndDontRun());
 
     spindexer.setDefaultCommand(SpindexerCommands.agitate());
 
@@ -301,16 +301,16 @@ public class RobotContainer {
     }
     marcus.b().whileTrue(Commands.deferredProxy(() -> AutonCommands.testAuto()));
 
-    marcus.leftBumper().toggleOnTrue(IntakeCommands.stow());
-
-    marcus.rightBumper().toggleOnTrue(CommandFactory.feedOrScore());
+    marcus.rightTrigger().and(marcus.leftTrigger()).whileTrue(Commands.parallel(IntakeCommands.deployAndRun(), CommandFactory.feedOrScore()));
+    marcus.rightTrigger().and(marcus.leftTrigger().negate()).whileTrue(Commands.parallel(IntakeCommands.agitateThenStow(), CommandFactory.feedOrScore()));
+    marcus.rightTrigger().negate().and(marcus.leftTrigger()).whileTrue(IntakeCommands.deployAndRun());
 
     kyle.rightBumper()
         .whileTrue(Commands.repeatingSequence(Commands.runOnce(() -> feeder.setUnjam(true))));
     kyle.rightBumper().onFalse(Commands.sequence(Commands.runOnce(() -> feeder.setUnjam(false))));
     // marcus.y().onTrue(Commands.sequence(Commands.runOnce(() -> spindexer.setUnjam(true))));
     marcus.y().onTrue(DriveCommands.stopWithX());
-    marcus.y().onFalse(Commands.sequence(Commands.runOnce(() -> feeder.setUnjam(false))));
+    // marcus.y().onFalse(Commands.sequence(Commands.runOnce(() -> feeder.setUnjam(false))));
     marcus.a().onTrue(Commands.runOnce(() -> System.gc()));
     kyle.leftTrigger().whileTrue(CommandFactory.outTake());
     marcus.rightTrigger().whileTrue(CommandFactory.outTake());

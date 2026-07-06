@@ -17,6 +17,14 @@ public class IntakeCommands {
         Commands.startRun(() -> intake.setDutyCycle(1), () -> intake.setDutyCycle(1)));
   }
 
+  public static Command deployAndDontRun() {
+    return Commands.parallel(
+        Commands.startRun(
+            () -> intake.setTargetAngleFast(Constants.IntakeC.PIVOT_LOWERED),
+            () -> intake.setTargetAngleFast(Constants.IntakeC.PIVOT_LOWERED),
+            intake),
+        Commands.startRun(() -> intake.setDutyCycle(0), () -> intake.setDutyCycle(0)));
+  }
   public static Command deployAndRunReverse() {
     return Commands.parallel(
         Commands.startRun(
@@ -48,6 +56,13 @@ public class IntakeCommands {
     return Commands.repeatingSequence(
         Commands.deadline(Commands.waitSeconds(0.5), pivotToAgitate()),
         Commands.deadline(Commands.waitSeconds(0.8), deployAndRun()));
+  }
+
+  public static Command agitateThenStow() {
+    return Commands.sequence(
+      Commands.deadline(Commands.waitSeconds(3), agitate()),
+      stow()
+    );
   }
 
   public static Command homeAxis() {
