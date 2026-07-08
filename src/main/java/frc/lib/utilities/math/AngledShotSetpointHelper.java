@@ -14,8 +14,8 @@ import frc.robot.util.ShootTarget;
 /**
  * Helpers for biasing shooter setpoints when the chassis is tipped.
  *
- * <p>This keeps the public methods intentionally simple: pass the setpoint you
- * would have used on flat carpet and get the setpoint to apply while tipped.
+ * <p>This keeps the public methods intentionally simple: pass the setpoint you would have used on
+ * flat carpet and get the setpoint to apply while tipped.
  */
 public final class AngledShotSetpointHelper {
   private static final double TARGET_ENTRANCE_HEIGHT_INCHES = 67.0;
@@ -32,9 +32,8 @@ public final class AngledShotSetpointHelper {
   /**
    * Adjusts a robot-relative turret setpoint for chassis pitch/roll.
    *
-   * <p>The returned angle is the original setpoint plus the difference between
-   * the flat robot-relative target bearing and the tipped robot-relative target
-   * bearing.
+   * <p>The returned angle is the original setpoint plus the difference between the flat
+   * robot-relative target bearing and the tipped robot-relative target bearing.
    */
   public static Rotation2d compensateTurretForRobotAngle(Rotation2d flatTurretSetpoint) {
     if (!isRobotMoreThanTwoDegreesFromNormal()) {
@@ -51,8 +50,8 @@ public final class AngledShotSetpointHelper {
   /**
    * Adjusts the hood angle, in degrees, for chassis pitch/roll.
    *
-   * <p>This applies the change in apparent target elevation caused by the chassis
-   * tilt and the lift of the chassis center while resting on one or more wheels.
+   * <p>This applies the change in apparent target elevation caused by the chassis tilt and the lift
+   * of the chassis center while resting on one or more wheels.
    */
   public static double compensateHoodForRobotAngle(double flatHoodDegrees) {
     if (!isRobotMoreThanTwoDegreesFromNormal()) {
@@ -71,13 +70,11 @@ public final class AngledShotSetpointHelper {
   }
 
   /**
-   * Adjusts the flywheel setpoint, in rotations per second, for chassis
-   * pitch/roll.
+   * Adjusts the flywheel setpoint, in rotations per second, for chassis pitch/roll.
    *
-   * <p>Without a projectile-speed-per-RPS calibration constant, the safest
-   * one-argument correction is a range ratio. If your lookup table already
-   * handles this better, keep this method as a small feedforward bias or replace
-   * the body with another lookup at the tipped effective range.
+   * <p>Without a projectile-speed-per-RPS calibration constant, the safest one-argument correction
+   * is a range ratio. If your lookup table already handles this better, keep this method as a small
+   * feedforward bias or replace the body with another lookup at the tipped effective range.
    */
   public static double compensateFlywheelForRobotAngle(double flatFlywheelRps) {
     if (!isRobotMoreThanTwoDegreesFromNormal()) {
@@ -114,8 +111,7 @@ public final class AngledShotSetpointHelper {
 
   private static Rotation2d getFlatRobotRelativeBearingToTarget() {
     Translation2d targetField = ShootTarget.getTranslationToTarget();
-    Translation2d turretField =
-        Turret.getInstance().getTurretPoseFieldSpace().getTranslation();
+    Translation2d turretField = Turret.getInstance().getTurretPoseFieldSpace().getTranslation();
 
     Rotation2d fieldBearing = targetField.minus(turretField).getAngle();
     return fieldBearing.minus(Drive.getInstance().getRotation());

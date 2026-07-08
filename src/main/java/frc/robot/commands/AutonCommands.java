@@ -387,37 +387,38 @@ public class AutonCommands {
 
   public static Command depotThenSwipeAuto(boolean isRed, double delaySeconds) {
 
-    try{
+    try {
 
       PathPlannerPath firstPath = PathPlannerPath.fromPathFile("D_S_1");
       PathPlannerPath secondPath = PathPlannerPath.fromPathFile("D_S_2");
 
-      if(isRed) {
+      if (isRed) {
         firstPath = firstPath.flipPath();
         secondPath = secondPath.flipPath();
       }
 
       return Commands.sequence(
-        Commands.deadline(
-          Commands.waitSeconds(delaySeconds), CommandFactory.scoring(), IntakeCommands.stow()),
-          Commands.deadline(AutoBuilder.followPath(firstPath),
-           IntakeCommands.deployAndRun(),
-           CommandFactory.scoring()),
-            Commands.deadline(AutoBuilder.followPath(secondPath),
-             IntakeCommands.deployAndRun(),
-             Commands.sequence(Commands.deadline(
-              Commands.waitSeconds(5),
-               FeederCommands.idleCommand(),
-               SpindexerCommands.idleCommand(),
-               CommandFactory.scoring(),
-               IntakeCommands.agitate())))
-      );
+          Commands.deadline(
+              Commands.waitSeconds(delaySeconds), CommandFactory.scoring(), IntakeCommands.stow()),
+          Commands.deadline(
+              AutoBuilder.followPath(firstPath),
+              IntakeCommands.deployAndRun(),
+              CommandFactory.scoring()),
+          Commands.deadline(
+              AutoBuilder.followPath(secondPath),
+              IntakeCommands.deployAndRun(),
+              Commands.sequence(
+                  Commands.deadline(
+                      Commands.waitSeconds(5),
+                      FeederCommands.idleCommand(),
+                      SpindexerCommands.idleCommand(),
+                      CommandFactory.scoring(),
+                      IntakeCommands.agitate()))));
 
-      } catch (Exception e) {
-        return Commands.none();
-      }
+    } catch (Exception e) {
+      return Commands.none();
+    }
   }
-
 
   public static Command feedAuto(boolean isRed, boolean rightSide) {
 

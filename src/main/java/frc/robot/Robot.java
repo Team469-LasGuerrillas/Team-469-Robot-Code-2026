@@ -110,7 +110,7 @@ public class Robot extends LoggedRobot {
 
     try {
       if (DriverStation.isEnabled()) {
-        // Threads.setCurrentThreadPriority(true, 1);
+        Threads.setCurrentThreadPriority(true, 1);
       }
     } catch (Exception e) {
       // TODO: handle exception
@@ -132,7 +132,7 @@ public class Robot extends LoggedRobot {
     firstLoop = false;
 
     // Return to non-RT thread priority (do not modify the first argument)
-    // Threads.setCurrentThreadPriority(false, 10);
+    Threads.setCurrentThreadPriority(false, 10);
 
     FiducialVision.applyUpdates();
 

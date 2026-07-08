@@ -301,9 +301,20 @@ public class RobotContainer {
     }
     marcus.b().whileTrue(Commands.deferredProxy(() -> AutonCommands.testAuto()));
 
-    marcus.rightTrigger().and(marcus.leftTrigger()).whileTrue(Commands.parallel(IntakeCommands.deployAndRun(), CommandFactory.feedOrScore()));
-    marcus.rightTrigger().and(marcus.leftTrigger().negate()).whileTrue(Commands.parallel(IntakeCommands.agitateThenStow(), CommandFactory.feedOrScore()));
-    marcus.rightTrigger().negate().and(marcus.leftTrigger()).whileTrue(IntakeCommands.deployAndRun());
+    marcus
+        .rightTrigger()
+        .and(marcus.leftTrigger())
+        .whileTrue(Commands.parallel(IntakeCommands.deployAndRun(), CommandFactory.feedOrScore()));
+    marcus
+        .rightTrigger()
+        .and(marcus.leftTrigger().negate())
+        .whileTrue(
+            Commands.parallel(IntakeCommands.agitateThenStow(), CommandFactory.feedOrScore()));
+    marcus
+        .rightTrigger()
+        .negate()
+        .and(marcus.leftTrigger())
+        .whileTrue(IntakeCommands.deployAndRun());
 
     kyle.rightBumper()
         .whileTrue(Commands.repeatingSequence(Commands.runOnce(() -> feeder.setUnjam(true))));
@@ -313,7 +324,6 @@ public class RobotContainer {
     // marcus.y().onFalse(Commands.sequence(Commands.runOnce(() -> feeder.setUnjam(false))));
     marcus.a().onTrue(Commands.runOnce(() -> System.gc()));
     kyle.leftTrigger().whileTrue(CommandFactory.outTake());
-    marcus.rightTrigger().whileTrue(CommandFactory.outTake());
     kyle.back().and(kyle.start()).onTrue(Commands.runOnce(() -> Turret.getInstance().lockAngle()));
     kyle.povDown().onTrue(Commands.runOnce(() -> Hood.getInstance().resetHood()));
 

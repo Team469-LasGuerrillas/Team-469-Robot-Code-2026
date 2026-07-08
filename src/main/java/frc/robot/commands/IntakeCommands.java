@@ -25,6 +25,7 @@ public class IntakeCommands {
             intake),
         Commands.startRun(() -> intake.setDutyCycle(0), () -> intake.setDutyCycle(0)));
   }
+
   public static Command deployAndRunReverse() {
     return Commands.parallel(
         Commands.startRun(
@@ -60,9 +61,7 @@ public class IntakeCommands {
 
   public static Command agitateThenStow() {
     return Commands.sequence(
-      Commands.deadline(Commands.waitSeconds(3), agitate()),
-      stow()
-    );
+        Commands.waitSeconds(0.5), Commands.deadline(Commands.waitSeconds(3), agitate()), stow());
   }
 
   public static Command homeAxis() {

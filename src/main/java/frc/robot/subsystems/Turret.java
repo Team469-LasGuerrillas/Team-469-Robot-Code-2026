@@ -225,12 +225,12 @@ public class Turret extends SubsystemBase {
 
     // boolean targetFar =
     // Math.abs(targetAngle.minus(talonInputs.motorPosition).in(Degrees)) > 40;
-    boolean targetFar = Math.abs(targetAngle.minus(talonInputs.motorPosition).in(Degrees)) > 40;
+    boolean targetFar = Math.abs(targetAngle.minus(talonInputs.motorPosition).in(Degrees)) > 300;
 
-    boolean tooFastTurret = Math.abs(talonInputs.motorVelocity.in(DegreesPerSecond)) > 100;
+    boolean tooFastTurret = Math.abs(talonInputs.motorVelocity.in(DegreesPerSecond)) > 200;
     boolean tooFastChassis =
         Math.abs(Units.radiansToDegrees(Drive.getInstance().getFieldSpeeds().omegaRadiansPerSecond))
-            > 80;
+            > 300;
 
     boolean onTarget =
         (!nearWrapMax
@@ -355,7 +355,9 @@ public class Turret extends SubsystemBase {
                 turretFieldPose.getRotation().plus(new Rotation2d(getAngle())))
             .transformBy(new Transform2d(1, 0, new Rotation2d())));
 
-    return computeTurretSetpointAngle(Radians.of(AngledShotSetpointHelper.compensateTurretForRobotAngle(deltaRotation).getRadians()));
+    return computeTurretSetpointAngle(
+        Radians.of(
+            AngledShotSetpointHelper.compensateTurretForRobotAngle(deltaRotation).getRadians()));
   }
 
   @AutoLogOutput(key = "Turret/FieldPose")
