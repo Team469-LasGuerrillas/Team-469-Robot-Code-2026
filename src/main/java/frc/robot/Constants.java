@@ -528,7 +528,7 @@ public final class Constants {
     public static final double IDLE_DC = 0;
     // public static final Angle PIVOT_RAISED = Radians.of(0.33);
     public static final Angle PIVOT_LOWERED = Degrees.of(130);
-    public static final Angle PIVOT_RAISED = Degrees.of(11);
+    public static final Angle PIVOT_RAISED = Degrees.of(40);
     public static final Angle PIVOT_AGITATE = Degrees.of(90);
 
     private static final ServoMotorSubsystemWithCancoderConfig DROP_CONFIG =
@@ -624,7 +624,7 @@ public final class Constants {
 
       SPINDEXER_SECONDARY_FXCONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
       SPINDEXER_SECONDARY_FXCONFIG.CurrentLimits.StatorCurrentLimit =
-          130; // TODO: Verify that these current limits make sense
+          90; // TODO: Verify that these current limits make sense
       SPINDEXER_SECONDARY_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 20;
     }
 
@@ -653,7 +653,7 @@ public final class Constants {
       FEEDER_LEAD_FXCONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
       FEEDER_LEAD_FXCONFIG.CurrentLimits.StatorCurrentLimit = 140;
-      FEEDER_LEAD_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 40;
+      FEEDER_LEAD_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 55;
 
       // FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 60;
       // FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerTime = 1;
@@ -661,7 +661,7 @@ public final class Constants {
       FEEDER_FOLLOWER_FXCONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
       FEEDER_FOLLOWER_FXCONFIG.CurrentLimits.StatorCurrentLimit =
           140; // TODO: Verify these make sense
-      FEEDER_FOLLOWER_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 40;
+      FEEDER_FOLLOWER_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 55;
 
       FEEDER_LEAD_CONFIG.followers = new FollowerConfig[1];
       FEEDER_LEAD_CONFIG.followers[0] = new FollowerConfig();
