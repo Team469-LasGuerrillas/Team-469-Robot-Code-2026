@@ -44,6 +44,15 @@ public class IntakeCommands {
         Commands.startRun(() -> intake.setDutyCycle(0.3), () -> intake.setDutyCycle(0)));
   }
 
+  public static Command agitateSlow() {
+    return Commands.parallel(
+        Commands.startRun(
+            () -> intake.setTargetAngleSlow(Constants.IntakeC.PIVOT_AGITATE),
+            () -> intake.setTargetAngleSlow(Constants.IntakeC.PIVOT_AGITATE),
+            intake),
+        Commands.startRun(() -> intake.setDutyCycle(0.3), () -> intake.setDutyCycle(0)));
+  }
+
   public static Command pivotToAgitate() {
     return Commands.parallel(
         Commands.startRun(
@@ -61,7 +70,11 @@ public class IntakeCommands {
 
   public static Command agitateThenStow() {
     return Commands.sequence(
-        Commands.waitSeconds(0.5), Commands.deadline(Commands.waitSeconds(3), agitate()), stow());
+        Commands.deadline(Commands.waitSeconds(0.3), agitateSlow()),
+        Commands.waitSeconds(0.5),
+        Commands.deadline(Commands.waitSeconds(0.8), agitateSlow()),
+        Commands.deadline(Commands.waitSeconds(2), agitate()),
+        stow());
   }
 
   public static Command homeAxis() {

@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.subsystems.configs.ServoMotorSubsystemWithFollowersConfig;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.MotorInputsAutoLogged;
-import frc.robot.Constants;
 
 public class Feeder extends SubsystemBase {
   private static Feeder instance;
@@ -50,7 +49,7 @@ public class Feeder extends SubsystemBase {
   public void setOpenLoopDutyCycle(double dutyCycle) {
     requestedDutycycle = dutyCycle;
     if (unjam) {
-      requestedDutycycle = Constants.FeederC.REVERSE_DC;
+      // requestedDutycycle = 0; // Constants.FeederC.REVERSE_DC;
     }
     feeder.setOpenLoopDutyCycle(requestedDutycycle);
   }
@@ -64,8 +63,8 @@ public class Feeder extends SubsystemBase {
     feeder.readInputs(talonInputs);
     // Logger.processInputs(getName() + "Motor", talonInputs);
 
-    if (talonInputs.statorCurrent.in(Amps) > 95
-        && talonInputs.motorVelocity.in(RotationsPerSecond) <= 25) {
+    if (talonInputs.statorCurrent.in(Amps) > 60
+        && talonInputs.motorVelocity.in(RotationsPerSecond) <= 20) {
       jamLoops++;
     } else {
       jamLoops = 0;

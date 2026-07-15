@@ -598,7 +598,7 @@ public final class Constants {
 
   public static class SpindexerC {
     public static final double FEEDING_DC = 1.0;
-    public static final double REVERSE_DC = -0.67;
+    public static final double REVERSE_DC = -0.9;
     public static final double IDLE_DC = 0.0;
     public static final double IDLE_REVERSE_DC = -0.0;
 
@@ -624,7 +624,7 @@ public final class Constants {
 
       SPINDEXER_SECONDARY_FXCONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
       SPINDEXER_SECONDARY_FXCONFIG.CurrentLimits.StatorCurrentLimit =
-          90; // TODO: Verify that these current limits make sense
+          150; // TODO: Verify that these current limits make sense
       SPINDEXER_SECONDARY_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 20;
     }
 

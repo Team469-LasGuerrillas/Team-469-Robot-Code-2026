@@ -12,6 +12,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -322,7 +323,7 @@ public class RobotContainer {
     // marcus.y().onTrue(Commands.sequence(Commands.runOnce(() -> spindexer.setUnjam(true))));
     marcus.y().onTrue(DriveCommands.stopWithX());
     // marcus.y().onFalse(Commands.sequence(Commands.runOnce(() -> feeder.setUnjam(false))));
-    marcus.a().onTrue(Commands.runOnce(() -> System.gc()));
+    marcus.a().onTrue(Commands.runOnce(() -> Drive.getInstance().setPose(new Pose2d())));
     kyle.leftTrigger().whileTrue(CommandFactory.outTake());
     kyle.back().and(kyle.start()).onTrue(Commands.runOnce(() -> Turret.getInstance().lockAngle()));
     kyle.povDown().onTrue(Commands.runOnce(() -> Hood.getInstance().resetHood()));
