@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -11,6 +12,7 @@ import frc.lib.utilities.math.ToleranceUtil;
 import frc.robot.Constants;
 import frc.robot.RobotState;
 import frc.robot.RobotState.FlywheelState;
+import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
 
@@ -24,6 +26,7 @@ public class Shooter extends SubsystemBase {
 
   private double requestedDutycycle = 0;
   private AngularVelocity requestedAngularVelocity = RotationsPerSecond.of(0);
+  private boolean shooterPowered = false;
 
   public static Shooter createinstance(
       ServoMotorSubsystemWithFollowersConfig leadConfig, MotorIO leadIo, MotorIO[] followerIo) {
@@ -58,10 +61,17 @@ public class Shooter extends SubsystemBase {
     leadFlywheel.setVelocitySetpiont(velocity);
   }
 
+  public boolean getShooterPowered() {
+    return leadInputs.supplyCurrent.in(Amps) > 3.3
+        || leadInputs.motorVelocity.in(RotationsPerSecond) > 15;
+  }
+
   @Override
   public void periodic() {
     leadFlywheel.readInputs(leadInputs);
-    // Logger.processInputs(getName() + "flywheelLead", leadInputs);
+    Logger.processInputs(getName() + "flywheelLead", leadInputs);
+
+    Logger.recordOutput("ShooterRequest", requestedAngularVelocity);
 
     boolean onTargetHub =
         ToleranceUtil.epsilonEquals(

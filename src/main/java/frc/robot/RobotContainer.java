@@ -8,21 +8,22 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.lib.subsystems.configs.ServoMotorSubsystemWithFollowersConfig;
 import frc.lib.subsystems.interfaces.CanCoderIO;
 import frc.lib.subsystems.interfaces.MotorIO;
 import frc.lib.subsystems.interfaces.VisionIO;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.robot.commands.AutonCommands;
-import frc.robot.commands.ClimbCommands;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeederCommands;
@@ -32,7 +33,6 @@ import frc.robot.commands.ShooterCommands;
 import frc.robot.commands.SpindexerCommands;
 import frc.robot.commands.TurretCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
@@ -46,7 +46,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.FiducialVision;
 import frc.robot.subsystems.vision.util.FiducialFilters.FiducialModifications;
-import frc.robot.util.HubShiftUtil;
+// import frc.robot.util.HubShiftUtil;
 import frc.robot.util.ShootTarget;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -62,17 +62,19 @@ import java.util.function.UnaryOperator;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final FiducialVision limelightRight;
   private final FiducialVision limelightLeft;
-  private final FiducialVision limelightClimb;
+  private final FiducialVision limelightRight;
+  private final FiducialVision limelightB;
+  private final FiducialVision limelightC;
+  private final FiducialVision limelightD;
   public final FiducialVision limelightTurd;
-  public final Turret exampe;
+  public final Turret turret;
   public final Intake intake;
   public final Spindexer spindexer;
   public final Shooter shooter;
   public final Feeder feeder;
   public final Hood hood;
-  public final Climb climb;
+  // public final Climb climb;
 
   // Controller
   private final CommandXboxController marcus = new CommandXboxController(0);
@@ -97,27 +99,51 @@ public class RobotContainer {
             new FiducialVision(
                 Constants.VisionC.LIMELIGHT_RIGHT,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
-                Constants.VisionC.LL3G_MODIFICATIONS);
+                Constants.VisionC.LL3G_MODIFICATIONS,
+                5,
+                0);
 
         limelightLeft =
             new FiducialVision(
                 Constants.VisionC.LIMELIGHT_LEFT,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
-                new ArrayList<UnaryOperator<FiducialModifications>>());
+                new ArrayList<UnaryOperator<FiducialModifications>>(),
+                3,
+                1);
 
-        limelightClimb =
+        limelightB =
             new FiducialVision(
-                Constants.VisionC.LIMELIGHT_CLIMB,
+                Constants.VisionC.LIMELIGHT_B,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
-                new ArrayList<UnaryOperator<FiducialModifications>>());
+                new ArrayList<UnaryOperator<FiducialModifications>>(),
+                3,
+                2);
+
+        limelightC =
+            new FiducialVision(
+                Constants.VisionC.LIMELIGHT_C,
+                new ArrayList<Function<PoseObservation, Boolean>>(),
+                Constants.VisionC.LL3G_MODIFICATIONS,
+                5,
+                3);
+
+        limelightD =
+            new FiducialVision(
+                Constants.VisionC.LIMELIGHT_D,
+                new ArrayList<Function<PoseObservation, Boolean>>(),
+                new ArrayList<UnaryOperator<FiducialModifications>>(),
+                3,
+                4);
 
         limelightTurd =
             new FiducialVision(
-                Constants.VisionC.TURD_LIMELIGHT,
+                Constants.VisionC.LIMELIGHT_TURD,
                 new ArrayList<Function<PoseObservation, Boolean>>(),
-                Constants.VisionC.TURRET_MODIFICATIONS);
+                new ArrayList<UnaryOperator<FiducialModifications>>(),
+                3,
+                5);
 
-        exampe =
+        turret =
             Turret.createInstance(
                 Constants.TurretC.motah, Constants.TurretC.coderA, Constants.TurretC.coderB);
 
@@ -127,7 +153,10 @@ public class RobotContainer {
                 Constants.IntakeC.PIVOT_MOTOR,
                 Constants.IntakeC.coder);
 
-        spindexer = Spindexer.createinstance(Constants.SpindexerC.SPINDEXER_MOTOR);
+        spindexer =
+            Spindexer.createinstance(
+                Constants.SpindexerC.SPINDEXER_FLOOR_MOTOR,
+                Constants.SpindexerC.SPINDEXER_SECONDARY_MOTOR);
 
         shooter =
             Shooter.createinstance(
@@ -135,11 +164,15 @@ public class RobotContainer {
                 Constants.LauncherC.LAUNCHER_MOTOR,
                 Constants.LauncherC.FOLLOWER_MOTORS);
 
-        feeder = Feeder.createinstance(Constants.FeederC.FEEDER_MOTOR);
+        feeder =
+            Feeder.createinstance(
+                Constants.FeederC.FEEDER_LEAD_CONFIG,
+                Constants.FeederC.FEEDER_LEAD_MOTOR,
+                Constants.FeederC.FEEDER_FOLLOWER_MOTOR);
 
         hood = Hood.createinstance(Constants.HoodC.PIVOT_MOTOR);
 
-        climb = Climb.createInstance(Constants.ClimbC.CLIMB_MOTOR);
+        // climb = Climb.createInstance(Constants.ClimbC.CLIMB_MOTOR);
 
         break;
 
@@ -166,37 +199,45 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
 
-        limelightRight = new FiducialVision(new VisionIO() {}, null, null);
+        limelightRight = new FiducialVision(new VisionIO() {}, null, null, 0, 0);
 
-        limelightLeft = new FiducialVision(new VisionIO() {}, null, null);
+        limelightLeft = new FiducialVision(new VisionIO() {}, null, null, 0, 0);
 
-        limelightClimb = new FiducialVision(new VisionIO() {}, null, null);
+        limelightB = new FiducialVision(new VisionIO() {}, null, null, 0, 0);
 
-        limelightTurd = new FiducialVision(new VisionIO() {}, null, null);
+        limelightC = new FiducialVision(new VisionIO() {}, null, null, 0, 0);
 
-        exampe = Turret.createInstance(new MotorIO() {}, new CanCoderIO() {}, new CanCoderIO() {});
+        limelightD = new FiducialVision(new VisionIO() {}, null, null, 0, 0);
+
+        limelightTurd = new FiducialVision(new VisionIO() {}, null, null, 0, 0);
+
+        turret = Turret.createInstance(new MotorIO() {}, new CanCoderIO() {}, new CanCoderIO() {});
 
         intake = Intake.createinstance(new MotorIO() {}, new MotorIO() {}, new CanCoderIO() {});
 
-        spindexer = Spindexer.createinstance(new MotorIO() {});
+        spindexer = Spindexer.createinstance(new MotorIO() {}, new MotorIO() {});
 
         shooter =
             Shooter.createinstance(
                 new ServoMotorSubsystemWithFollowersConfig() {}, new MotorIO() {}, null);
 
-        feeder = Feeder.createinstance(new MotorIO() {});
+        feeder =
+            Feeder.createinstance(
+                new ServoMotorSubsystemWithFollowersConfig() {},
+                new MotorIO() {},
+                new MotorIO() {});
 
         hood = Hood.createinstance(new MotorIO() {});
 
-        climb = Climb.createInstance(new MotorIO() {});
+        // climb = Climb.createInstance(new MotorIO() {});
 
         break;
     }
 
-    RobotModeTriggers.teleop().onTrue(Commands.runOnce(HubShiftUtil::initialize));
-    RobotModeTriggers.autonomous().onTrue(Commands.runOnce(HubShiftUtil::initialize));
-    RobotModeTriggers.disabled()
-        .onTrue(Commands.runOnce(HubShiftUtil::initialize).ignoringDisable(true));
+    // RobotModeTriggers.teleop().onTrue(Commands.runOnce(HubShiftUtil::initialize));
+    // RobotModeTriggers.autonomous().onTrue(Commands.runOnce(HubShiftUtil::initialize));
+    // RobotModeTriggers.disabled()
+    // .onTrue(Commands.runOnce(HubShiftUtil::initialize).ignoringDisable(true));
 
     // Configure the button
     configurePPNamedCommands();
@@ -208,6 +249,8 @@ public class RobotContainer {
 
   private void configurePPNamedCommands() {
     NamedCommands.registerCommand("IntakeStart", IntakeCommands.deployAndRun());
+    NamedCommands.registerCommand(
+        "ShooterStart", ShooterCommands.targetLaunchSpeed(() -> RotationsPerSecond.of(30)));
   }
 
   private void configureDefaultCommands() {
@@ -217,15 +260,15 @@ public class RobotContainer {
             drive, () -> -marcus.getLeftY(), () -> -marcus.getLeftX(), () -> -marcus.getRightX()));
 
     HashSet<Subsystem> turretList = new HashSet<Subsystem>();
-    turretList.add(exampe);
+    turretList.add(turret);
 
     // exampe.setDefaultCommand(TurretCommands.targetAngle(Rotations.of(0)));
 
-    exampe.setDefaultCommand(
+    turret.setDefaultCommand(
         Commands.defer(
             () -> TurretCommands.targetPoint(ShootTarget::getTranslationToTarget), turretList));
 
-    intake.setDefaultCommand(IntakeCommands.stow());
+    intake.setDefaultCommand(IntakeCommands.deployAndDontRun());
 
     spindexer.setDefaultCommand(SpindexerCommands.agitate());
 
@@ -235,7 +278,7 @@ public class RobotContainer {
 
     hood.setDefaultCommand(HoodCommands.stowHood());
 
-    climb.setDefaultCommand(ClimbCommands.setClimbOff());
+    // climb.setDefaultCommand(ClimbCommands.setClimbOff());
   }
 
   private void configureButtonBindings() {
@@ -243,12 +286,12 @@ public class RobotContainer {
     driveList.add(Drive.getInstance());
 
     // Lock to 0° when A button is held
-    marcus.povUp().whileTrue(ClimbCommands.setClimbUp());
-    marcus.povDown().whileTrue(ClimbCommands.setClimbDown());
+    // marcus.povUp().whileTrue(ClimbCommands.setClimbUp());
+    // marcus.povDown().whileTrue(ClimbCommands.setClimbDown());
     marcus.povUp().onTrue(TurretCommands.targetAngle(Rotations.of(-0.23)));
 
     // Switch to X pattern when X button is pressed
-    marcus.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // marcus.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
     PathPlannerPath testA;
@@ -259,19 +302,46 @@ public class RobotContainer {
     }
     marcus.b().whileTrue(Commands.deferredProxy(() -> AutonCommands.testAuto()));
 
-    marcus.leftBumper().toggleOnTrue(IntakeCommands.deployAndRun());
+    marcus
+        .rightTrigger()
+        .and(marcus.leftTrigger())
+        .whileTrue(Commands.parallel(IntakeCommands.deployAndRun(), CommandFactory.feedOrScore()));
+    marcus
+        .rightTrigger()
+        .and(marcus.leftTrigger().negate())
+        .whileTrue(
+            Commands.parallel(IntakeCommands.agitateThenStow(), CommandFactory.feedOrScore()));
+    marcus
+        .rightTrigger()
+        .negate()
+        .and(marcus.leftTrigger())
+        .whileTrue(IntakeCommands.deployAndRun());
 
-    marcus.rightBumper().toggleOnTrue(CommandFactory.feedOrScore());
-
-    kyle.rightBumper().whileTrue(CommandFactory.unJam());
-    marcus.a().whileTrue(CommandFactory.unJam());
+    kyle.rightBumper()
+        .whileTrue(Commands.repeatingSequence(Commands.runOnce(() -> feeder.setUnjam(true))));
+    kyle.rightBumper().onFalse(Commands.sequence(Commands.runOnce(() -> feeder.setUnjam(false))));
+    // marcus.y().onTrue(Commands.sequence(Commands.runOnce(() -> spindexer.setUnjam(true))));
+    marcus.y().onTrue(DriveCommands.stopWithX());
+    // marcus.y().onFalse(Commands.sequence(Commands.runOnce(() -> feeder.setUnjam(false))));
+    marcus.a().onTrue(Commands.runOnce(() -> Drive.getInstance().setPose(new Pose2d())));
     kyle.leftTrigger().whileTrue(CommandFactory.outTake());
     kyle.back().and(kyle.start()).onTrue(Commands.runOnce(() -> Turret.getInstance().lockAngle()));
     kyle.povDown().onTrue(Commands.runOnce(() -> Hood.getInstance().resetHood()));
 
+    kyle.y()
+        .onTrue(
+            Commands.sequence(
+                Commands.runOnce(() -> RobotController.setBrownoutVoltage(6.3)),
+                Commands.runOnce(() -> RobotState.setOverrideFlywheelState(false))));
+    kyle.x()
+        .onTrue(
+            Commands.sequence(
+                Commands.runOnce(() -> RobotController.setBrownoutVoltage(6.1)),
+                Commands.runOnce(() -> RobotState.setOverrideFlywheelState(true))));
+
     // Set ignore hub state commands
-    marcus.rightTrigger().onTrue(ShooterCommands.ignoreHubStateCommand());
-    marcus.leftTrigger().onTrue(ShooterCommands.respectHubStateCommand());
+    // marcus.rightTrigger().onTrue(ShooterCommands.ignoreHubStateCommand());
+    // marcus.leftTrigger().onTrue(ShooterCommands.respectHubStateCommand());
   }
 
   /**
@@ -280,6 +350,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Dashboard.autonChooser.get();
+    return Dashboard.autonChooser.getSelected();
   }
 }

@@ -7,18 +7,18 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Rotations;
-
 import com.pathplanner.lib.commands.FollowPathCommand;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.subsystems.implementations.MotorIOTalonFX;
-import frc.robot.commands.IntakeCommands;
-import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.vision.FiducialVision;
-import frc.robot.util.HubShiftUtil;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -39,6 +39,8 @@ public class Robot extends LoggedRobot {
   private boolean firstLoop = true;
 
   private boolean loggingMode = false;
+
+  private Timer timer = new Timer();
 
   public Robot() {
     // Record metadata
@@ -86,12 +88,18 @@ public class Robot extends LoggedRobot {
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
 
-    RobotController.setBrownoutVoltage(6.0);
+    // SignalLogger.enableAutoLogging(false);
+
+    RobotController.setBrownoutVoltage(7.01);
 
     CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
-  }
 
-  private int gcLoopCounter = 0;
+    timer.start();
+
+    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    Runnable task = () -> MotorIOTalonFX.refreshAllSignals();
+    scheduler.scheduleWithFixedDelay(task, 20, 20, TimeUnit.MILLISECONDS);
+  }
 
   /** This function is called periodically during all modes. */
   @Override
@@ -99,20 +107,13 @@ public class Robot extends LoggedRobot {
     // Optionally switch the thread to high priority to improve loop
     // timing (see the template project documentation for details)
     if (!loggingMode) {}
-    Threads.setCurrentThreadPriority(true, 99);
 
-    MotorIOTalonFX.refreshAllSignals();
-
-    if (gcLoopCounter % 5 == 0) {
-      // explicitly run java gc every 5 loops
-      System.gc();
-      gcLoopCounter++;
-    }
-
-    if (!firstLoop) {
-      robotContainer.limelightTurd.setPositionTurret(
-          Turret.getInstance().getAngleForTurretLL().plus(Rotations.of(0.25 - 0.0262)),
-          Constants.TurretC.TURD_CENTER_WITHOUT_ROTATION);
+    try {
+      if (DriverStation.isEnabled()) {
+        Threads.setCurrentThreadPriority(true, 1);
+      }
+    } catch (Exception e) {
+      // TODO: handle exception
     }
 
     // Runs the Scheduler. This is responsible for polling buttons, adding
@@ -121,26 +122,34 @@ public class Robot extends LoggedRobot {
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    // robotContainer.limelightTurd.setPoseRobotSpace(
-    // new Pose3d(0, 0, 1, new Rotation3d(new
-    // Rotation2d(robotContainer.exampe.getPosition()))));
 
-    FiducialVision.applyUpdates();
     Logger.recordOutput("WeLocked/Pass", RobotState.weLockedPass());
     Logger.recordOutput("WeLocked/Hub", RobotState.weLockedHub());
 
-    Logger.recordOutput("HubShift/Official", HubShiftUtil.getOfficialShiftInfo());
-    Logger.recordOutput("HubShift/Shifted", HubShiftUtil.getShiftedShiftInfo());
+    // Logger.recordOutput("HubShift/Official", HubShiftUtil.getOfficialShiftInfo());
+    // Logger.recordOutput("HubShift/Shifted", HubShiftUtil.getShiftedShiftInfo());
 
     firstLoop = false;
 
     // Return to non-RT thread priority (do not modify the first argument)
-    // Threads.setCurrentThreadPriority(false, 10);
+    Threads.setCurrentThreadPriority(false, 10);
+
+    FiducialVision.applyUpdates();
+
+    if (timer.advanceIfElapsed(60) && DriverStation.isTeleopEnabled()) {
+      // explicitly run java gc every 60s during teleop enabled
+      System.gc();
+    }
   }
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    // SignalLogger.enableAutoLogging(false);
+    System.gc();
+    timer.restart();
+    CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
+  }
 
   /** This function is called periodically when disabled. */
   @Override
@@ -149,6 +158,9 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    timer.reset();
+    timer.start();
+
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -175,8 +187,9 @@ public class Robot extends LoggedRobot {
     }
 
     Dashboard.setChangeTabToTeleop();
-
-    CommandScheduler.getInstance().schedule(IntakeCommands.deployAndRun());
+    timer.reset();
+    timer.start();
+    // CommandScheduler.getInstance().schedule(IntakeCommands.deployAndRun());
   }
 
   /** This function is called periodically during operator control. */

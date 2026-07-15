@@ -46,6 +46,7 @@ import frc.lib.subsystems.configs.CanCoderConfig;
 import frc.lib.subsystems.configs.ServoMotorSubsystemConfig;
 import frc.lib.subsystems.configs.ServoMotorSubsystemWithCancoderConfig;
 import frc.lib.subsystems.configs.ServoMotorSubsystemWithFollowersConfig;
+import frc.lib.subsystems.configs.ServoMotorSubsystemWithFollowersConfig.FollowerConfig;
 import frc.lib.subsystems.implementations.CanCoderIOCanCoder;
 import frc.lib.subsystems.implementations.MotorIOTalonFX;
 import frc.lib.subsystems.implementations.VisionIOLimelight;
@@ -91,7 +92,11 @@ public final class Constants {
 
     public static final PPHolonomicDriveController PP_CONTROLLER =
         new PPHolonomicDriveController(
-            new PIDConstants(7.1, 0.0, 0.27), new PIDConstants(5.3, 0.0, 0.6));
+            new PIDConstants(9.87, 0.0, 0.383), new PIDConstants(7, 0.0, 0.6));
+
+    public static final PPHolonomicDriveController PP_CONTROLLER_SLOW =
+        new PPHolonomicDriveController(
+            new PIDConstants(2, 0.0, 0.0), new PIDConstants(4, 0.0, 0.1));
   }
 
   public static class Field {
@@ -106,10 +111,14 @@ public final class Constants {
     public static final double MID_FIELD_Y_METERS = MID_FIELD_Y.in(Meters);
 
     public static final Matrix<N3, N1> FIELD_SPEEDS_STDS = VecBuilder.fill(0.067, 0.067, 0.08);
-    public static final Matrix<N3, N1> FIELD_ACCELERATIONS_STDS = VecBuilder.fill(0.3, 0.3, 0.3);
+    public static final Matrix<N3, N1> FIELD_ACCELERATIONS_STDS = VecBuilder.fill(0.24, 0.24, 0.24);
     public static final Matrix<N3, N1> TURRET_SPEEDS_STDS = VecBuilder.fill(0.1, 0.1, 0.1);
     public static final Matrix<N3, N1> TURRET_MOTOR_SPEEDS_STDS =
         VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(80));
+    public static final Matrix<N3, N1> TURRET_TARGET_SPEEDS_STDS =
+        VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(67));
+    public static final Matrix<N3, N1> TURRET_TARGET_SPEEDS_STDS_FOR_ZERO =
+        VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(3));
 
     public static final Distance BLUE_TRENCH_SCORING = Inches.of(182.11);
     public static final Distance RED_TRENCH_SCORING = MAX_FIELD_X.minus(Inches.of(182.11));
@@ -123,15 +132,17 @@ public final class Constants {
     public static final Translation2d RED_HUB =
         new Translation2d(RED_TRENCH_SCORING.in(Meters), MID_FIELD_Y.in(Meters));
 
-    public static final Distance PASS_WALL_DISTANCE = Meters.of(3.5);
+    public static final Translation2d FIELD_CENTER = new Translation2d(MID_FIELD_X, MID_FIELD_Y);
+
+    public static final Distance PASS_WALL_DISTANCE = Meters.of(2.7);
   }
 
   public static class VisionC {
     public static final double MAX_SINGLE_TAG_AMBIGUITY = 0.55;
     public static final double MIN_SINGLE_TAG_AREA = 0.33;
     public static final Angle MAX_YAW_ERROR_MT1 = Degrees.of(2.41);
-    public static final Angle MAX_YAW_ERROR_MT2 = Degrees.of(2);
-    public static final Distance MAX_FLOATING_NOCLIP = Meters.of(0.2);
+    public static final Angle MAX_YAW_ERROR_MT2 = Degrees.of(3); // 2
+    public static final Distance MAX_FLOATING_NOCLIP = Meters.of(1.0);
 
     public static final AngularVelocity BAD_TURRET_ANGULAR_VELOCITY = DegreesPerSecond.of(90);
 
@@ -155,14 +166,6 @@ public final class Constants {
         new ArrayList<UnaryOperator<FiducialModifications>>();
 
     static {
-      TURRET_REJECTIONS.add(FiducialFilters.FiducialRejections::badTurretAngularVelocity);
-
-      TURRET_MODIFICATIONS.add(
-          FiducialFilters.FiducialModifications.o_withDistrustMt2WhileTurretSpinToFast());
-      TURRET_MODIFICATIONS.add(FiducialFilters.FiducialModifications.o_withDistrustYaw());
-      TURRET_MODIFICATIONS.add(FiducialFilters.FiducialModifications.o_withMultiplyAllResults());
-      // TURRET_MODIFICATIONS.add(FiducialFilters.FiducialModifications.o_withDistrustMt1());
-
       LL3G_MODIFICATIONS.add(
           FiducialFilters.FiducialModifications.o_withDistrustMt2WhileDriveSpinToFast());
     }
@@ -170,51 +173,75 @@ public final class Constants {
     public static final Pose3d TURD_CENTER =
         new Pose3d(0.031613, 0.183773, 0.215900, new Rotation3d(0, 0, Units.degreesToRadians(0)));
 
+    // LL4
+    public static final VisionIOLimelight LIMELIGHT_LEFT =
+        VisionIOLimelight.getInstance(
+            "limelight-left",
+            new Pose3d(
+                -0.224,
+                0.361356,
+                0.414413 + Units.inchesToMeters(0.625) - Units.inchesToMeters(0.125),
+                new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(90))));
+
+    // LL3G
     public static final VisionIOLimelight LIMELIGHT_RIGHT =
         VisionIOLimelight.getInstance(
             "limelight-right",
             new Pose3d(
                 -0.139700,
-                -0.352969,
-                0.313057 - Units.inchesToMeters(0.125),
+                -0.350888,
+                0.313784 - Units.inchesToMeters(0.125),
                 new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(-90))));
 
-    public static final VisionIOLimelight LIMELIGHT_LEFT =
+    // LL4, rear left facing cam doesnt exist yet
+    public static final VisionIOLimelight LIMELIGHT_D =
         VisionIOLimelight.getInstance(
-            "limelight-left",
+            "limelight-d",
             new Pose3d(
-                -0.228600,
-                0.359812,
-                0.432361 - Units.inchesToMeters(0.125),
-                new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(90))));
+                -0.281789,
+                0.111784,
+                0.423056 - Units.inchesToMeters(0.125),
+                new Rotation3d(0, Units.degreesToRadians(20), Units.degreesToRadians(180 - 30))));
 
-    public static final VisionIOLimelight LIMELIGHT_CLIMB =
+    // LL3G, right mounted starting cam
+    public static final VisionIOLimelight LIMELIGHT_C =
         VisionIOLimelight.getInstance(
-            "limelight-climb",
+            "limelight-c",
             new Pose3d(
-                -0.215665,
-                0.289118,
-                0.522026 - Units.inchesToMeters(0.125),
-                new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(-15))));
+                -0.263023,
+                -0.312937,
+                0.536056 - Units.inchesToMeters(0.125),
+                new Rotation3d(0, Units.degreesToRadians(20), Units.degreesToRadians(38))));
 
-    public static final VisionIOLimelight TURD_LIMELIGHT =
+    // LL4, left mounted starting cam
+    public static final VisionIOLimelight LIMELIGHT_B =
+        VisionIOLimelight.getInstance(
+            "limelight-b",
+            new Pose3d(
+                -0.251966,
+                0.290833,
+                0.532736 - Units.inchesToMeters(0.125),
+                new Rotation3d(0, Units.degreesToRadians(18), Units.degreesToRadians(-30))));
+
+    // LL4, right rear facing cam
+    public static final VisionIOLimelight LIMELIGHT_TURD =
         VisionIOLimelight.getInstance(
             "limelight-turd",
             new Pose3d(
-                0.081752,
-                -0.201245 - 0.040055 - 0.040055 + 0.165100,
-                0.501594 - Units.inchesToMeters(0.125),
-                new Rotation3d(0, Units.degreesToRadians(13.396331), Units.rotationsToRadians(0))));
+                -0.284696,
+                0.286244,
+                0.449211 - Units.inchesToMeters(0.125),
+                new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(-180 + 30))));
   }
 
   public static class LauncherC {
-    public static final double RAMP_DC = 0.95;
+    public static final double RAMP_DC = 1.0;
     public static final double UNJAM_DC = -0.5;
     public static final double IDLE_DC = 0.0;
 
-    public static final AngularVelocity HUB_SPEED_TOLERANCE = RotationsPerSecond.of(6.7);
-    public static final AngularVelocity PASS_SPEED_TOLERANCE = RotationsPerSecond.of(44);
-    public static final AngularVelocity RAMP_SPEED_TOLERANCE = RotationsPerSecond.of(15);
+    public static final AngularVelocity HUB_SPEED_TOLERANCE = RotationsPerSecond.of(10.0);
+    public static final AngularVelocity PASS_SPEED_TOLERANCE = RotationsPerSecond.of(999.0);
+    public static final AngularVelocity RAMP_SPEED_TOLERANCE = RotationsPerSecond.of(8);
 
     public static final double FEEDER_LEAD_TIME_SECONDS = 0.07;
 
@@ -241,41 +268,54 @@ public final class Constants {
     static {
       phaseDelay = 67;
 
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(0.1, 35.0);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(3.5, 48.0);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(4.5, 52.7);
-      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.3, 57.0);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(0.1, 28.0);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(3.3, 36.0);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(4.5, 43.5);
+      FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.3, 50.0);
+      // FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(0.1, 27.5);
+      // FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(3.3, 34.7);
+      // FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(4.5, 41.0);
+      // FLYWHEEL_SHOT_SPEEDMAP_SHOOTING.put(6.3, 47.2);
 
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(0.5, 28.0);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(2.0, 45.0);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(5.0, 55.0);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(10.0, 65.0);
-      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(20.0, 75.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(0.5, 25.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(2.0, 28.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(5.0, 30.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(8.3, 58.0);
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(10.3, 53.0); // Cap shot to mid field to save battery
+      FLYWHEEL_SHOT_SPEEDMAP_PASSING.put(20.0, 53.0);
 
       TIME_OF_FLIGHT_MAP_SHOOTING.put(0.2, 0.3);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.0, 0.78);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.8, 1.05);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(2.5, 1.22);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(3.5, 1.35);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(5.0, 1.43);
-      TIME_OF_FLIGHT_MAP_SHOOTING.put(6.0, 1.50);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.0, 0.7);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(1.8, 1.0);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(2.5, 1.07);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(3.5, 1.11);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(5.0, 1.26);
+      TIME_OF_FLIGHT_MAP_SHOOTING.put(6.0, 1.29);
 
-      TIME_OF_FLIGHT_MAP_PASSING.put(1.0, 0.8);
-      TIME_OF_FLIGHT_MAP_PASSING.put(7.0, 1.5);
-      TIME_OF_FLIGHT_MAP_PASSING.put(20.0, 1.8);
+      TIME_OF_FLIGHT_MAP_PASSING.put(1.0, 0.2);
+      TIME_OF_FLIGHT_MAP_PASSING.put(4.0, 0.7);
+      TIME_OF_FLIGHT_MAP_PASSING.put(7.0, 1.2);
+      TIME_OF_FLIGHT_MAP_PASSING.put(20.0, 1.4);
 
       SHOOTER_HOOD_MAP_SHOOTING.put(0.2, 0.0);
       SHOOTER_HOOD_MAP_SHOOTING.put(0.8, 0.1);
-      SHOOTER_HOOD_MAP_SHOOTING.put(1.7, 0.5);
+      SHOOTER_HOOD_MAP_SHOOTING.put(1.7, 0.2);
       SHOOTER_HOOD_MAP_SHOOTING.put(2.2, 3.0);
-      SHOOTER_HOOD_MAP_SHOOTING.put(3.75, 8.0);
+      SHOOTER_HOOD_MAP_SHOOTING.put(3.75, 10.5);
       SHOOTER_HOOD_MAP_SHOOTING.put(5.0, 13.0);
+      SHOOTER_HOOD_MAP_SHOOTING.put(6.0, 13.0);
+      // SHOOTER_HOOD_MAP_SHOOTING.put(0.2, 0.0);
+      // SHOOTER_HOOD_MAP_SHOOTING.put(1.2, 0.1);
+      // SHOOTER_HOOD_MAP_SHOOTING.put(2.2, 6.0);
+      // SHOOTER_HOOD_MAP_SHOOTING.put(3.75, 13.5);
+      // SHOOTER_HOOD_MAP_SHOOTING.put(5.0, 14.5);
+      // SHOOTER_HOOD_MAP_SHOOTING.put(6.0, 15.0);
 
-      SHOOTER_HOOD_MAP_PASSING.put(0.5, 0.0);
-      SHOOTER_HOOD_MAP_PASSING.put(2.0, 3.0);
-      SHOOTER_HOOD_MAP_PASSING.put(4.0, 12.0);
-      SHOOTER_HOOD_MAP_PASSING.put(7.0, 20.0);
-      SHOOTER_HOOD_MAP_PASSING.put(20.0, 22.0);
+      SHOOTER_HOOD_MAP_PASSING.put(0.5, 8.0);
+      SHOOTER_HOOD_MAP_PASSING.put(2.0, 15.0);
+      SHOOTER_HOOD_MAP_PASSING.put(3.5, 25.0);
+      SHOOTER_HOOD_MAP_PASSING.put(7.0, 27.9);
+      SHOOTER_HOOD_MAP_PASSING.put(20.0, 27.9);
     }
 
     public static final ServoMotorSubsystemWithFollowersConfig LAUNCHER_CONFIG =
@@ -297,33 +337,40 @@ public final class Constants {
 
     static {
       LAUNCHER_CONFIG.name = "Launcher";
-      LAUNCHER_CONFIG.talonCANID = new CANDeviceId(13, "469CanivoreB");
+      LAUNCHER_CONFIG.talonCANID = new CANDeviceId(14, "469CanivoreB");
 
       LAUNCHER_CONFIG.unitToRotorRatio = 1 / 1.25;
 
       LAUNCHER_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
-      LAUNCHER_TALON_CONFIG.MotorOutput.ControlTimesyncFreqHz = 0;
-      LAUNCHER_TALON_CONFIG.Slot0.kP = 4.69;
+      LAUNCHER_TALON_CONFIG.Slot0.kP = 15.0; // 13.23
       LAUNCHER_TALON_CONFIG.Slot0.kI = 0;
-      LAUNCHER_TALON_CONFIG.Slot0.kD = 0;
-      LAUNCHER_TALON_CONFIG.Slot0.kV = 0.267;
+      LAUNCHER_TALON_CONFIG.Slot0.kD = 0; // 0.167
+      LAUNCHER_TALON_CONFIG.Slot0.kV = 0.267; // 0.267
+      LAUNCHER_TALON_CONFIG.ClosedLoopRamps.TorqueClosedLoopRampPeriod =
+          LAUNCHER_TALON_CONFIG.Slot1.kP = 0.987;
+      LAUNCHER_TALON_CONFIG.Slot1.kI = 0;
+      LAUNCHER_TALON_CONFIG.Slot1.kD = 0;
       // LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakForwardTorqueCurrent = 120;
       LAUNCHER_TALON_CONFIG.TorqueCurrent.PeakReverseTorqueCurrent = -10;
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakForwardDutyCycle = 1;
       LAUNCHER_TALON_CONFIG.MotorOutput.PeakReverseDutyCycle = 0;
 
-      LAUNCHER_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
-      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
+      LAUNCHER_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 140;
+      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 33;
+      LAUNCHER_TALON_CONFIG.CurrentLimits.SupplyCurrentLowerTime = 0;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
-      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 60;
-      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
-      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 60;
-      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 120;
-      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 60;
+      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 140;
+      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 33;
+      FOLLOWER_1_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLowerTime = 0;
+      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 140;
+      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 33;
+      FOLLOWER_2_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLowerTime = 0;
+      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.StatorCurrentLimit = 140;
+      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLimit = 33;
+      FOLLOWER_3_CONFIG.config.fxConfig.CurrentLimits.SupplyCurrentLowerTime = 0;
 
       LAUNCHER_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
@@ -339,8 +386,8 @@ public final class Constants {
       FOLLOWER_2_CONFIG.inverted = true;
       FOLLOWER_3_CONFIG.inverted = true;
 
-      FOLLOWER_1_CONFIG.config.talonCANID = new CANDeviceId(14, "469CanivoreB");
-      FOLLOWER_2_CONFIG.config.talonCANID = new CANDeviceId(15, "469CanivoreB");
+      FOLLOWER_1_CONFIG.config.talonCANID = new CANDeviceId(15, "469CanivoreB");
+      FOLLOWER_2_CONFIG.config.talonCANID = new CANDeviceId(13, "469CanivoreB");
       FOLLOWER_3_CONFIG.config.talonCANID = new CANDeviceId(16, "469CanivoreB");
 
       LAUNCHER_CONFIG.followers =
@@ -361,10 +408,10 @@ public final class Constants {
 
   public static class TurretC {
 
-    public static final Angle TURRET_TOLERANCE = Degrees.of(6.7);
+    public static final Angle TURRET_TOLERANCE = Degrees.of(16.7);
 
-    public static final Angle TURRERT_MAX = Rotations.of(0.44);
-    public static final Angle TURRERT_MIN = Rotations.of(-0.84);
+    public static final Angle TURRERT_MAX = Rotations.of(1.08);
+    public static final Angle TURRERT_MIN = Rotations.of(-0.18);
 
     public static final double WRAPAROUND_PREDICTION_FACOTR = 0.2;
 
@@ -373,7 +420,7 @@ public final class Constants {
             -0.107950,
             -0.158750,
             0.414338,
-            new Rotation3d(0, 0, Units.rotationsToRadians(0.25 - 0.0262)));
+            new Rotation3d(0, 0, Units.rotationsToRadians(-0.25 - Units.degreesToRotations(0.67))));
 
     public static final Pose3d TURD_CENTER_WITHOUT_ROTATION =
         new Pose3d(-0.107950, -0.158750, 0.414338, new Rotation3d());
@@ -416,16 +463,16 @@ public final class Constants {
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TURRERT_MIN.in(Rotations);
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       TURRET_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-      TURRET_TALON_CONFIG.Slot0.kP = 3310; // 3310
+      TURRET_TALON_CONFIG.Slot0.kP = 5000; // 3310
       TURRET_TALON_CONFIG.Slot0.kI = 0;
-      TURRET_TALON_CONFIG.Slot0.kD = 98.7; // 98.7
+      TURRET_TALON_CONFIG.Slot0.kD = 67.0; // 98.7
       TURRET_TALON_CONFIG.Slot0.kS = 0.5;
-      TURRET_TALON_CONFIG.Slot0.kV = (16.0 / 100.0) * 360.0 * 2;
-      TURRET_TALON_CONFIG.Slot0.kA = 0;
+      TURRET_TALON_CONFIG.Slot0.kV = // (16.0 / 100.0) * 360.0 * 2;
+          TURRET_TALON_CONFIG.Slot0.kA = 0;
       SERVO_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
-      TURRET_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
-      TURRET_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 70;
+      TURRET_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 140;
+      TURRET_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 40;
 
       SERVO_CONFIG.talonCANID = new CANDeviceId(20, "469CanivoreB");
       // SERVO_CONFIG.canCoderConfig = TURRETA_CANCODER_CONFIG;
@@ -472,7 +519,7 @@ public final class Constants {
       CLIMB_CONFIG.fxConfig = CLIMB_TALON_CONFIG;
     }
 
-    public static final MotorIO CLIMB_MOTOR = new MotorIOTalonFX(CLIMB_CONFIG);
+    // public static final MotorIO CLIMB_MOTOR = new MotorIOTalonFX(CLIMB_CONFIG);
   }
 
   public static class IntakeC {
@@ -480,9 +527,9 @@ public final class Constants {
     public static final double UNJAM_DC = -0.3;
     public static final double IDLE_DC = 0;
     // public static final Angle PIVOT_RAISED = Radians.of(0.33);
-    public static final Angle PIVOT_LOWERED = Radians.of(2.195);
-    public static final Angle PIVOT_RAISED = Degrees.of(45);
-    public static final Angle PIVOT_AGITATE = Degrees.of(45);
+    public static final Angle PIVOT_LOWERED = Degrees.of(130);
+    public static final Angle PIVOT_RAISED = Degrees.of(40);
+    public static final Angle PIVOT_AGITATE = Degrees.of(90);
 
     private static final ServoMotorSubsystemWithCancoderConfig DROP_CONFIG =
         new ServoMotorSubsystemWithCancoderConfig();
@@ -498,9 +545,9 @@ public final class Constants {
     static {
       INTAKE_PIVOT_CANCODER_CONFIG.CANID = new CANDeviceId(5);
       INTAKE_PIVOT_CANCODER_CONFIG.config = new CANcoderConfiguration();
-      INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = 0.671875;
+      INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.MagnetOffset = -0.128;
       INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.SensorDirection =
-          SensorDirectionValue.CounterClockwise_Positive;
+          SensorDirectionValue.Clockwise_Positive;
       INTAKE_PIVOT_CANCODER_CONFIG.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
 
       INTAKE_PIVOT_TALON_CONFIG.Feedback.FeedbackRemoteSensorID =
@@ -518,23 +565,25 @@ public final class Constants {
       INTAKE_PIVOT_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
       INTAKE_PIVOT_TALON_CONFIG.ClosedLoopGeneral.ContinuousWrap = false;
-      INTAKE_PIVOT_TALON_CONFIG.Slot0.kP = 440;
+      INTAKE_PIVOT_TALON_CONFIG.Slot0.kP = 696;
       INTAKE_PIVOT_TALON_CONFIG.Slot0.kI = 0;
-      INTAKE_PIVOT_TALON_CONFIG.Slot0.kD = 50;
+      INTAKE_PIVOT_TALON_CONFIG.Slot0.kD = 33;
       INTAKE_PIVOT_TALON_CONFIG.Slot0.kS = 0;
       INTAKE_PIVOT_TALON_CONFIG.Slot0.kV = 0;
       DROP_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 
-      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 90;
-      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 30;
+      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 150;
+      INTAKE_PIVOT_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 55;
 
       DROP_CONFIG.talonCANID = new CANDeviceId(9);
       DROP_CONFIG.canCoderConfig = INTAKE_PIVOT_CANCODER_CONFIG;
       DROP_CONFIG.isFusedCancoder = true;
       DROP_CONFIG.fxConfig = INTAKE_PIVOT_TALON_CONFIG;
 
-      INTAKE_ROLLER_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
+      INTAKE_ROLLER_TALON_CONFIG.CurrentLimits.StatorCurrentLimit = 150;
       INTAKE_ROLLER_TALON_CONFIG.CurrentLimits.SupplyCurrentLimit = 45;
+      INTAKE_ROLLER_TALON_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 30;
+      INTAKE_ROLLER_TALON_CONFIG.CurrentLimits.SupplyCurrentLowerTime = 1;
 
       ROLLER_CONFIG.talonCANID = new CANDeviceId(10);
       ROLLER_CONFIG.fxConfig = INTAKE_ROLLER_TALON_CONFIG;
@@ -548,26 +597,41 @@ public final class Constants {
   }
 
   public static class SpindexerC {
-    public static final double FEEDING_DC = 0.85;
-    public static final double REVERSE_DC = -1.0;
+    public static final double FEEDING_DC = 1.0;
+    public static final double REVERSE_DC = -0.9;
     public static final double IDLE_DC = 0.0;
     public static final double IDLE_REVERSE_DC = -0.0;
 
-    private static final ServoMotorSubsystemWithCancoderConfig SERVO_CONFIG =
-        new ServoMotorSubsystemWithCancoderConfig();
-    private static final TalonFXConfiguration SPINDEXER_MOTOR_CONFIG = new TalonFXConfiguration();
+    public static final ServoMotorSubsystemConfig SPINDEXER_MOTOR_SUBSYSTEM_CONFIG =
+        new ServoMotorSubsystemConfig();
+    public static final ServoMotorSubsystemConfig SPINDEXER_SECONDARY_SUBSYSTEM_CONFIG =
+        new ServoMotorSubsystemConfig();
+    private static final TalonFXConfiguration SPINDEXER_FLOOR_FXCONFIG = new TalonFXConfiguration();
+    private static final TalonFXConfiguration SPINDEXER_SECONDARY_FXCONFIG =
+        new TalonFXConfiguration();
 
     static {
-      SERVO_CONFIG.talonCANID = new CANDeviceId(11);
-      SERVO_CONFIG.fxConfig = SPINDEXER_MOTOR_CONFIG;
+      SPINDEXER_MOTOR_SUBSYSTEM_CONFIG.talonCANID = new CANDeviceId(11);
+      SPINDEXER_MOTOR_SUBSYSTEM_CONFIG.fxConfig = SPINDEXER_FLOOR_FXCONFIG;
+      SPINDEXER_SECONDARY_SUBSYSTEM_CONFIG.talonCANID =
+          new CANDeviceId(21); // TODO: Put in correct can ID
+      SPINDEXER_SECONDARY_SUBSYSTEM_CONFIG.fxConfig = SPINDEXER_SECONDARY_FXCONFIG;
 
-      SPINDEXER_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+      SPINDEXER_FLOOR_FXCONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-      SPINDEXER_MOTOR_CONFIG.CurrentLimits.StatorCurrentLimit = 100;
-      SPINDEXER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
+      SPINDEXER_FLOOR_FXCONFIG.CurrentLimits.StatorCurrentLimit = 100;
+      SPINDEXER_FLOOR_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 20;
+
+      SPINDEXER_SECONDARY_FXCONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      SPINDEXER_SECONDARY_FXCONFIG.CurrentLimits.StatorCurrentLimit =
+          150; // TODO: Verify that these current limits make sense
+      SPINDEXER_SECONDARY_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 20;
     }
 
-    public static final MotorIO SPINDEXER_MOTOR = new MotorIOTalonFX(SERVO_CONFIG);
+    public static final MotorIO SPINDEXER_FLOOR_MOTOR =
+        new MotorIOTalonFX(SPINDEXER_MOTOR_SUBSYSTEM_CONFIG);
+    public static final MotorIO SPINDEXER_SECONDARY_MOTOR =
+        new MotorIOTalonFX(SPINDEXER_SECONDARY_SUBSYSTEM_CONFIG);
   }
 
   public static class FeederC {
@@ -576,50 +640,66 @@ public final class Constants {
     public static final double IDLE_REVERSE_DC = -0.0;
     public static final double IDLE_DC = 0;
 
-    private static final ServoMotorSubsystemWithCancoderConfig SERVO_CONFIG =
-        new ServoMotorSubsystemWithCancoderConfig();
-    private static final TalonFXConfiguration FEEDER_MOTOR_CONFIG = new TalonFXConfiguration();
+    public static final ServoMotorSubsystemWithFollowersConfig FEEDER_LEAD_CONFIG =
+        new ServoMotorSubsystemWithFollowersConfig();
+    private static final TalonFXConfiguration FEEDER_LEAD_FXCONFIG = new TalonFXConfiguration();
+    private static final TalonFXConfiguration FEEDER_FOLLOWER_FXCONFIG = new TalonFXConfiguration();
 
     static {
-      SERVO_CONFIG.talonCANID = new CANDeviceId(12, "469CanivoreB");
-      SERVO_CONFIG.fxConfig = FEEDER_MOTOR_CONFIG;
+      FEEDER_LEAD_CONFIG.talonCANID = new CANDeviceId(12, "469CanivoreB");
+      FEEDER_LEAD_CONFIG.fxConfig = FEEDER_LEAD_FXCONFIG;
 
-      FEEDER_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-      FEEDER_MOTOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+      FEEDER_LEAD_FXCONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      FEEDER_LEAD_FXCONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-      FEEDER_MOTOR_CONFIG.CurrentLimits.StatorCurrentLimit = 120;
-      FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
+      FEEDER_LEAD_FXCONFIG.CurrentLimits.StatorCurrentLimit = 140;
+      FEEDER_LEAD_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 55;
 
       // FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 60;
       // FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerTime = 1;
+
+      FEEDER_FOLLOWER_FXCONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+      FEEDER_FOLLOWER_FXCONFIG.CurrentLimits.StatorCurrentLimit =
+          140; // TODO: Verify these make sense
+      FEEDER_FOLLOWER_FXCONFIG.CurrentLimits.SupplyCurrentLimit = 55;
+
+      FEEDER_LEAD_CONFIG.followers = new FollowerConfig[1];
+      FEEDER_LEAD_CONFIG.followers[0] = new FollowerConfig();
+      FEEDER_LEAD_CONFIG.followers[0].config = new ServoMotorSubsystemConfig();
+      FEEDER_LEAD_CONFIG.followers[0].config.fxConfig = FEEDER_FOLLOWER_FXCONFIG;
+      FEEDER_LEAD_CONFIG.followers[0].config.talonCANID =
+          new CANDeviceId(22, "469CanivoreB"); // TODO: Put in the correct can ID
+      FEEDER_LEAD_CONFIG.followers[0].inverted = false;
     }
 
-    public static final MotorIO FEEDER_MOTOR = new MotorIOTalonFX(SERVO_CONFIG);
+    public static final MotorIO FEEDER_LEAD_MOTOR = new MotorIOTalonFX(FEEDER_LEAD_CONFIG);
+    public static final MotorIO FEEDER_FOLLOWER_MOTOR =
+        new MotorIOTalonFX(FEEDER_LEAD_CONFIG.followers[0].config);
   }
 
   public static class HoodC {
-    public static final Angle HOOD_TOLERANCE = Degrees.of(1.67);
+    public static final Angle HOOD_TOLERANCE = Degrees.of(6.7);
 
     public static final Angle HOOD_STOW = Radians.of(0);
-    public static final Angle HOOD_MAX = Radians.of(0.436);
+    public static final Angle HOOD_MAX = Radians.of(0.49); // 28 degees
 
     private static final ServoMotorSubsystemConfig HOOD_CONFIG = new ServoMotorSubsystemConfig();
     private static final TalonFXConfiguration HOOD_TALON_CONFIG = new TalonFXConfiguration();
 
     static {
-      HOOD_TALON_CONFIG.Feedback.SensorToMechanismRatio = 111.4;
+      HOOD_TALON_CONFIG.Feedback.SensorToMechanismRatio = 57.04; // 111.4;
       HOOD_TALON_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
       HOOD_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       HOOD_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
       HOOD_TALON_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = HOOD_MAX.in(Rotations);
-      HOOD_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.05;
+      HOOD_TALON_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
       HOOD_TALON_CONFIG.ClosedLoopGeneral.ContinuousWrap = false;
-      HOOD_TALON_CONFIG.Slot0.kP = 3700;
+      HOOD_TALON_CONFIG.Slot0.kP = 8000;
       HOOD_TALON_CONFIG.Slot0.kI = 0;
-      HOOD_TALON_CONFIG.Slot0.kD = 80;
-      HOOD_TALON_CONFIG.Slot0.kS = 11;
+      HOOD_TALON_CONFIG.Slot0.kD = 130;
+      HOOD_TALON_CONFIG.Slot0.kS = 3;
       HOOD_TALON_CONFIG.Slot0.kV = 0;
       HOOD_CONFIG.outputMode = ClosedLoopOutputType.TorqueCurrentFOC;
 

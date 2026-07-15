@@ -1,47 +1,67 @@
 package frc.robot;
 
-import frc.robot.subsystems.drive.Drive;
-import frc.robot.util.HubShiftUtil;
+import com.ctre.phoenix6.SignalLogger;
+import edu.wpi.first.math.geometry.Pose2d;
+import frc.robot.util.FieldZoning;
+// import frc.robot.util.HubShiftUtil;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class RobotState {
 
-  public static boolean weLockedPass() {
-    return getTurretState() == TurretState.LOCKED
-        && getHoodState() == HoodState.LOCKED
-        && (getFlywheelState() == FlywheelState.PASSLOCKED
-            || getFlywheelState() == FlywheelState.HUBLOCKED)
-        && Math.abs(Drive.getInstance().getPose().getY() - Constants.Field.MID_FIELD_Y_METERS)
-            > 0.5;
+  private static boolean overrideFlywheelstate = false;
+
+  public static void setOverrideFlywheelState(boolean override) {
+    overrideFlywheelstate = override;
   }
 
-  private static boolean overrideHubState = true;
+  public static boolean weLockedPass() {
+    return !FieldZoning.notAllowedToPass()
+        && getTurretState() == TurretState.LOCKED
+        && getHoodState() == HoodState.LOCKED
+        && (getFlywheelState() == FlywheelState.PASSLOCKED
+            || getFlywheelState() == FlywheelState.HUBLOCKED
+            || overrideFlywheelstate)
+        && !FieldZoning.isTowerZone();
+  }
+
+  // private static boolean overrideHubState = true;
 
   public static boolean weLockedHub() {
     return getTurretState() == TurretState.LOCKED
         && getHoodState() == HoodState.LOCKED
         && getFlywheelState() == FlywheelState.HUBLOCKED
-        && (getHubState() == HubState.ACTIVE || overrideHubState);
+        && !FieldZoning.isTowerZone();
+    // && (getHubState() == HubState.ACTIVE || overrideHubState);
   }
 
-  public static void setOverrideHubState(boolean override) {
-    overrideHubState = override;
+  private static Pose2d trajectoryTarget = new Pose2d();
+
+  public static void setTrajectoryTarget(Pose2d pose) {
+    trajectoryTarget = pose;
   }
+
+  public static Pose2d getTrajectoryTarget() {
+    return trajectoryTarget;
+  }
+
+  // public static void setOverrideHubState(boolean override) {
+  // overrideHubState = override;
+  // }
 
   public enum HubState {
     ACTIVE,
     INACTIVE,
   }
 
-  public static HubState getHubState() {
-    HubState state;
-    if (HubShiftUtil.getShiftedShiftInfo().active()) state = HubState.ACTIVE;
-    else state = HubState.INACTIVE;
+  // public static HubState getHubState() {
+  // HubState state;
+  // if (HubShiftUtil.getShiftedShiftInfo().active()) state = HubState.ACTIVE;
+  // else state = HubState.INACTIVE;
 
-    Logger.recordOutput("State/HubState", state);
-    return state;
-  }
+  // Logger.recordOutput("State/HubState", state);
+  // return state;
+  // }
 
   public enum TurretState {
     LOCKED,
@@ -53,6 +73,15 @@ public class RobotState {
   public static void setTurretState(TurretState state) {
     turretState = state;
     Logger.recordOutput("State/TurretState", state);
+
+    boolean sigState;
+    if (state == TurretState.LOCKED) {
+      sigState = true;
+    } else {
+      sigState = false;
+    }
+
+    SignalLogger.writeBoolean("State/TurretState", sigState);
   }
 
   public static TurretState getTurretState() {
@@ -69,6 +98,15 @@ public class RobotState {
   public static void setHoodState(HoodState state) {
     hoodState = state;
     Logger.recordOutput("State/HoodState", hoodState);
+
+    boolean sigState;
+    if (state == HoodState.LOCKED) {
+      sigState = true;
+    } else {
+      sigState = false;
+    }
+
+    SignalLogger.writeBoolean("State/HoodState", sigState);
   }
 
   public static HoodState getHoodState() {
@@ -86,6 +124,15 @@ public class RobotState {
   public static void setFlywheelState(FlywheelState state) {
     flywheelState = state;
     Logger.recordOutput("State/FlywheelState", state);
+
+    boolean sigState;
+    if (state == FlywheelState.HUBLOCKED) {
+      sigState = true;
+    } else {
+      sigState = false;
+    }
+
+    SignalLogger.writeBoolean("State/FlywheelState", sigState);
   }
 
   public static FlywheelState getFlywheelState() {

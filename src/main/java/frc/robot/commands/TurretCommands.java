@@ -12,11 +12,15 @@ public class TurretCommands {
 
   public static Command targetPoint(Supplier<Translation2d> point) {
     return Commands.startRun(
-        () -> turret.setTargetPoint(point.get()), () -> turret.setTargetPoint(point.get()), turret);
+        () -> turret.setTurretTargetPointSetpoint(point.get()),
+        () -> turret.setTurretTargetPointSetpoint(point.get()),
+        turret);
   }
 
   public static Command targetAngle(Angle angle) {
     return Commands.startRun(
-        () -> turret.setTargetAngle(angle), () -> turret.setTargetAngle(angle), turret);
+        () -> turret.setTurretTargetAngleSetpoint(angle),
+        () -> turret.setTurretTargetAngleSetpoint(angle),
+        turret);
   }
 }

@@ -35,7 +35,7 @@ public class TunerConstants {
   // When using closed-loop control, the drive motor uses the control
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
   private static final Slot0Configs driveGains =
-      new Slot0Configs().withKP(111).withKI(0).withKD(0).withKS(1.0).withKV(3.3);
+      new Slot0Configs().withKP(88.8).withKI(0).withKD(0).withKS(1.33).withKV(0);
 
   // The closed-loop output type to use for the steer motors;
   // This affects the PID/FF gains for the steer motors
@@ -58,7 +58,7 @@ public class TunerConstants {
 
   // The stator current at which the wheels start to slip;
   // This needs to be tuned to your individual robot
-  private static final Current kSlipCurrent = Amps.of(140);
+  private static final Current kSlipCurrent = Amps.of(98.7);
 
   // Initial configs for the drive and steer motors and the azimuth encoder; these
   // cannot be null.
@@ -66,7 +66,11 @@ public class TunerConstants {
   // documentation.
   private static final TalonFXConfiguration driveInitialConfigs =
       new TalonFXConfiguration()
-          .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
+          .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
+          .withCurrentLimits(
+              new CurrentLimitsConfigs()
+                  .withSupplyCurrentLimit(90)
+                  .withSupplyCurrentLimitEnable(true));
   private static final TalonFXConfiguration steerInitialConfigs =
       new TalonFXConfiguration()
           .withCurrentLimits(

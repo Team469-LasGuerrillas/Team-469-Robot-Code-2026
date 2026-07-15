@@ -12,6 +12,7 @@ import static frc.robot.util.PhoenixUtil.*;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -34,7 +35,10 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Shooter;
 import java.util.Queue;
 
 /**
@@ -83,6 +87,9 @@ public class ModuleIOTalonFX implements ModuleIO {
   private final StatusSignal<Voltage> turnAppliedVolts;
   private final StatusSignal<Current> turnCurrent;
 
+  private final TalonFXConfiguration driveConfig;
+  private double lastCurrent = 0;
+
   // Connection debouncers
   private final Debouncer driveConnectedDebounce =
       new Debouncer(0.5, Debouncer.DebounceType.kFalling);
@@ -90,6 +97,8 @@ public class ModuleIOTalonFX implements ModuleIO {
       new Debouncer(0.5, Debouncer.DebounceType.kFalling);
   private final Debouncer turnEncoderConnectedDebounce =
       new Debouncer(0.5, Debouncer.DebounceType.kFalling);
+
+  private final TalonFXConfiguration cachedDriveConfig;
 
   public ModuleIOTalonFX(
       SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
@@ -100,7 +109,7 @@ public class ModuleIOTalonFX implements ModuleIO {
     cancoder = new CANcoder(constants.EncoderId, TunerConstants.kCANBus);
 
     // Configure drive motor
-    var driveConfig = constants.DriveMotorInitialConfigs;
+    driveConfig = constants.DriveMotorInitialConfigs;
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     driveConfig.Slot0 = constants.DriveMotorGains;
     driveConfig.Feedback.SensorToMechanismRatio = constants.DriveMotorGearRatio;
@@ -112,6 +121,9 @@ public class ModuleIOTalonFX implements ModuleIO {
         constants.DriveMotorInverted
             ? InvertedValue.Clockwise_Positive
             : InvertedValue.CounterClockwise_Positive;
+
+    cachedDriveConfig = driveConfig;
+
     tryUntilOk(5, () -> driveTalon.getConfigurator().apply(driveConfig, 0.25));
     tryUntilOk(5, () -> driveTalon.setPosition(0.0, 0.25));
 
@@ -236,6 +248,36 @@ public class ModuleIOTalonFX implements ModuleIO {
     timestampQueue.clear();
     drivePositionQueue.clear();
     turnPositionQueue.clear();
+
+    double updatedCurrentLimit;
+    if (Shooter.getInstance().getShooterPowered() || Feeder.getInstance().isRunning()) {
+      updatedCurrentLimit = 25;
+    } else {
+      updatedCurrentLimit = 80;
+    }
+
+    try {
+      if ((lastCurrent != updatedCurrentLimit) && !DriverStation.isAutonomousEnabled()) {
+        var currentConfigs = new CurrentLimitsConfigs();
+
+        // double currentDrivePosition = drivePosition.getValueAsDouble();
+
+        currentConfigs.SupplyCurrentLimit = updatedCurrentLimit;
+        currentConfigs.SupplyCurrentLimitEnable = true;
+        currentConfigs.StatorCurrentLimit = constants.SlipCurrent;
+        currentConfigs.StatorCurrentLimitEnable = true;
+
+        driveTalon.getConfigurator().apply(currentConfigs, 0.0);
+        // driveTalon.setPosition(currentDrivePosition);
+
+        System.out.println("Changing current limits to " + updatedCurrentLimit);
+      }
+
+    } catch (Exception e) {
+      // TODO: handle exception
+    }
+
+    lastCurrent = updatedCurrentLimit;
   }
 
   @Override
@@ -260,7 +302,8 @@ public class ModuleIOTalonFX implements ModuleIO {
   public void setDriveVelocity(double velocityRadPerSec) {
     double velocityRotPerSec = Units.radiansToRotations(velocityRadPerSec);
 
-    if (Math.abs(velocityRotPerSec) < Units.degreesToRotations(1)) {
+    if (Math.abs(velocityRotPerSec) < Units.degreesToRotations(1)
+        && Math.abs(driveVelocity.getValueAsDouble()) < 1) {
       driveTalon.setControl(torqueCurrentRequest.withOutput(0));
     } else {
 

@@ -3,7 +3,9 @@ package frc.robot.subsystems.vision;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 
+import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -41,6 +43,10 @@ public class FiducialVision extends SubsystemBase {
   private boolean distrustTurret = false;
   private Pose3d lastGoodPose = new Pose3d();
 
+  private final int skipCount;
+
+  private int loopCount = 0;
+
   ArrayList<Function<PoseObservation, Boolean>> extraRejections;
   ArrayList<UnaryOperator<FiducialModifications>> extraModifications;
 
@@ -52,11 +58,16 @@ public class FiducialVision extends SubsystemBase {
 
       Logger.recordOutput("Data into pose estimator delay", Clock.time() - o.timestamp());
 
+      double updatedYawStd = o.stdDevs()[2];
+      if (o.type() == PoseObservationType.MT2) {
+        updatedYawStd = Double.MAX_VALUE - 10;
+      }
+
       Drive.getInstance()
           .addVisionMeasurement(
               o.pose().toPose2d(),
               o.timestamp(),
-              VecBuilder.fill(o.stdDevs()[0], o.stdDevs()[1], o.stdDevs()[2]));
+              VecBuilder.fill(o.stdDevs()[0], o.stdDevs()[1], updatedYawStd));
 
       Drive.getInstance().getCameraField().setRobotPose(o.pose().toPose2d());
     }
@@ -67,15 +78,32 @@ public class FiducialVision extends SubsystemBase {
   public FiducialVision(
       VisionIO io,
       ArrayList<Function<PoseObservation, Boolean>> extraRejections,
-      ArrayList<UnaryOperator<FiducialModifications>> extraModifications) {
+      ArrayList<UnaryOperator<FiducialModifications>> extraModifications,
+      int skipCount,
+      int skipOffset) {
     this.io = io;
     this.extraRejections = extraRejections;
     this.extraModifications = extraModifications;
+    this.skipCount = skipCount;
+    loopCount = skipOffset;
     // Set tag filter override
   }
 
   @Override
   public void periodic() {
+
+    loopCount++;
+
+    if (visionInputs.cameraName.equals("limelight-right")
+        || visionInputs.cameraName.equals("limelight-c")) {
+      io.setRobotRotationUpdate(
+          Drive.getInstance().getRotation(),
+          RadiansPerSecond.of(Drive.getInstance().getFieldSpeeds().omegaRadiansPerSecond));
+    }
+
+    if (!(loopCount % skipCount == 0)) {
+      return;
+    }
 
     io.readInputs(visionInputs);
     io.setRobotRotationUpdate(
@@ -85,20 +113,18 @@ public class FiducialVision extends SubsystemBase {
 
     if (DriverStation.isDisabled() && !wasLastDisabled) {
       if (visionInputs.cameraName.equals("limelight-turd")) {
-        io.setThrottle(200);
-      } else {
-        io.setThrottle(0);
+        io.setThrottle(400);
       }
       LimelightHelpers.SetIMUMode(visionInputs.cameraName, 1);
 
       wasLastDisabled = true;
       wasLastEnabled = false;
     } else if (DriverStation.isEnabled() && !wasLastEnabled) {
-      io.setThrottle(0);
       if (visionInputs.cameraName.equals("limelight-turd")) {
-        LimelightHelpers.SetIMUMode(visionInputs.cameraName, 3);
-        LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.02);
-      } else {
+        io.setThrottle(0);
+      }
+      if (!visionInputs.cameraName.equals("limelight-c")
+          && !visionInputs.cameraName.equals("limelight-right")) {
         LimelightHelpers.SetIMUMode(visionInputs.cameraName, 4);
         LimelightHelpers.SetIMUAssistAlpha(visionInputs.cameraName, 0.01);
       }
@@ -113,7 +139,7 @@ public class FiducialVision extends SubsystemBase {
     }
 
     // if (!visionInputs.cameraName.equals("limelight_turd")) {
-    //   io.setPoseRobotSpace(originalCameraPose);
+    // io.setPoseRobotSpace(originalCameraPose);
     // }
 
     List<PoseObservation> robotPosesAccepted = new LinkedList<>();
@@ -145,10 +171,13 @@ public class FiducialVision extends SubsystemBase {
                 || FiducialFilters.FiducialRejections.tooSmall(observation)
                 || LimelightHelpers.getCameraPose3d_RobotSpace(visionInputs.cameraName).getX() == 0
                 || !observation.isUpdated()
-                || (mt2Difference > 0.8
+                || Clock.time() - observation.timestamp() > 0.8
+                || (mt2Difference > 0.5
                     && observation.type() == PoseObservationType.MT2
                     && observation.tagCount() > 1)
-                || (distrustTurret && visionInputs.cameraName.equals("limelight-turd"));
+                || (mt2Difference > 1
+                    && observation.type() == PoseObservationType.MT2
+                    && observation.tagCount() == 1);
 
         if (observation.type() == PoseObservationType.MT1) {
           Logger.recordOutput(
@@ -202,7 +231,10 @@ public class FiducialVision extends SubsystemBase {
           robotPosesAccepted.add(observation);
 
           FiducialModifications filteredObservation =
-              new FiducialFilters.FiducialModifications(observation).withUpdateYaw();
+              new FiducialFilters.FiducialModifications(observation)
+                  .withUpdateYaw()
+                  .withMultiplyResultsBasedOnOneOrTwo()
+                  .withMultiplyAllResultsBasedOnGyro();
 
           for (UnaryOperator<FiducialModifications> modification : extraModifications) {
             filteredObservation = modification.apply(filteredObservation);
@@ -216,6 +248,21 @@ public class FiducialVision extends SubsystemBase {
     Logger.recordOutput(
         getCameraName() + "/RobotPosesAccepted",
         robotPosesAccepted.toArray(new PoseObservation[robotPosesAccepted.size()]));
+
+    for (PoseObservation p : robotPosesAccepted) {
+      SignalLogger.writeStruct(
+          "Vision/Accepted/" + visionInputs.cameraName + "/" + p.type().toString(),
+          Pose2d.struct,
+          p.pose().toPose2d(),
+          Clock.time() - p.timestamp());
+    }
+    for (PoseObservation p : robotPosesRejected) {
+      SignalLogger.writeStruct(
+          "Vision/Rejected/" + visionInputs.cameraName + "/" + p.type().toString(),
+          Pose2d.struct,
+          p.pose().toPose2d(),
+          Clock.time() - p.timestamp());
+    }
 
     Logger.recordOutput(
         getCameraName() + "/RobotPosesRejected",

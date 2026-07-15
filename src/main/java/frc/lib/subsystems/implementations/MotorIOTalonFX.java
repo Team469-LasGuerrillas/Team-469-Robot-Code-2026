@@ -73,6 +73,8 @@ public class MotorIOTalonFX implements MotorIO {
   private static final ArrayList<BaseStatusSignal> canivoreASignals = new ArrayList<>();
   private static final ArrayList<BaseStatusSignal> canivoreBSignals = new ArrayList<>();
 
+  boolean autoLimit = false;
+
   public MotorIOTalonFX(ServoMotorSubsystemConfig config) {
     this.config = config;
     talon = new TalonFX(config.talonCANID.getDeviceNumber(), config.talonCANID.getBus());
@@ -104,7 +106,7 @@ public class MotorIOTalonFX implements MotorIO {
 
     CANStatusLogger.getInstance().registerTalonFX(config.name, talon, config.talonCANID);
 
-    if (talon.getDeviceID() == 13) {
+    if (talon.getDeviceID() == 14 || talon.getDeviceID() == 12) {
       CTREUtil.tryUntilOK(
           () -> BaseStatusSignal.setUpdateFrequencyForAll(1000, torqueCurrentSignal),
           talon.getDeviceID());
@@ -174,6 +176,35 @@ public class MotorIOTalonFX implements MotorIO {
     inputs.supplyCurrent = Amps.of(currentSupplySignal.getValueAsDouble());
     inputs.statorCurrent = Amps.of(currentStatorSignal.getValueAsDouble());
     inputs.rawMotorPosition = Revolutions.of(rawRotorPositionSignal.getValueAsDouble());
+
+    // if (talon.getDeviceID() == 10 && DriverStation.isAutonomous()) {
+    //   // This is auto
+    //   if (autoLimit == false) {
+    //     CurrentLimitsConfigs newConfig =
+    //         new CurrentLimitsConfigs()
+    //             .withStatorCurrentLimit(150)
+    //             .withStatorCurrentLimitEnable(true)
+    //             .withSupplyCurrentLimit(45)
+    //             .withSupplyCurrentLimitEnable(true)
+    //             .withSupplyCurrentLowerLimit(30)
+    //             .withSupplyCurrentLowerTime(3);
+    //     talon.getConfigurator().apply(newConfig, 0);
+    //     autoLimit = true;
+    //   }
+    // } else if (talon.getDeviceID() == 10) {
+    //   if (autoLimit = true) {
+    //     CurrentLimitsConfigs newConfig =
+    //         new CurrentLimitsConfigs()
+    //             .withStatorCurrentLimit(150)
+    //             .withStatorCurrentLimitEnable(true)
+    //             .withSupplyCurrentLimit(45)
+    //             .withSupplyCurrentLimitEnable(true)
+    //             .withSupplyCurrentLowerLimit(30)
+    //             .withSupplyCurrentLowerTime(0.5);
+    //     talon.getConfigurator().apply(newConfig, 0);
+    //     autoLimit = false;
+    //   }
+    // }
   }
 
   @Override
@@ -182,12 +213,20 @@ public class MotorIOTalonFX implements MotorIO {
   }
 
   @Override
-  public void setPositionSetpoint(Angle position, double ff) {
+  public void setPositionSetpoint(Angle position, AngularVelocity velocity, double ff) {
     if (config.outputMode == ClosedLoopOutputType.TorqueCurrentFOC) {
-      talon.setControl(positionTorqueCurrentFOC.withPosition(position).withFeedForward(ff));
+      talon.setControl(
+          positionTorqueCurrentFOC
+              .withPosition(position)
+              .withVelocity(velocity)
+              .withFeedForward(ff));
     } else {
       talon.setControl(
-          positionVoltageControl.withPosition(position).withFeedForward(ff).withEnableFOC(true));
+          positionVoltageControl
+              .withPosition(position)
+              .withVelocity(velocity)
+              .withFeedForward(ff)
+              .withEnableFOC(true));
     }
   }
 
@@ -219,8 +258,18 @@ public class MotorIOTalonFX implements MotorIO {
   @Override
   public void setVelocitySetpiont(AngularVelocity velocity) {
     if (config.outputMode == ClosedLoopOutputType.TorqueCurrentFOC) {
-      talon.setControl(
-          velocityTorqueCurrentFOC.withVelocity(unitsToRotor(velocity.in(RotationsPerSecond))));
+      if (Math.abs(velocity.in(RotationsPerSecond)) < 0.00001) {
+        talon.setControl(
+            velocityTorqueCurrentFOC
+                .withVelocity(unitsToRotor(velocity.in(RotationsPerSecond)))
+                .withSlot(1));
+      } else {
+        talon.setControl(
+            velocityTorqueCurrentFOC
+                .withVelocity(unitsToRotor(velocity.in(RotationsPerSecond)))
+                .withSlot(0));
+      }
+
     } else {
       talon.setControl(
           velocityVoltageControl

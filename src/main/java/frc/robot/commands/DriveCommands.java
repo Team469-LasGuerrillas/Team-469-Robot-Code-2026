@@ -43,6 +43,10 @@ public class DriveCommands {
 
   private DriveCommands() {}
 
+  public static Command stopWithX() {
+    return Commands.runOnce(() -> Drive.getInstance().stopWithX(), Drive.getInstance());
+  }
+
   private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
     // Apply deadband
     double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), DEADBAND);

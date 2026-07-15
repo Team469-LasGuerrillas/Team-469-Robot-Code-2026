@@ -6,7 +6,6 @@ import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservation;
 import frc.lib.subsystems.interfaces.VisionIO.PoseObservationType;
 import frc.robot.Constants;
@@ -78,8 +77,10 @@ public class FiducialFilters {
     /** Is the robot flying? If so, return false. */
     public static boolean isFlying(PoseObservation toFilter) {
       if (Math.abs(toFilter.pose().getZ()) >= Constants.VisionC.MAX_FLOATING_NOCLIP.in(Meters)
-          && (toFilter.type() == PoseObservationType.MT2
-              || toFilter.tagCount() == 1 && toFilter.type() == PoseObservationType.MT1)) {
+      /*
+       * && (toFilter.type() == PoseObservationType.MT2
+       * || toFilter.tagCount() == 1 && toFilter.type() == PoseObservationType.MT1)
+       */ ) {
         return true;
       }
       return false;
@@ -95,18 +96,25 @@ public class FiducialFilters {
 
     public FiducialModifications withUpdateYaw() {
       if (observation.type() == PoseObservationType.MT2) {
-        observation.stdDevs()[2] = Double.MAX_VALUE;
-      } else {
-        if (DriverStation.isEnabled()) {
-          observation.stdDevs()[2] *= 6.7;
-        }
+        observation.stdDevs()[2] = Double.MAX_VALUE / 2.0;
       }
       return this;
     }
 
+    public FiducialModifications withMultiplyAllResultsBasedOnGyro() {
+      if (Drive.getInstance().hasBeenOverBumpTimer.get() < 0.8) {
+        double multiplier = 0.3 / (3 - Drive.getInstance().hasBeenOverBumpTimer.get());
+
+        observation.stdDevs()[0] *= multiplier;
+        observation.stdDevs()[1] *= multiplier;
+      }
+
+      return this;
+    }
+
     public FiducialModifications withMultiplyAllResults() {
-      observation.stdDevs()[0] *= 1.2;
-      observation.stdDevs()[1] *= 1.2;
+      observation.stdDevs()[0] *= 1.0;
+      observation.stdDevs()[1] *= 1.0;
 
       return this;
     }
@@ -134,6 +142,21 @@ public class FiducialFilters {
         observation.stdDevs()[0] *= Constants.VisionC.REASONABLE_DRIVE_ANGULAR_VELOCITY_MT2_MULT;
         observation.stdDevs()[1] *= Constants.VisionC.REASONABLE_DRIVE_ANGULAR_VELOCITY_MT2_MULT;
       }
+      return this;
+    }
+
+    public FiducialModifications withMultiplyResultsBasedOnOneOrTwo() {
+      if (observation.type() == PoseObservationType.MT1 && observation.tagCount() == 1) {
+        observation.stdDevs()[0] *= 4;
+        observation.stdDevs()[1] *= 4;
+      } else if (observation.type() == PoseObservationType.MT1 && observation.tagCount() > 1) {
+        observation.stdDevs()[0] *= 2;
+        observation.stdDevs()[1] *= 2;
+      } else if (observation.type() == PoseObservationType.MT2) {
+        observation.stdDevs()[0] *= 0.67;
+        observation.stdDevs()[1] *= 0.67;
+      }
+
       return this;
     }
 

@@ -45,7 +45,7 @@ public interface MotorIO {
 
   default void setOpenLoopDutyCycle(double dutyCycle) {}
 
-  default void setPositionSetpoint(Angle position, double ff) {}
+  default void setPositionSetpoint(Angle position, AngularVelocity velocity, double ff) {}
 
   default void setMagicalPositionSetpoint(
       Angle position,

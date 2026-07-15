@@ -9,11 +9,15 @@ package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
@@ -31,9 +35,11 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -43,6 +49,7 @@ import frc.lib.utilities.field.Clock;
 import frc.lib.utilities.math.GeomUtil;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.RobotState;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import java.util.Optional;
@@ -114,6 +121,11 @@ public class Drive extends SubsystemBase {
 
   private ChassisSpeeds lastFieldSpeeds = new ChassisSpeeds();
 
+  private double lastTimestamp;
+  private double[] odometryFrameTimestamps;
+
+  public Timer hasBeenOverBumpTimer = new Timer();
+
   public static Drive getInstance(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -173,7 +185,11 @@ public class Drive extends SubsystemBase {
     PathPlannerLogging.setLogTargetPoseCallback(
         (targetPose) -> {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+          SignalLogger.writeStruct("Odometry/TrajectorySetpoint", Pose2d.struct, targetPose);
+          RobotState.setTrajectoryTarget(targetPose);
         });
+
+    hasBeenOverBumpTimer.start();
 
     // Configure SysId
     sysId =
@@ -237,6 +253,7 @@ public class Drive extends SubsystemBase {
         Twist2d twist = kinematics.toTwist2d(moduleDeltas);
         rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
       }
+      odometryFrameTimestamps = sampleTimestamps;
 
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
@@ -249,11 +266,16 @@ public class Drive extends SubsystemBase {
     fieldSpeedEstimator.addVisionMeasurement(
         GeomUtil.toPose2d(getFieldSpeeds()), Clock.time(), Constants.Field.FIELD_SPEEDS_STDS);
 
+    double deltaTime = Clock.time() - lastTimestamp;
+
     ChassisSpeeds deltaSpeeds =
         new ChassisSpeeds(
-            (updatedSpeeds.vxMetersPerSecond - lastFieldSpeeds.vxMetersPerSecond) / 0.02,
-            (updatedSpeeds.vyMetersPerSecond - lastFieldSpeeds.vyMetersPerSecond) / 0.02,
-            (updatedSpeeds.omegaRadiansPerSecond - lastFieldSpeeds.omegaRadiansPerSecond) / 0.02);
+            (updatedSpeeds.vxMetersPerSecond - lastFieldSpeeds.vxMetersPerSecond) / deltaTime,
+            (updatedSpeeds.vyMetersPerSecond - lastFieldSpeeds.vyMetersPerSecond) / deltaTime,
+            (updatedSpeeds.omegaRadiansPerSecond - lastFieldSpeeds.omegaRadiansPerSecond)
+                / deltaTime);
+
+    lastTimestamp = Clock.time();
 
     fieldAccelerationEstimator.updateWithTime(
         Clock.time(), new Rotation2d(), Constants.EMPTY_MODULE_POSITIONS);
@@ -261,6 +283,10 @@ public class Drive extends SubsystemBase {
         GeomUtil.toPose2d(deltaSpeeds), Clock.time(), Constants.Field.FIELD_ACCELERATIONS_STDS);
 
     lastFieldSpeeds = updatedSpeeds;
+
+    if (Math.abs(getRoll().in(Degrees)) > 5 || Math.abs(getPitch().in(Degrees)) > 5) {
+      hasBeenOverBumpTimer.restart();
+    }
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode == Mode.REAL);
@@ -270,12 +296,32 @@ public class Drive extends SubsystemBase {
     SmartDashboard.putData(localizationField);
   }
 
+  public double[] getCurrentLoopOdometryUpdateTimestamps() {
+    return odometryFrameTimestamps;
+  }
+
   public Command followPath(PathPlannerPath path) {
     return AutoBuilder.followPath(path);
   }
 
+  public Command followPath(PathPlannerPath path, PPHolonomicDriveController controller) {
+    return new FollowPathCommand(
+        path,
+        this::getPose,
+        this::getChassisSpeeds,
+        this::runVulocity,
+        controller,
+        PP_CONFIG,
+        () -> false,
+        this);
+  }
+
   public Command pathfindToPath(PathPlannerPath path) {
     return AutoBuilder.pathfindThenFollowPath(path, Constants.DriveC.defaultConstraints);
+  }
+
+  public void runVulocity(ChassisSpeeds speeds, DriveFeedforwards ff) {
+    runVelocity(speeds);
   }
 
   /**
@@ -403,6 +449,7 @@ public class Drive extends SubsystemBase {
   /** Returns the current odometry pose. */
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
+    SignalLogger.writeStruct("Odometry/Robot", Pose2d.struct, poseEstimator.getEstimatedPosition());
     return poseEstimator.getEstimatedPosition();
   }
 
@@ -417,6 +464,16 @@ public class Drive extends SubsystemBase {
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
     return getPose().getRotation();
+  }
+
+  /** Returns the pitch measured by the gyro. */
+  public Angle getPitch() {
+    return gyroInputs.pitchPosition;
+  }
+
+  /** Returns the roll measured by the gyro. */
+  public Angle getRoll() {
+    return gyroInputs.rollPosition;
   }
 
   /** Resets the current odometry pose. */
@@ -437,8 +494,6 @@ public class Drive extends SubsystemBase {
     poseEstimator.addVisionMeasurement(
         visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
   }
-
-  
 
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
